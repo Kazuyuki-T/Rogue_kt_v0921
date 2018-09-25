@@ -287,22 +287,22 @@ public class MonteCarloPlayer implements Agent
 		//return (double)(maxSum - sum) + (double)(countbeat * 5) - (double)(info.player.maxHp - info.player.hp) + (double)(50 * life) + (double)(100 * newfloor) + (double)(1000 * gameclear) + (double)(wst * ist);
                 
                 
-                int ifd = info.player.inventory.getInvItemNum(1); // 食料数*回復量
-                int ipt = info.player.inventory.getInvItemNum(2); // ポーション数
-                int iar = info.player.inventory.getInvItemNum(3); // 矢数
-                int ist = info.player.inventory.getInvItemNum(4); // 杖数
+//                int ifd = info.player.inventory.getInvItemNum(1); // 食料数*回復量
+//                int ipt = info.player.inventory.getInvItemNum(2); // ポーション数
+//                int iar = info.player.inventory.getInvItemNum(3); // 矢数
+//                int ist = info.player.inventory.getInvItemNum(4); // 杖数
                 
-                double value = 
-                        (double)(0.0
-                            + ((life == 0) ? -1000 : 0)
-                            + (50 * countbeat)
-                            + (-25 * ((sfd - ifd) < 0 ? 0 : (sfd - ifd))) 
-                            + (-25 * (spt - ipt))
-                            + (-25 * ((sar - iar) < 0 ? 0 : (sar - iar))) 
-                            + (-25 * ((sst - ist) < 0 ? 0 : (sst - ist)))
-                            + (-35 * ((info.eatknum - info.patknum)>0?info.eatknum - info.patknum:0))
-                            + (25 * (info.patknum))
-                             );
+//                double value = 
+//                        (double)(0.0
+//                            + ((life == 0) ? -1000 : 0)
+//                            + (50 * countbeat)
+//                            + (-25 * ((sfd - ifd) < 0 ? 0 : (sfd - ifd))) 
+//                            + (-25 * (spt - ipt))
+//                            + (-25 * ((sar - iar) < 0 ? 0 : (sar - iar))) 
+//                            + (-25 * ((sst - ist) < 0 ? 0 : (sst - ist)))
+//                            + (-35 * ((info.eatknum - info.patknum)>0?info.eatknum - info.patknum:0))
+//                            + (25 * (info.patknum))
+//                             );
                 
 //                System.out.println("life                                        : " + ((life == 0) ? -1000 : 0));
 //                System.out.println("(50 * countbeat)                            : " + (50 * countbeat));
@@ -314,7 +314,7 @@ public class MonteCarloPlayer implements Agent
 //                System.out.println("(info.patknum)                              : " + ( 50 * info.patknum));
 //                System.out.println("= value                                     : " + value);
                 
-                return value;
+                //return value;
                 
 //              
 //
@@ -645,9 +645,94 @@ public class MonteCarloPlayer implements Agent
 //                    }
 //                    
 //                    return innerp + value;
-//                }                
+//                } 
+            
+            // 中間審査後
+            int hp = info.player.hp;
+            double lv = calcLevelandExpD(info); // 経験値を少数点で表したレベル
+            int sp = info.player.satiety + (info.player.inventory.getInvItemNum(1) * info.player.inventory.getFoodHealVal()); // 満腹度+食料による回復量
+            int pt = info.player.inventory.getInvItemNum(2); // ポーション数
+            int ar = info.player.inventory.getInvItemNum(3); // 矢数(使用可能数) 
+            int st = info.player.inventory.getInvItemNum(4); // 杖数
+            double unknownAreaPer = calcUnknownAreaPer(info); // 未知領域の割合
+            int stair = (info.stairpos == true) ? 1 : -1; // 階段発見の有無，発見1，未発見-1
+            
+            //System.out.println();
+            
+            double innerp = 0.0;
+            int eval = 0;
+            if (eval == 0) {
+                if (curFloor == 0) {
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) 2.0364443211759813)
+                            + ((double) info.player.hp * 12.406989321869366)
+                            + ((double) info.player.level * 450.29377340174733)
+                            + ((double) (info.player.satiety + sp) * -49.624351684925806)
+                            + ((double) pt * 630.4329773956456)
+                            + ((double) ar * 522.8628206906116)
+                            + ((double) st * 336.1643877409513);
+                }
+                else if (curFloor == 1) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) -1737.87659305395)
+                            + ((double) info.player.hp * 38.7841204200804)
+                            + ((double) info.player.level * 116.648577122649)
+                            + ((double) (info.player.satiety + sp) * -44.6516670185182)
+                            + ((double) pt * 202.435531883301)
+                            + ((double) ar * 134.068083769612)
+                            + ((double) st * 83.1771765887105);
+                } else if (curFloor == 2) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) -1692.83670351477)
+                            + ((double) info.player.hp * 48.1688720345866)
+                            + ((double) info.player.level * -20.9999222223086)
+                            + ((double) (info.player.satiety + sp) * 22.6880959021157)
+                            + ((double) pt * 72.5431005076661)
+                            + ((double) ar * 186.477792802452)
+                            + ((double) st * 52.2077886580126);
+                } else if (curFloor == 3) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) -1692.83670351477)
+                            + ((double) info.player.hp * 48.1688720345866)
+                            + ((double) info.player.level * -20.9999222223086)
+                            + ((double) (info.player.satiety + sp) * 22.6880959021157)
+                            + ((double) pt * 72.5431005076661)
+                            + ((double) ar * 186.477792802452)
+                            + ((double) st * 52.2077886580126);
+                } else if (curFloor == 4) {
+                    innerp = 100000;
+                }
+            }
+
+            return innerp;
 	}
 
+        public double calcLevelandExpD(Info info){
+            double levelandExp = info.player.level;
+            double exp = info.player.exp; // 経験値
+            double lvupExp = info.player.lvupExp; // LvUpに必要な経験値
+            levelandExp += (double)(exp / lvupExp);
+            
+            return levelandExp;
+        }
+        
+        public double calcUnknownAreaPer(Info info){
+            int hitCount = 0; // 未探索マス
+            double unknownAreaPer = 0.0;
+            int mapx = info.mapsizeX;
+            int mapy = info.mapsizeY;
+            
+            for(int y = 0; y < mapy; y++)
+                for(int x = 0; x < mapx; x++)
+                    if(info.pmap[y][x] == false) hitCount++;
+            
+            unknownAreaPer = (hitCount * 100.0) / (double)(mapx * mapy);
+            return unknownAreaPer;
+        }
+        
         public void countAtk(Info info) {
             for (Enemy tgen : info.visibleEnemy) {
                 Point p = new Point(info.player.gridMapX, info.player.gridMapY);

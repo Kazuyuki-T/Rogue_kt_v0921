@@ -557,7 +557,7 @@ public class MyCanvas extends Canvas implements Runnable
                         deathCount++;
 			deathFloor[floorNumber]++;
                         gameCounter++;
-			//System.out.println("num:" + gameCounter);
+			System.out.println("win:" + clearCount + "/" + gameCounter);
 			init();
 
 			if (shotSPkey_state == SHOT_DOWN)
@@ -627,7 +627,7 @@ public class MyCanvas extends Canvas implements Runnable
                         
                         clearCount++;
 			gameCounter++;
-                        //System.out.println("num:" + gameCounter);
+                        System.out.println("win:" + clearCount + "/" + gameCounter);
 			init();
 
 			if (shotSPkey_state == SHOT_DOWN)
@@ -805,6 +805,8 @@ public class MyCanvas extends Canvas implements Runnable
                             //logger.OutputFileLog(fname);
                             logger.initLog(logger.LogLevel);
                         }
+                        
+                        info.stairpos = (rbp.getStairRoomID() != -1) ? true : false; // stairRoomID != -1 -> 階段発見済み
                         
 			// TurnManagerを用いてターン管理を行う
 			// 移動・攻撃によるターン経過を管理する

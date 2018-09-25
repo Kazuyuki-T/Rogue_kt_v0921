@@ -23,7 +23,7 @@ public class Info implements Cloneable
         public int eatknum; // 敵がプレイヤに攻撃できる数
         public int patknum; // プレイヤが敵に攻撃できる数
         
-        public Point stairpos; // 階段の座標
+        public boolean stairpos; // 階段の座標
         
         // map
         // mapobj
@@ -185,7 +185,7 @@ public class Info implements Cloneable
                 
                 visibleEnemy = new ArrayList<Enemy>();
             
-                stairpos = new Point(-1, -1);
+                stairpos = false;
                 
                 eatknum = 0;
                 patknum = 0;
