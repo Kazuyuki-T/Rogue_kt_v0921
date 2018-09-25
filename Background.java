@@ -52,7 +52,7 @@ public class Background extends LoadImg
 		random = new Random();
 
 		// マップチップの読み込み
-		img = loadImage("mat/mapchip.png");
+		img = loadImage("src/mat/mapchip.png");
 		// マップの読み込み
 		//map = mapUpdate(new String("mat/d.txt"));
 		mapUpdate();
@@ -66,7 +66,7 @@ public class Background extends LoadImg
                 random = new Random();
 
 		// マップチップの読み込み
-		img = loadImage("mat/mapchip.png");
+		img = loadImage("src/mat/mapchip.png");
 		// マップの読み込み
 		//map = mapUpdate(new String("mat/d.txt"));
 		mapUpdate();
@@ -238,7 +238,7 @@ public class Background extends LoadImg
 		ppList.clear();
 
 		// ランダムに読み込むマップを変更
-		String fname = new String("mat/d" + (random.nextInt(5) + 3) + ".txt");
+		String fname = new String("src/mat/d" + (random.nextInt(5) + 3) + ".txt");
                 //System.out.println("map : " + fname);
 		//String fname = new String("mat/d7.txt");
 		tmp = loadMap(fname, true);

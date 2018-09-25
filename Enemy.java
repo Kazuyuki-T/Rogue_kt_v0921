@@ -124,7 +124,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 60;
 			attack = 20;
 			spoint = 15;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -136,7 +136,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 80;
 			attack = 25;
 			spoint = 20;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -148,7 +148,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 90;
 			attack = 30;
 			spoint = 25;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -160,7 +160,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 95;
 			attack = 35;
 			spoint = 30;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -172,7 +172,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 60;
 			attack = 35;
 			spoint = 15;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -213,7 +213,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 60;
 			attack = 20;
 			spoint = 15;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -225,7 +225,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 80;
 			attack = 25;
 			spoint = 20;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -237,7 +237,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 90;
 			attack = 30;
 			spoint = 25;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -249,7 +249,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 95;
 			attack = 35;
 			spoint = 30;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;
@@ -261,7 +261,7 @@ public class Enemy extends Unit implements Cloneable
 			hp = 60;
 			attack = 35;
 			spoint = 15;
-			img = loadImage("mat/enemy.png"); // 敵機読み込み
+			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
 			sizeMagX = MyCanvas.MAPCHIP_MAGX;

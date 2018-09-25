@@ -71,7 +71,7 @@ public class Item extends Object implements Cloneable
 	static void setItemInfo()
 	{
 		try {
-			File f = new File("mat/item.csv");
+			File f = new File("src/mat/item.csv");
 			BufferedReader br = new BufferedReader(new FileReader(f));
 
 			String line = br.readLine();
@@ -110,7 +110,7 @@ public class Item extends Object implements Cloneable
 		// アイテムの種類
 		id = idn;
 
-		String imgfName = new String("mat/item" + idn + ".png");
+		String imgfName = new String("src/mat/item" + idn + ".png");
 		img = loadImage(imgfName);
 
 		sizeX = img.getWidth(this);

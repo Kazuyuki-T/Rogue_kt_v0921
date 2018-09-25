@@ -38,7 +38,7 @@ public class Stair extends Object implements Cloneable
 
 		active = false;
 
-		img = loadImage("mat/stair.png"); // 階段画像読み込み
+		img = loadImage("src/mat/stair.png"); // 階段画像読み込み
 		sizeX = img.getWidth(this);
 		sizeY = img.getHeight(this);
 		sizeMagX = MyCanvas.MAPCHIP_MAGX;

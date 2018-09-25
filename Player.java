@@ -153,7 +153,7 @@ public class Player extends Unit implements Cloneable
 		spDecCount = 0;
 
 		// 自機読み込み
-		img = loadImage("mat/player.png");
+		img = loadImage("src/mat/player.png");
 
 		// 本来のimgサイズ
 		sizeX = img.getWidth(this);
