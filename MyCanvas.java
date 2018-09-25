@@ -940,7 +940,7 @@ public class MyCanvas extends Canvas implements Runnable
                 
                 
                 // 既定のゲーム回数終了時
-		if(gameCounter == TRYNUM && !(DATA_COLLECTED))
+		if(gameCounter == TRYNUM && DATA_COLLECTED == false)
 		{
 			scene = SCENE_TITLE;
                         
@@ -994,7 +994,7 @@ public class MyCanvas extends Canvas implements Runnable
                 
                 // 各階層への到達数が上限以上 -> 終了
                 // かつ，ゲームが一区切りついたとき
-                if(isReachCount() == true && startFlag == false && floorNumber == 0 && DATA_COLLECTED)
+                if(isReachCount() == true && startFlag == false && floorNumber == 0 && DATA_COLLECTED == true)
                 {
                         scene = SCENE_TITLE;
                         

@@ -164,11 +164,11 @@ public class MonteCarloPlayer implements Agent
 	public double calcEvaVal(Info info)
 	{
 		// 評価値計算
-		double pHpPersent = (double)info.player.hp / info.player.maxHp;
+//		double pHpPersent = (double)info.player.hp / info.player.maxHp;
 
 		// 敵のhpの合計
-		int sum = 0;
-		int maxSum = 0;
+//		int sum = 0;
+//		int maxSum = 0;
 
 
                 // すべての敵
@@ -179,25 +179,25 @@ public class MonteCarloPlayer implements Agent
 //		}
 
                 // 視界内の敵
-                int countbeat = 0;
-                for(int index = 0; index < info.visibleEnemy.size(); index++)
-		{
-			for(int eindex = 0; eindex < info.enemy.length; eindex++)
-                        {
-                            if(info.visibleEnemy.get(index).index == info.enemy[eindex].index)
-                            {
-                                sum += (double)info.enemy[index].hp;
-                                maxSum += (double)info.enemy[index].maxHp;
-                                
-                                if(info.enemy[index].active == false)
-                                {
-                                    countbeat++;
-                                }
-                                
-                                break;
-                            }
-                        }
-		}
+//                int countbeat = 0;
+//                for(int index = 0; index < info.visibleEnemy.size(); index++)
+//		{
+//			for(int eindex = 0; eindex < info.enemy.length; eindex++)
+//                        {
+//                            if(info.visibleEnemy.get(index).index == info.enemy[eindex].index)
+//                            {
+//                                sum += (double)info.enemy[index].hp;
+//                                maxSum += (double)info.enemy[index].maxHp;
+//                                
+//                                if(info.enemy[index].active == false)
+//                                {
+//                                    countbeat++;
+//                                }
+//                                
+//                                break;
+//                            }
+//                        }
+//		}
                 
 
 		/*
@@ -228,8 +228,8 @@ public class MonteCarloPlayer implements Agent
 		//System.out.println("eva:" + (pHpPersent + (sum/maxSum) * 10) * life);
 
 
-		int w1 = 1;
-		int w2 = 10;
+//		int w1 = 1;
+//		int w2 = 10;
 		//return  (pHpPersent + (1.0 - sum/maxSum) * 10) * life;
 		//return  (objSimu.beatEnemy + 1) * (1.0 - sum/maxSum) * 10 * life;
 		//return  ((1.0 - sum/maxSum) * 10 + (double)objSimu.atkNum) * life;
@@ -239,17 +239,17 @@ public class MonteCarloPlayer implements Agent
 		//return (double)objSimu.atkNum;
 
                 
-                int newfloor = 0;
-                int gameclear = 0;
-                if(info.player.curFloor < MyCanvas.TOPFLOOR)
-                {
-                    //newfloor = (info.floorturn[info.player.curFloor] == 1) ? 1 : 0;
-                    newfloor = (curFloor != info.player.curFloor) ? 1 : 0;
-                }
-                else if(info.player.curFloor == MyCanvas.TOPFLOOR)
-                {
-                    gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
-                }
+//                int newfloor = 0;
+//                int gameclear = 0;
+//                if(info.player.curFloor < MyCanvas.TOPFLOOR)
+//                {
+//                    //newfloor = (info.floorturn[info.player.curFloor] == 1) ? 1 : 0;
+//                    newfloor = (curFloor != info.player.curFloor) ? 1 : 0;
+//                }
+//                else if(info.player.curFloor == MyCanvas.TOPFLOOR)
+//                {
+//                    gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
+//                }
 
                 //int ist = info.player.inventory.getInvItemNum(4); // 杖数
                 //int wst = 70;
@@ -663,45 +663,53 @@ public class MonteCarloPlayer implements Agent
             int eval = 0;
             if (eval == 0) {
                 if (curFloor == 0) {
-                    if (life == 0) innerp = -10000;
-                    else innerp = ((double) 2.0364443211759813)
-                            + ((double) info.player.hp * 12.406989321869366)
-                            + ((double) info.player.level * 450.29377340174733)
-                            + ((double) (info.player.satiety + sp) * -49.624351684925806)
-                            + ((double) pt * 630.4329773956456)
-                            + ((double) ar * 522.8628206906116)
-                            + ((double) st * 336.1643877409513);
+                    if (life == 0) innerp = -100000;
+                    else innerp = ((double) -349.66)
+                            + ((double) hp * 31.31)
+                            + ((double) lv * 93.00)
+                            + ((double) sp * -37.59)
+                            + ((double) pt * 1180.67)
+                            + ((double) ar * -224.23)
+                            + ((double) st * 609.08)
+                            + ((double) unknownAreaPer * 8.32)
+                            + ((double) stair * -107.24);
                 }
                 else if (curFloor == 1) {
                     // 死んでいるとき
-                    if (life == 0) innerp = -10000;
-                    else innerp = ((double) -1737.87659305395)
-                            + ((double) info.player.hp * 38.7841204200804)
-                            + ((double) info.player.level * 116.648577122649)
-                            + ((double) (info.player.satiety + sp) * -44.6516670185182)
-                            + ((double) pt * 202.435531883301)
-                            + ((double) ar * 134.068083769612)
-                            + ((double) st * 83.1771765887105);
+                    if (life == 0) innerp = -100000;
+                    else innerp = ((double) -1149.91)
+                            + ((double) hp * 46.95)
+                            + ((double) lv * 44.27)
+                            + ((double) sp * -27.41)
+                            + ((double) pt * 1078.39)
+                            + ((double) ar * -119.27)
+                            + ((double) st * 479.54)
+                            + ((double) unknownAreaPer * -20.92)
+                            + ((double) stair * -117.17);
                 } else if (curFloor == 2) {
                     // 死んでいるとき
-                    if (life == 0) innerp = -10000;
-                    else innerp = ((double) -1692.83670351477)
-                            + ((double) info.player.hp * 48.1688720345866)
-                            + ((double) info.player.level * -20.9999222223086)
-                            + ((double) (info.player.satiety + sp) * 22.6880959021157)
-                            + ((double) pt * 72.5431005076661)
-                            + ((double) ar * 186.477792802452)
-                            + ((double) st * 52.2077886580126);
+                    if (life == 0) innerp = -100000;
+                    else innerp = ((double) -1515.51)
+                            + ((double) hp * 85.62)
+                            + ((double) lv * -14.81)
+                            + ((double) sp * -20.66)
+                            + ((double) pt * 961.29)
+                            + ((double) ar * -80.88)
+                            + ((double) st * 421.87)
+                            + ((double) unknownAreaPer * -46.10)
+                            + ((double) stair * -330.53);
                 } else if (curFloor == 3) {
                     // 死んでいるとき
-                    if (life == 0) innerp = -10000;
-                    else innerp = ((double) -1692.83670351477)
-                            + ((double) info.player.hp * 48.1688720345866)
-                            + ((double) info.player.level * -20.9999222223086)
-                            + ((double) (info.player.satiety + sp) * 22.6880959021157)
-                            + ((double) pt * 72.5431005076661)
-                            + ((double) ar * 186.477792802452)
-                            + ((double) st * 52.2077886580126);
+                    if (life == 0) innerp = -100000;
+                    else innerp = ((double) -2284.18)
+                            + ((double) hp * 189.04)
+                            + ((double) lv * -230.70)
+                            + ((double) sp * 0.31)
+                            + ((double) pt * 883.37)
+                            + ((double) ar * 111.03)
+                            + ((double) st * 558.56)
+                            + ((double) unknownAreaPer * -23.25)
+                            + ((double) stair * 1658.15);
                 } else if (curFloor == 4) {
                     innerp = 100000;
                 }
