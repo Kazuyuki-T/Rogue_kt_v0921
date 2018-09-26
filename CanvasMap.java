@@ -1,3 +1,10 @@
+public class CanvasMap
+{
+    CanvasMap(){}
+}
+
+//<editor-fold defaultstate="collapsed" desc="現在未使用，旧サブマップ用">
+/*
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,7 +13,8 @@ import java.awt.Point;
 
 public class CanvasMap extends Canvas implements Runnable
 {
-	private Image imgBuf;
+	
+        private Image imgBuf;
 	private Graphics gBuf;
 
 	// MyCanvasから参照
@@ -133,11 +141,10 @@ public class CanvasMap extends Canvas implements Runnable
 							}
 
 							// 常に見える状態にできる
-							/*
 							gBuf.setColor(Color.red);
 							gBuf.fillRect(x*8, y*8, 8, 8);
 							continue;
-							*/
+							
 						}
 						// アイテム
 						if(obj.getpmap(x, y) == true && bg.getMapObject(x, y) == 4)
@@ -183,3 +190,5 @@ public class CanvasMap extends Canvas implements Runnable
 		}
 	}
 }
+*/
+//</editor-fold>

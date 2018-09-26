@@ -709,7 +709,8 @@ public class ObjectSet
 	// できなければfalse
 	public boolean movePlayer(KeyInput keyinput)
 	{
-		// 上
+		/*
+                // 上
 		if(keyinput.keyUp == true)
 		{
 			// 待ち時間
@@ -814,8 +815,8 @@ public class ObjectSet
 
 			}
 		}
-
-		/*
+                */
+		
 			// 左下
 			if(keyinput.keyDown == true && keyinput.keyLeft == true)
 			{
@@ -955,9 +956,9 @@ public class ObjectSet
 				player.action_flag = true;
 				return true;
 			}
-			*/
+			
 
-		/*
+		
 		// 同時押しがあるか否か
 		if(keyinput.keyAlt == true && keyinput.keyShift == false && keyinput.keyCtrl == false)
 		{
@@ -1173,7 +1174,7 @@ public class ObjectSet
 				return true;
 			}
 		}
-		*/
+		
 
 		return false;
 	}

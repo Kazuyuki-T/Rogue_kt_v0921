@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -67,6 +68,9 @@ public class MyCanvas extends Canvas implements Runnable
 
 	// 初回判定
 	static boolean startFlag;
+        
+        // マップの表示開始フラグ
+        private boolean startDrawmapFlag;
 
 	// リザルト表示判定
 	private boolean resultFlag;
@@ -257,9 +261,8 @@ public class MyCanvas extends Canvas implements Runnable
 		counter = 0;
 
 		// submap-update
-		Game.canvm.init(this, 10);
-                
-                //System.out.println("init");
+		//Game.canvm.init(this, 10);
+                startDrawmapFlag = false;
                 
                 ld = new LData[TOPFLOOR - 1];
                 for(int i = 0; i < ld.length; i++)
@@ -332,6 +335,79 @@ public class MyCanvas extends Canvas implements Runnable
 					break;
 			}
 
+                        // マップ描画
+                        if(startFlag == true)
+			{
+				int biasX = 0; // x方向のバイアス，表示領域調整用
+                                int biasY = 600; // y方向のバイアス，表示領域調整用
+
+                                // プレイヤーの持つマップと比較し，描画する
+				for(int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++)
+				{
+					for(int x = 0; x < MyCanvas.MAPGRIDSIZE_X; x++)
+					{
+						// プレイヤーの場合
+						if(objectset.getpmap(x, y) == true && background.getMapUnit(x, y) == 6)
+						{
+							gBuf.setColor(Color.ORANGE);
+							gBuf.fillRect(x*8 + biasX, y*8 + biasY, 8, 8);
+							continue;
+						}
+						// 敵
+						if(objectset.getpmap(x, y) == true && background.getMapUnit(x, y) == 3)
+						{
+							// 視界にない(部屋外，周囲視界になし)とき，表示しない
+
+							// もし，同じ部屋の中ではなく，プレイヤの周囲視界内に敵が存在しないとき
+							// 探索済みのマップ部分だとしても，表示を行わない
+							if(objectset.getpCurmap(x, y) == true)
+							{
+								gBuf.setColor(Color.red);
+								gBuf.fillRect(x*8 + biasX, y*8 + biasY, 8, 8);
+								continue;
+							}
+
+							// 常に見える状態にできる
+							/*
+							gBuf.setColor(Color.red);
+							gBuf.fillRect(x*8, y*8, 8, 8);
+							continue;
+							*/
+						}
+						// アイテム
+						if(objectset.getpmap(x, y) == true && background.getMapObject(x, y) == 4)
+						{
+							gBuf.setColor(Color.green);
+							gBuf.fillRect(x*8 + biasX, y*8 + biasY, 8, 8);
+							continue;
+						}
+						// 階段
+						if(objectset.getpmap(x, y) == true && background.getMapObject(x, y) == 5)
+						{
+							gBuf.setColor(Color.gray);
+							gBuf.fillRect(x*8 + biasX, y*8 + biasY, 8, 8);
+							continue;
+						}
+						if(false) // ルールベース時の目標点を表示 
+						{
+							Point tg = rbp.getTarget();
+                                                        if(tg.x == x && tg.y == y){
+                                                            gBuf.setColor(Color.yellow);
+                                                            gBuf.fillRect(x*8+1, y*8+1, 6, 6);
+                                                            continue;
+                                                        }
+						}
+                                                // 通行可能な探索済みの部分
+						if(objectset.getpmap(x, y) == true && background.getMap(x, y) == 0)
+						{
+							gBuf.setColor(Color.white);
+							gBuf.fillRect(x*8 + biasX, y*8 + biasY, 8, 8);
+							continue;
+						}
+					}
+				}
+			}
+                        
 			// 再描画
 			repaint();
 
@@ -737,8 +813,9 @@ public class MyCanvas extends Canvas implements Runnable
                                     objectset.setObjectRand(new String("stair"));
 
                                     // マップ視野の描画を開始する
-                                    CanvasMap.startDrawmap();
-
+                                    //CanvasMap.startDrawmap();
+                                    startDrawmapFlag = true;
+                                    
                                     startFlag = true;
 
                                     // ログに現在の状態を出力，0F以外
@@ -782,8 +859,9 @@ public class MyCanvas extends Canvas implements Runnable
                                     objectset.setObject(new String("stair"), -1, 15, 22);
 
                                     // マップ視野の描画を開始する
-                                    CanvasMap.startDrawmap();
-
+                                    //CanvasMap.startDrawmap();
+                                    startDrawmapFlag = true;
+                                    
                                     startFlag = true;
 
                                     // ログに現在の状態を出力，0F以外

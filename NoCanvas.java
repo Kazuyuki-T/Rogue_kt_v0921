@@ -241,7 +241,8 @@ public class NoCanvas
 				objectset.setObjectRand(new String("stair"));
 
 				// マップ視野の描画を開始する
-				CanvasMap.startDrawmap();
+				//CanvasMap.startDrawmap();
+                                
 
 				startFlag = true;
                                 
