@@ -28,10 +28,7 @@ public class MyCanvas extends Canvas // implements Runnable
 	// ターン管理用
 	private TurnManager turnmanager;
 
-        // info -> log の管理
-        private Logger logger;
-        
-	private Image imgBuf;
+        private Image imgBuf;
 	private Graphics gBuf;
 	private boolean gameover;
 	private int counter;
@@ -177,9 +174,7 @@ public class MyCanvas extends Canvas // implements Runnable
 
 		turnmanager = new TurnManager(background, MAPGRIDSIZE_X, MAPGRIDSIZE_Y);
                 
-                logger = new Logger(0);
-
-		frameSizeX = x;
+                frameSizeX = x;
 		frameSizeY = y;
 
 		floorNumber = 0;
@@ -460,7 +455,7 @@ public class MyCanvas extends Canvas // implements Runnable
 
 		if(resultFlag == false)
 		{
-			Game.appendLog("*-- result --*");
+			Logger.appendLog("*-- result --*");
 			resultFlag = true;
 		}
 
@@ -768,8 +763,8 @@ public class MyCanvas extends Canvas // implements Runnable
                                 reachCount[floorNumber]++;
                                 
                                 
-                                Game.appendLog(floorNumber + "F");
-				Game.appendLog("\n" + "[turn : " + turnmanager.getTurn() + "]");
+                                Logger.appendLog(floorNumber + "F");
+				Logger.appendLog("\n" + "[turn : " + turnmanager.getTurn() + "]");
 
                                 
                                 if(DEBUG_INIT == true)
@@ -883,7 +878,7 @@ public class MyCanvas extends Canvas // implements Runnable
                             String fname = new String("log/log_" + gameCounter + "_" + turn / 100 + ".txt");
                             // ファイルへ出力
                             //logger.OutputFileLog(fname);
-                            logger.initLog(logger.LogLevel);
+                            //logger.initLog(logger.LogLevel);
                         }
                         
                         info.stairpos = (rbp.getStairRoomID() != -1) ? true : false; // stairRoomID != -1 -> 階段発見済み
@@ -1011,7 +1006,7 @@ public class MyCanvas extends Canvas // implements Runnable
 //                    }
                     
                     // logの初期化
-                    Game.initLog();
+                    Logger.initLog();
                     
                     histCount = gameCounter;
                 }
@@ -1064,7 +1059,7 @@ public class MyCanvas extends Canvas // implements Runnable
                         System.out.println(new String(restr));
 
                         //
-                        logger.OutputFileLog(new String(fileName + ".txt"), new String(restr));
+                        Logger.OutputFileLog(new String(fileName + ".txt"), new String(restr));
                         
                         System.exit(0);
 		}
@@ -1126,7 +1121,7 @@ public class MyCanvas extends Canvas // implements Runnable
                         System.out.println(new String(restr));
 
                         //
-                        logger.OutputFileLog(new String(fileName + ".txt"), new String(restr));
+                        Logger.OutputFileLog(new String(fileName + ".txt"), new String(restr));
                         
                         System.exit(0);
                 }
@@ -1257,7 +1252,7 @@ public class MyCanvas extends Canvas // implements Runnable
                 StringBuilder data = new StringBuilder();
                 data.append(fl + "," + hp + "," + lv + "," + sp + "," + pt + "," + ar + "," + st + ", " + (label == true ? 1 : -1) + ", " + (nextFlabel == true ? 1 : -1) + System.getProperty("line.separator"));
                 
-                logger.OutputFileLog(new String(fileName + ".csv"), new String(data), true);
+                Logger.OutputFileLog(new String(fileName + ".csv"), new String(data), true);
             }
         }
         
@@ -1291,8 +1286,6 @@ public class MyCanvas extends Canvas // implements Runnable
             boolean label_nf; // 次階層を突破できたか，true:突破できた，false:ゲームオーバー
             boolean label; // ゲームクリアの有無，true:ゲームクリア，false:ゲームオーバー
             
-            Logger logger;
-            
             public LData_bt()
             {
                 number = 0;
@@ -1322,8 +1315,6 @@ public class MyCanvas extends Canvas // implements Runnable
                 label_cf = false;
                 label_nf = false;
                 label = false;
-                
-                logger = new Logger(0);
             }
             
             public void setLData_bt(int gcount, int fnum, Player p, int stairid, boolean[][] pmap)
@@ -1410,7 +1401,7 @@ public class MyCanvas extends Canvas // implements Runnable
                                         + "battle result,current floor clear,next floor clear,game clear"
                                         + System.getProperty("line.separator"));
                 
-                logger.OutputFileLog(new String(fileName + "_bt.csv"), str, true);
+                Logger.OutputFileLog(new String(fileName + "_bt.csv"), str, true);
             }
             
             public void fileoutput(String fn)
@@ -1424,7 +1415,7 @@ public class MyCanvas extends Canvas // implements Runnable
                         (label_cf == true ? 1 : -1) + ", " + (label_nf == true ? 1 : -1) +  ", " + 
                         (label == true ? 1 : -1) + System.getProperty("line.separator"));
                 
-                logger.OutputFileLog(new String(fileName + "_bt.csv"), new String(data), true);
+                Logger.OutputFileLog(new String(fileName + "_bt.csv"), new String(data), true);
             }
         }
 }

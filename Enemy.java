@@ -595,7 +595,7 @@ public class Enemy extends Unit implements Cloneable
 						int oldhp = player.hp;
 						player.damageCalc(ObjectSet.enemy[enemyIndex], bg);
 						int newhp = player.hp;
-						Game.appendLog("player:" + oldhp + "->" + newhp);
+						Logger.appendLog("player:" + oldhp + "->" + newhp);
 					}
 				}
 				// 斜め攻撃ではないとき
@@ -605,7 +605,7 @@ public class Enemy extends Unit implements Cloneable
 					int oldhp = player.hp;
 					player.damageCalc(ObjectSet.enemy[enemyIndex], bg);
 					int newhp = player.hp;
-					Game.appendLog("player:" + oldhp + "->" + newhp);
+					Logger.appendLog("player:" + oldhp + "->" + newhp);
 				}
 			}
 			else

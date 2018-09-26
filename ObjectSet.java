@@ -1265,7 +1265,7 @@ public class ObjectSet
 				int oldhp = enemy[nextMonsIndex].hp;
 				enemy[nextMonsIndex].damageCalc(player); // ダメージ計算・アクティブ処理
 				int newhp = enemy[nextMonsIndex].hp < 0 ? 0 : enemy[nextMonsIndex].hp;
-				Game.appendLog("enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
+				Logger.appendLog("enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
 
 				// 敵を倒したか否かのチェック
 				if(enemy[nextMonsIndex].active == false)
@@ -1297,19 +1297,19 @@ public class ObjectSet
 			int oldhp = enemy[nextMonsIndex].hp;
 			enemy[nextMonsIndex].damageCalc(player); // ダメージ計算・アクティブ処理
 			int newhp = enemy[nextMonsIndex].hp < 0 ? 0 : enemy[nextMonsIndex].hp;
-			Game.appendLog("enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
+			Logger.appendLog("enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
 
 			// 敵を倒したか否かのチェック
 			if(enemy[nextMonsIndex].active == false)
 			{
 				// 倒した場合，経験値を得る
 				player.addExp(enemy[nextMonsIndex].spoint);
-				Game.appendLog("get-exp");
+				Logger.appendLog("get-exp");
 			}
 		}
 		else
 		{
-			Game.appendLog("attack-miss : " + nextMonsIndex + ", " + player.isDiagonalAtkCheck(np.x - player.gridMapX, np.y - player.gridMapY, bg));
+			Logger.appendLog("attack-miss : " + nextMonsIndex + ", " + player.isDiagonalAtkCheck(np.x - player.gridMapX, np.y - player.gridMapY, bg));
 			//System.out.println("attack-miss");
 		}
 		// いないときもターンはカウントする

@@ -29,9 +29,6 @@ public class NoCanvas
         // ターン管理用
 	private TurnManager turnmanager;
 
-        // info -> log の管理
-        private Logger logger;
-
         private Info info;
         
         private long start; // 処理開始前の時間を保持する
@@ -99,9 +96,7 @@ public class NoCanvas
 
 		turnmanager = new TurnManager(background, MAPGRIDSIZE_X, MAPGRIDSIZE_Y);
                 
-                logger = new Logger(0);
-
-		floorNumber = 0;
+                floorNumber = 0;
 
 		// 初期化
 		for(int i = 0; i < TOPFLOOR; i++)
@@ -110,21 +105,21 @@ public class NoCanvas
                         gasif[i] = 0;
 		}
 
-                // ログの出力
-		try{
-                        File file = new File("log.txt");
-
-			if (checkBeforeWritefile(file)){
-				PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-				Date date = new Date();
-                                pw.print(date.toString() + "\n");
-				pw.close();
-			}else{
-				System.out.println("ファイルに書き込めません");
-			}
-		}catch(IOException e){
-			System.out.println(e);
-		}
+//                // ログの出力
+//		try{
+//                        File file = new File("log.txt");
+//
+//			if (checkBeforeWritefile(file)){
+//				PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+//				Date date = new Date();
+//                                pw.print(date.toString() + "\n");
+//				pw.close();
+//			}else{
+//				System.out.println("ファイルに書き込めません");
+//			}
+//		}catch(IOException e){
+//			System.out.println(e);
+//		}
                 
                 info = new Info(MAPGRIDSIZE_X, MAPGRIDSIZE_Y);
                 
@@ -197,8 +192,8 @@ public class NoCanvas
 			// ゲーム開始直後の場合，オブジェクトを設置する
 			if(startFlag == false)
 			{
-				Game.appendLog(floorNumber + "F");
-				Game.appendLog("\n" + "[turn : " + turnmanager.getTurn() + "]");
+				Logger.appendLog(floorNumber + "F");
+				Logger.appendLog("\n" + "[turn : " + turnmanager.getTurn() + "]");
 
 				// マップの情報の更新
 				background.mapUpdate();
@@ -263,7 +258,7 @@ public class NoCanvas
                             String fname = new String("log/log_" + gameCounter + "_" + turn / 100 + ".txt");
                             // ファイルへ出力
                             //logger.OutputFileLog(fname);
-                            logger.initLog(logger.LogLevel);
+                            //logger.initLog(logger.LogLevel);
                         }
                         
 			// TurnManagerを用いてターン管理を行う
@@ -294,7 +289,7 @@ public class NoCanvas
 //                    }
                     
                     // logの初期化
-                    Game.initLog();
+                    Logger.initLog();
                     
                     histCount = gameCounter;
                 }
@@ -323,28 +318,28 @@ public class NoCanvas
                         //
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'log'_yyyyMMdd_HHmmss'.txt'");
                         String fileName = simpleDateFormat.format(new Date(System.currentTimeMillis()));
-                        logger.OutputFileLog(fileName, new String(restr));
+                        Logger.OutputFileLog(fileName, new String(restr));
                         
                         System.exit(0);
 		}
         }
         
-        private static boolean checkBeforeWritefile(File file)
-	{
-            if (file.exists()){
-            	if (file.isFile() && file.canWrite())
-		{
-			return true;
-		}
-            }
-            else{
-                try{
-                    file.createNewFile();
-                    return true;
-                }catch(IOException e){
-                    System.out.println(e);
-                }
-            }
-	    return false;
-	}
+//        private static boolean checkBeforeWritefile(File file)
+//	{
+//            if (file.exists()){
+//            	if (file.isFile() && file.canWrite())
+//		{
+//			return true;
+//		}
+//            }
+//            else{
+//                try{
+//                    file.createNewFile();
+//                    return true;
+//                }catch(IOException e){
+//                    System.out.println(e);
+//                }
+//            }
+//	    return false;
+//	}
 }

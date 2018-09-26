@@ -15,9 +15,6 @@ import javax.swing.JViewport;
 
 public class Game extends JFrame
 {
-	private static JTextArea logText; // ログ中のテキスト
-        private static JViewport view; // ログのスクロール部分？
-        
 	public static void main(String args[])
 	{
 		int dLevel = 1; // フレーム（出力）の有無の決定，0:フレーム出力なし，その他:出力あり
@@ -95,19 +92,19 @@ public class Game extends JFrame
                 
                     //<editor-fold defaultstate="collapsed" desc="テキストエリア（ログ用）の設定">
                     JScrollPane scrollpane;
-                    logText = new JTextArea();
-                    logText.append("*-- log --*\n");
+                    Logger.logText = new JTextArea();
+                    Logger.logText.append("*-- log --*\n");
                     scrollpane = new JScrollPane();
                     scrollpane.setPreferredSize(new Dimension(250, 800));
                     scrollpane.setMinimumSize(new Dimension(250, 800));
-                    logText.setEditable(false);
-                    logText.setLineWrap(true); // 折り返しアリ
+                    Logger.logText.setEditable(false);
+                    Logger.logText.setLineWrap(true); // 折り返しアリ
 
-                    view = scrollpane.getViewport();
-                    view.setView(logText);
+                    Logger.view = scrollpane.getViewport();
+                    Logger.view.setView(Logger.logText);
 
                     // 初期値
-                    view.setViewPosition(new Point(0,0));
+                    Logger.view.setViewPosition(new Point(0,0));
 
                     gbc.gridx = 1;
                     gbc.gridy = 0;
@@ -151,22 +148,6 @@ public class Game extends JFrame
                 }
         }
         
-	// ログの更新
-	public static void appendLog(String str)
-	{
-		logText.append(str + "\n"); // 末尾に str を追加
-		int textPosY = logText.getPreferredSize().height - 200; // 16:1行当たりのおおよその高さ
-		view.setViewPosition(new Point(0, textPosY >= 0 ? textPosY : 0));
-	}
-
-	public static String getLog()
-	{
-		return logText.getText();
-	}
-        
-        public static void initLog()
-	{
-		logText.setText("");
-	}
+	
 }
 

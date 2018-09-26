@@ -107,7 +107,7 @@ public class Inventory implements Cloneable
 		itemList.get(num).usageCount--;
 		if(itemList.get(num).usageCount == 0)
 		{
-			Game.appendLog("remove Item : " + itemList.get(num).name + "(slot" + num + ")");
+			Logger.appendLog("remove Item : " + itemList.get(num).name + "(slot" + num + ")");
 			itemList.remove(num);
 		}
 	}
@@ -117,7 +117,7 @@ public class Inventory implements Cloneable
 	{
 		// インベントリ何番目のなんというアイテムを使用したか
 		String iName = getInvItemName(num);
-		Game.appendLog("use item : " + iName + "(slot " + num + ")");
+		Logger.appendLog("use item : " + iName + "(slot " + num + ")");
 
 		// 使用したアイテムのタイプが食料の時
 		if(itemList.get(num).type.equals(new String("food")))
@@ -130,7 +130,7 @@ public class Inventory implements Cloneable
 			{
 				objectset.player.hp = objectset.player.maxHp;
 			}
-			Game.appendLog("HP : " + oldPlayerHp + "->" + objectset.player.hp);
+			Logger.appendLog("HP : " + oldPlayerHp + "->" + objectset.player.hp);
 
 			int oldPlayerSatiety = objectset.player.satiety;
 			// 選択されたアイテムによる満腹度の回復
@@ -141,7 +141,7 @@ public class Inventory implements Cloneable
 				objectset.player.satiety = objectset.player.maxSatiety;
 			}
 			// ログへの出力
-			Game.appendLog("SP : " + oldPlayerSatiety + "->" + objectset.player.satiety);
+			Logger.appendLog("SP : " + oldPlayerSatiety + "->" + objectset.player.satiety);
 
 			MyCanvas.useItemFood++;
 		}
@@ -157,7 +157,7 @@ public class Inventory implements Cloneable
 			{
 				objectset.player.hp = objectset.player.maxHp;
 			}
-			Game.appendLog("HP : " + oldPlayerHp + "->" + objectset.player.hp);
+			Logger.appendLog("HP : " + oldPlayerHp + "->" + objectset.player.hp);
 
 			int oldPlayerSatiety = objectset.player.satiety;
 			// 選択されたアイテムによる満腹度の回復
@@ -168,7 +168,7 @@ public class Inventory implements Cloneable
 				objectset.player.satiety = objectset.player.maxSatiety;
 			}
 			// ログへの出力
-			Game.appendLog("SP : " + oldPlayerSatiety + "->" + objectset.player.satiety);
+			Logger.appendLog("SP : " + oldPlayerSatiety + "->" + objectset.player.satiety);
 
 			MyCanvas.useItemPotion++;
 		}
@@ -201,7 +201,7 @@ public class Inventory implements Cloneable
 						int oldhp = ObjectSet.enemy[nextMonsIndex].hp;
 						ObjectSet.enemy[nextMonsIndex].damageCalc(itemList.get(num).damage);
 						int newhp = ObjectSet.enemy[nextMonsIndex].hp < 0 ? 0 : ObjectSet.enemy[nextMonsIndex].hp;
-						Game.appendLog("hit!! enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
+						Logger.appendLog("hit!! enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
 
 						MyCanvas.useItemLStaff++;
 					}
@@ -220,7 +220,7 @@ public class Inventory implements Cloneable
 						if(itemList.get(num).effect == 1)
 						{
 							objectset.warpUnit(ObjectSet.enemy[nextMonsIndex]);
-							Game.appendLog("hit-warp!!");
+							Logger.appendLog("hit-warp!!");
 
 							MyCanvas.useItemWStaff++;
 						}
@@ -283,7 +283,7 @@ public class Inventory implements Cloneable
                         
                         
 			// 追加されたアイテムのログ表示
-			Game.appendLog("get Item : " + itemList.get(itemList.size() - 1).name);
+			Logger.appendLog("get Item : " + itemList.get(itemList.size() - 1).name);
 
 			/*
 			for(int i=0; i<ObjectSet.item.length; i++)

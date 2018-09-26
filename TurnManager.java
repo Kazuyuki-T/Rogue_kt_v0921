@@ -125,11 +125,11 @@ public class TurnManager
 			// ターン終了時に，プレイヤが持つアイテム一覧
 			if(objectset.player.inventory.getInvItemNum() != 0)
 			{
-				Game.appendLog("Inventory");
+				Logger.appendLog("Inventory");
 			}
 			for(int index = 0; index < objectset.player.inventory.getInvItemNum(); index++)
 			{
-				Game.appendLog(index + " : " + objectset.player.inventory.getInvItemName(index) + "(" + objectset.player.inventory.getInvItemUsageCount(index) + ")");
+				Logger.appendLog(index + " : " + objectset.player.inventory.getInvItemName(index) + "(" + objectset.player.inventory.getInvItemUsageCount(index) + ")");
 			}
 
 			// ターンの更新
@@ -139,7 +139,7 @@ public class TurnManager
                         floorturn[objectset.player.curFloor]++;
                         
 			//System.out.println("turn:" + turn);
-			Game.appendLog("\n" + "[turn : " + turn + "]");
+			Logger.appendLog("\n" + "[turn : " + turn + "]");
 		}
                 else
                 {
