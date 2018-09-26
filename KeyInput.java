@@ -40,7 +40,7 @@ public class KeyInput extends KeyAdapter
 	int keyUshot;
         int keyWshot;
 
-	KeyInput()
+	public KeyInput()
 	{
 		keyUp = false;
 		keyDown = false;

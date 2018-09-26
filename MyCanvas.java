@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 
 
-public class MyCanvas extends Canvas implements Runnable
+public class MyCanvas extends Canvas // implements Runnable
 {
 	private ObjectSet objectset;
 	private KeyInput keyinput;
@@ -166,7 +166,9 @@ public class MyCanvas extends Canvas implements Runnable
 	// コンストラクタ
 	public MyCanvas(int x, int y, int lv)
 	{
-		keyinput = new KeyInput();
+		
+            
+                keyinput = new KeyInput();
 		addKeyListener(keyinput);	// キーリスナ
 		setFocusable(true);			// フォーカス
 		random = new Random();		// 乱数
@@ -284,12 +286,12 @@ public class MyCanvas extends Canvas implements Runnable
 		return objectset;
 	}
 
-	// 外部からのスレッド初期化
-	public void initThread()
-	{
-		Thread thread = new Thread(this);
-		thread.start();
-	}
+//	// 外部からのスレッド初期化
+//	public void initThread()
+//	{
+//		Thread thread = new Thread(this);
+//		thread.start();
+//	}
 
 	// 描画
 	public void paint(Graphics g)
