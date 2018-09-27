@@ -71,9 +71,9 @@ public class Game extends JFrame
                     //</editor-fold>
 
                 
-                    //<editor-fold defaultstate="collapsed" desc="プレイヤビューの設定">
+                    //<editor-fold defaultstate="collapsed" desc="キャンバスの設定">
                     // キャンパスの作成(周囲視野)
-                    int oplv = 10; // 0:表示なし，10:表示あり
+                    int oplv = 0; // 0:表示なし，10:表示あり
                     mc = new MyCanvas(frameSizeX - 250, frameSizeY, oplv);
 
                     // 以下，抜くと描画が不可？サイズの変化が原因か
