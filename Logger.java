@@ -84,9 +84,9 @@ public class Logger {
 
     // ログの更新
     public static void appendLog(String str) {
-        logText.append(str + "\n"); // 末尾に str を追加
-        int textPosY = logText.getPreferredSize().height - 200; // 16:1行当たりのおおよその高さ
-        view.setViewPosition(new Point(0, textPosY >= 0 ? textPosY : 0));
+        //logText.append(str + "\n"); // 末尾に str を追加
+        //int textPosY = logText.getPreferredSize().height - 200; // 16:1行当たりのおおよその高さ
+        //view.setViewPosition(new Point(0, textPosY >= 0 ? textPosY : 0));
     }
 
     public static String getLog() {

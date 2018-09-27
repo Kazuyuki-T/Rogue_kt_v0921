@@ -73,8 +73,9 @@ public class Game extends JFrame
                 
                     //<editor-fold defaultstate="collapsed" desc="プレイヤビューの設定">
                     // キャンパスの作成(周囲視野)
-                    int oplv = 10; // 0:表示なし，10:表示あり
-                    mc = new MyCanvas(frameSizeX - 250, frameSizeY, oplv);
+                    int oplv = 0; // 0:表示なし，10:表示あり
+                    boolean gameMode = false; // true:人間，false:AI
+                    mc = new MyCanvas(frameSizeX - 250, frameSizeY, oplv, gameMode);
 
                     // 以下，抜くと描画が不可？サイズの変化が原因か
                     mc.setPreferredSize(new Dimension(frameSizeX - 250, frameSizeY)); // 適切なサイズの設定
