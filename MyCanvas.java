@@ -50,7 +50,7 @@ public class MyCanvas extends Canvas {
     private static final int BOUND_REACHCOUNT = 100; // 各階層の最低到達回数
 
     // 実行回数
-    public static final int TRYNUM = 50000;
+    public static final int TRYNUM = 10;
 
     // 初期配置，true:ランダム配置，false:配置をいじる
     public static final boolean DEBUG_INIT = true;
