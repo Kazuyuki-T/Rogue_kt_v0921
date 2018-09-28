@@ -3672,8 +3672,8 @@ public class RuleBasePlayer implements Agent, Cloneable
                 px = info.player.gridMapX;
                 py = info.player.gridMapY;
                 
-                //act = ruleBased(info);
-                act = ruleBasedOnly(info);
+                act = ruleBased(info);
+                //act = ruleBasedOnly(info);
                 
                 //RuleBasePlayer rbp_deepcopy = this.clone();
                 //rbp_deepcopy.sysoutput();
