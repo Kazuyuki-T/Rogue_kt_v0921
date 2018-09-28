@@ -6,14 +6,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Random;
-import java.util.Date;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MyCanvas extends Canvas {
@@ -50,7 +43,7 @@ public class MyCanvas extends Canvas {
     private static final int BOUND_REACHCOUNT = 100; // 各階層の最低到達回数
 
     // 実行回数
-    public static final int TRYNUM = 10;
+    public static final int TRYNUM = 200;
 
     // 初期配置，true:ランダム配置，false:配置をいじる
     public static final boolean DEBUG_INIT = true;
@@ -150,8 +143,7 @@ public class MyCanvas extends Canvas {
     private int[] reachCount; // 各階層への到達回数
     private int[] dataCount; // 各階層の取得データ数
 
-    public SimpleDateFormat simpleDateFormat;
-    public static String fileName;
+    public String fileName;
 
     private static boolean GAMEMODE;
     
@@ -160,8 +152,9 @@ public class MyCanvas extends Canvas {
     }
 
     // コンストラクタ
-    public MyCanvas(int x, int y, int lv, boolean gmode) {
+    public MyCanvas(int x, int y, int lv, boolean gmode, String fn) {
         GAMEMODE = gmode; // 人間プレイヤorAIプレイヤ
+        fileName = fn;
         
         random = new Random();		// 乱数
 
@@ -195,9 +188,6 @@ public class MyCanvas extends Canvas {
         info = new Info(MAPGRIDSIZE_X, MAPGRIDSIZE_Y);
 
         drawlevel = lv;
-
-        simpleDateFormat = new SimpleDateFormat("'log'_yyyyMMdd_HHmmss");
-        fileName = simpleDateFormat.format(new Date(System.currentTimeMillis()));
 
         LDBT_List = new ArrayList<LData_bt>();
         LData_bt ld_bt_init = new LData_bt();
@@ -853,19 +843,7 @@ public class MyCanvas extends Canvas {
         ///*
         // 1ゲーム毎に終了時
         if (histCount != gameCounter) {
-//                    // logの追加
-//                    try{
-//                        File file = new File("log.txt");
-//        		if (checkBeforeWritefile(file)){
-//                		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-//				pw.print(Game.getLog());
-//				pw.close();
-//			}else{
-//				System.out.println("ファイルに書き込めません");
-//			}
-//                    }catch(IOException e){
-//			System.out.println(e);
-//                    }
+            // ログに追加がここ？初期化のタイミングとの兼ね合い
 
             // logの初期化
             Logger.initLog();

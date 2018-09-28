@@ -3,6 +3,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -25,12 +28,7 @@ public class Game extends JFrame
         {
                 // フレーム出力あり，入力受付あり
                 if(drawLv != 0)
-                {
-                    MyCanvas mc; // キャンバス，メインループ
-                    int frameSizeX = 1024;
-                    int frameSizeY = 900;
-                    
-                    
+                {                    
                     //<editor-fold defaultstate="collapsed" desc="レイアウトの設定">
                     GridBagLayout layout;
                     GridBagConstraints gbc;
@@ -71,11 +69,26 @@ public class Game extends JFrame
                     //</editor-fold>
 
                 
-                    //<editor-fold defaultstate="collapsed" desc="プレイヤビューの設定">
+                    //<editor-fold defaultstate="collapsed" desc="キャンバス全般の設定">
                     // キャンパスの作成(周囲視野)
+                    MyCanvas mc; // キャンバス，メインループ
+                    int frameSizeX = 1024;
+                    int frameSizeY = 900;
+                    
                     int oplv = 0; // 0:表示なし，10:表示あり
                     boolean gameMode = false; // true:人間，false:AI
-                    mc = new MyCanvas(frameSizeX - 250, frameSizeY, oplv, gameMode);
+                    // フォルダ・ログ用の名前（日時）作成
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                    String folderName = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+                    // フォルダ作成
+                    File file = new File(folderName);
+                    if (file.mkdir() == true) {
+                        //System.out.println("フォルダの作成に成功しました");
+                    } else {
+                        System.out.println("フォルダの作成に失敗しました");
+                    }
+                    
+                    mc = new MyCanvas(frameSizeX - 250, frameSizeY, oplv, gameMode, folderName + "/log_" + folderName);
 
                     // 以下，抜くと描画が不可？サイズの変化が原因か
                     mc.setPreferredSize(new Dimension(frameSizeX - 250, frameSizeY)); // 適切なサイズの設定

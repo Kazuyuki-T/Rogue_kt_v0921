@@ -664,52 +664,52 @@ public class MonteCarloPlayer implements Agent
             if (eval == 0) {
                 if (curFloor == 0) {
                     if (life == 0) innerp = -100000;
-                    else innerp = ((double) -349.66)
-                            + ((double) hp * 31.31)
-                            + ((double) lv * 93.00)
-                            + ((double) sp * -37.59)
-                            + ((double) pt * 1180.67)
-                            + ((double) ar * -224.23)
-                            + ((double) st * 609.08)
-                            + ((double) unknownAreaPer * 8.32)
-                            + ((double) stair * -107.24);
+                    else innerp = ((double) hp * 30.11)
+                            + ((double) lv * 96.59)
+                            + ((double) sp * -37.95)
+                            + ((double) pt * 1248.19)
+                            + ((double) ar * -297.62)
+                            + ((double) st * 652.10)
+                            + ((double) unknownAreaPer * 9.10)
+                            + ((double) stair * -96.84)
+                            + ((double) -325.22);
                 }
                 else if (curFloor == 1) {
                     // 死んでいるとき
                     if (life == 0) innerp = -100000;
-                    else innerp = ((double) -1149.91)
-                            + ((double) hp * 46.95)
-                            + ((double) lv * 44.27)
-                            + ((double) sp * -27.41)
-                            + ((double) pt * 1078.39)
-                            + ((double) ar * -119.27)
-                            + ((double) st * 479.54)
-                            + ((double) unknownAreaPer * -20.92)
-                            + ((double) stair * -117.17);
+                    else innerp =((double) hp * 45.08)
+                            + ((double) lv * 36.48)
+                            + ((double) sp * -28.08)
+                            + ((double) pt * 1387.79)
+                            + ((double) ar * -158.79)
+                            + ((double) st * 710.06)
+                            + ((double) unknownAreaPer * -23.09)
+                            + ((double) stair * -128.12)
+                            + ((double) -1168.95);
                 } else if (curFloor == 2) {
                     // 死んでいるとき
                     if (life == 0) innerp = -100000;
-                    else innerp = ((double) -1515.51)
-                            + ((double) hp * 85.62)
-                            + ((double) lv * -14.81)
-                            + ((double) sp * -20.66)
-                            + ((double) pt * 961.29)
-                            + ((double) ar * -80.88)
-                            + ((double) st * 421.87)
-                            + ((double) unknownAreaPer * -46.10)
-                            + ((double) stair * -330.53);
+                    else innerp = ((double) hp * 83.81)
+                            + ((double) lv * -20.26)
+                            + ((double) sp * -22.09)
+                            + ((double) pt * 1380.92)
+                            + ((double) ar * -166.22)
+                            + ((double) st * 717.78)
+                            + ((double) unknownAreaPer * -49.86)
+                            + ((double) stair * -369.20)
+                            + ((double) -1556.24);
                 } else if (curFloor == 3) {
                     // 死んでいるとき
                     if (life == 0) innerp = -100000;
-                    else innerp = ((double) -2284.18)
-                            + ((double) hp * 189.04)
-                            + ((double) lv * -230.70)
-                            + ((double) sp * 0.31)
-                            + ((double) pt * 883.37)
-                            + ((double) ar * 111.03)
-                            + ((double) st * 558.56)
-                            + ((double) unknownAreaPer * -23.25)
-                            + ((double) stair * 1658.15);
+                    else innerp = ((double) hp * 188.06)
+                            + ((double) lv * -253.38)
+                            + ((double) sp * -2.43)
+                            + ((double) pt * 1316.10)
+                            + ((double) ar * 78.60)
+                            + ((double) st * 968.24)
+                            + ((double) unknownAreaPer * -26.41)
+                            + ((double) stair * 1636.07)
+                            + ((double) -2314.29);
                 } else if (curFloor == 4) {
                     innerp = 100000;
                 }
