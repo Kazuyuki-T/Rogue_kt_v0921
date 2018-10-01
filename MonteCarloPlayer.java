@@ -662,7 +662,8 @@ public class MonteCarloPlayer implements Agent
             double innerp = 0.0;
             // 0:実験７重み
             // 1:実験７データ，onehot，sqrt(2x)
-            int eval = 1;
+            // 2:実験７データ，onehot，sqrt(3)*sqrt(x)
+            int eval = 2;
             if(eval == 0){
                 if (curFloor == 0) {
                     if (life == 0) innerp = -100000;
@@ -765,6 +766,59 @@ public class MonteCarloPlayer implements Agent
                             + ((double) unknownAreaPer * -26.41)
                             + ((double) stair * 1636.07)
                             + ((double) -2314.29);
+                } else if (curFloor == 4) {
+                    innerp = 100000;
+                }
+            }
+            else if(eval == 2){
+                if (curFloor == 0) {
+                    if (life == 0) innerp = -100000;
+                    else innerp = ((double) hp * 30.21)
+                            + ((double) lv * 104.26)
+                            + ((double) sp * -39.86)
+                            + ((double) pt * 854.71)
+                            + ((double) ar * -246.17)
+                            + ((double) st * 476.67)
+                            + ((double) unknownAreaPer * 9.43)
+                            + ((double) stair * -117.29)
+                            + ((double) -330.23);
+                }
+                else if (curFloor == 1) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -100000;
+                    else innerp =((double) hp * 43.84)
+                            + ((double) lv * 27.94)
+                            + ((double) sp * -29.73)
+                            + ((double) pt * 1090.52)
+                            + ((double) ar * -168.19)
+                            + ((double) st * 659.19)
+                            + ((double) unknownAreaPer * -24.62)
+                            + ((double) stair * -112.02)
+                            + ((double) -1166.54);
+                } else if (curFloor == 2) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -100000;
+                    else innerp = ((double) hp * 81.92)
+                            + ((double) lv * -33.15)
+                            + ((double) sp * -23.27)
+                            + ((double) pt * 1133.74)
+                            + ((double) ar * -144.43)
+                            + ((double) st * 684.07)
+                            + ((double) unknownAreaPer * -50.31)
+                            + ((double) stair * -354.69)
+                            + ((double) -1581.80);
+                } else if (curFloor == 3) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -100000;
+                    else innerp = ((double) hp * 186.55)
+                            + ((double) lv * -236.91)
+                            + ((double) sp * -3.70)
+                            + ((double) pt * 1153.52)
+                            + ((double) ar * 70.90)
+                            + ((double) st * 818.19)
+                            + ((double) unknownAreaPer * -29.60)
+                            + ((double) stair * 1615.72)
+                            + ((double) -2323.68);
                 } else if (curFloor == 4) {
                     innerp = 100000;
                 }
