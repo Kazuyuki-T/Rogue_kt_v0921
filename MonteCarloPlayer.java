@@ -660,12 +660,46 @@ public class MonteCarloPlayer implements Agent
             //System.out.println();
             
             double innerp = 0.0;
+            //-1:旧評価値，log20171108_021226再現
             // 0:実験７重み
             // 1:実験７データ，onehot，sqrt(2x)
             // 2:実験７データ，onehot，sqrt(3)*sqrt(x)
             // 3:実験７データ，onehot，StUn，10*sqrt(x)
-            int eval = 3;
-            if(eval == 0){
+            int eval = -1;
+            if(eval == -1){
+                int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
+                int ifd = info.player.inventory.getInvItemNum(1); // 食料数*回復量
+                int ipt = info.player.inventory.getInvItemNum(2); // ポーション数
+                int iar = info.player.inventory.getInvItemNum(3); // 矢数
+                int ist = info.player.inventory.getInvItemNum(4); // 杖数
+                // 視界内の敵
+                int sum = 0;
+		int maxSum = 0;
+                int countbeat = 0;
+                for(int index = 0; index < info.visibleEnemy.size(); index++) {
+			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
+                            if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
+                                sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].maxHp;
+                                if(info.enemy[index].active == false) countbeat++;
+                                break;
+                            }
+                        }
+		}
+                
+                innerp = (double)(0.0
+                            + (maxSum - sum)
+                            + (info.player.maxHp - info.player.hp)
+                            + (50 * countbeat)
+                            + (1000 * life)
+                            + (1000 * gameclear)
+                            + (70 * ifd) 
+                            + (70 * ipt)
+                            + (23 * iar) 
+                            + (70 * ist)
+                             );
+            }
+            else if(eval == 0){
                 if (curFloor == 0) {
                     if (life == 0) innerp = -100000;
                     else innerp = ((double) hp * 31.31)
