@@ -21,6 +21,7 @@ public abstract class LoadImg extends Canvas
 			return rv;//
 		}catch(IOException e){
 			System.out.println("Err e=" + e);//
+                        Logger.appendLog("Err e=" + e);
 			return null;// null
 		}
 	}

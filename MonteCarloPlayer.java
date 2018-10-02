@@ -668,7 +668,7 @@ public class MonteCarloPlayer implements Agent
             int eval = -1;
             if(eval == -1){
                 int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
-                int ifd = info.player.inventory.getInvItemNum(1) * info.player.inventory.getFoodHealVal(); // 食料数*回復量
+                int ifd = info.player.inventory.getInvItemNum(1); // 食料数
                 // 視界内の敵
                 int sum = 0;
 		int maxSum = 0;
@@ -683,10 +683,12 @@ public class MonteCarloPlayer implements Agent
                             }
                         }
 		}
+                //System.out.println("enemy:" + sum + "/" + maxSum);
+                //System.out.println("countbeat:" + countbeat);
                 
                 innerp = (double)(0.0
                             + (maxSum - sum)
-                            + (info.player.maxHp - info.player.hp)
+                            - (info.player.maxHp - info.player.hp)
                             + (50 * countbeat)
                             + (1000 * life)
                             + (1000 * gameclear)

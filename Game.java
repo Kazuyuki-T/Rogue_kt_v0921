@@ -68,6 +68,32 @@ public class Game extends JFrame
                     menu1.add(menuitem3);
                     //</editor-fold>
 
+                    
+                    //<editor-fold defaultstate="collapsed" desc="テキストエリア（ログ用）の設定">
+                    JScrollPane scrollpane;
+                    Logger.logText = new JTextArea();
+                    Logger.logText.append("*-- log --*\n");
+                    scrollpane = new JScrollPane();
+                    scrollpane.setPreferredSize(new Dimension(250, 800));
+                    scrollpane.setMinimumSize(new Dimension(250, 800));
+                    Logger.logText.setEditable(false);
+                    Logger.logText.setLineWrap(true); // 折り返しアリ
+
+                    Logger.view = scrollpane.getViewport();
+                    Logger.view.setView(Logger.logText);
+
+                    // 初期値
+                    Logger.view.setViewPosition(new Point(0,0));
+
+                    gbc.gridx = 1;
+                    gbc.gridy = 0;
+                    gbc.gridheight = 2;
+                    gbc.weightx = 1.0d;
+                    gbc.weighty = 1.0d;
+                    gbc.fill = GridBagConstraints.VERTICAL;
+                    layout.setConstraints(scrollpane, gbc);
+                    //</editor-fold>
+                    
                 
                     //<editor-fold defaultstate="collapsed" desc="キャンバス全般の設定">
                     // キャンパスの作成(周囲視野)
@@ -103,32 +129,6 @@ public class Game extends JFrame
                     layout.setConstraints(mc, gbc);
                     //</editor-fold>
 
-                
-                    //<editor-fold defaultstate="collapsed" desc="テキストエリア（ログ用）の設定">
-                    JScrollPane scrollpane;
-                    Logger.logText = new JTextArea();
-                    Logger.logText.append("*-- log --*\n");
-                    scrollpane = new JScrollPane();
-                    scrollpane.setPreferredSize(new Dimension(250, 800));
-                    scrollpane.setMinimumSize(new Dimension(250, 800));
-                    Logger.logText.setEditable(false);
-                    Logger.logText.setLineWrap(true); // 折り返しアリ
-
-                    Logger.view = scrollpane.getViewport();
-                    Logger.view.setView(Logger.logText);
-
-                    // 初期値
-                    Logger.view.setViewPosition(new Point(0,0));
-
-                    gbc.gridx = 1;
-                    gbc.gridy = 0;
-                    gbc.gridheight = 2;
-                    gbc.weightx = 1.0d;
-                    gbc.weighty = 1.0d;
-                    gbc.fill = GridBagConstraints.VERTICAL;
-                    layout.setConstraints(scrollpane, gbc);
-                    //</editor-fold>
-                
                     
                     //<editor-fold defaultstate="collapsed" desc="Jフレームの作成">
                     JFrame frame;
