@@ -719,6 +719,9 @@ public class MonteCarloPlayer implements Agent
                 }
             }
             else if (eval == 1) {
+                pt = (int)(Math.sqrt(2 * pt) + 0.5);
+                ar = (int)(Math.sqrt(2 * ar) + 0.5);
+                st = (int)(Math.sqrt(2 * st) + 0.5);
                 if (curFloor == 0) {
                     if (life == 0) innerp = -100000;
                     else innerp = ((double) hp * 30.11)
@@ -772,6 +775,9 @@ public class MonteCarloPlayer implements Agent
                 }
             }
             else if(eval == 2){
+                pt = (int)(Math.sqrt(3) * Math.sqrt(pt) + 0.5);
+                ar = (int)(Math.sqrt(3) * Math.sqrt(ar) + 0.5);
+                st = (int)(Math.sqrt(3) * Math.sqrt(st) + 0.5);
                 if (curFloor == 0) {
                     if (life == 0) innerp = -100000;
                     else innerp = ((double) hp * 30.21)
@@ -825,6 +831,8 @@ public class MonteCarloPlayer implements Agent
                 }
             }
             else if(eval == 3){
+                sp = (int)(10 * Math.sqrt(sp) + 0.5);
+                unknownAreaPer = 10 * Math.sqrt(unknownAreaPer);
                 if (curFloor == 0) {
                     if (life == 0) innerp = -100000;
                     else innerp = ((double) hp * 37.45)
