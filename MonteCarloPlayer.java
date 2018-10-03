@@ -31,6 +31,15 @@ public class MonteCarloPlayer implements Agent
         
         int debug = 0;
         
+        // プレイアウト終了時の評価値の計算方法
+        // 0:平均値, 1:最大値
+        private static final int MethodOfEval = 0;
+        
+        String logstr;
+        String logsimurand;
+        
+        
+        
         // コンストラクタ
 	public MonteCarloPlayer()
 	{
@@ -660,6 +669,8 @@ public class MonteCarloPlayer implements Agent
             //System.out.println();
             
             double innerp = 0.0;
+            //-5:旧評価値，log20171108_021226再現，countbeat修正版，倒したターンに応じて評価値変化
+            //-4:旧評価値，log20171108_021226再現，-2と-3合体版
             //-3:旧評価値，log20171108_021226再現，countbeat係数ターン毎に減少
             //-2:旧評価値，log20171108_021226再現，敵hp差分2倍
             //-1:旧評価値，log20171108_021226再現
@@ -667,9 +678,78 @@ public class MonteCarloPlayer implements Agent
             // 1:実験７データ，onehot，sqrt(2x)
             // 2:実験７データ，onehot，sqrt(3)*sqrt(x)
             // 3:実験７データ，onehot，StUn，10*sqrt(x)
-            int eval = -3;
-            if(eval == -3){
-                int simuturn = info.floorturn[curFloor] - stturn; // 展開分のバイアス
+            // 4:0重み，死亡ペナ減少
+            int eval = -5;
+            if(eval == -5){
+                int simuturn = info.turn - stturn; // 展開分のバイアス
+                if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
+                int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
+                int ifd = info.player.inventory.getInvItemNum(1); // 食料数
+                // 視界内の敵
+                int sum = 0;
+		int maxSum = 0;
+                for(int index = 0; index < info.visibleEnemy.size(); index++) {
+			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
+                            if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
+                                sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].maxHp;
+                                break;
+                            }
+                        }
+		}
+                //System.out.println("enemy:" + sum + "/" + maxSum);
+                //if(info.countbeatsum_60_1t5 != 0)System.out.println("info.countbeatsum_60_1t5:" + info.countbeatsum_60_1t5);
+                //System.out.println("simuturn:" + simuturn);
+                innerp = (double)(0.0
+                            + (maxSum - sum)
+                            - (info.player.maxHp - info.player.hp)
+                            + (info.countbeatsum_70_1t5)
+                            + (1000 * life)
+                            + (1000 * gameclear)
+                            + (70 * ifd)
+                            + (70 * pt)
+                            + (23 * ar)
+                            + (70 * st)
+                             );
+                if(life == 0) innerp = -10000;
+            }
+            else if(eval == -4) {
+                int simuturn = info.turn - stturn; // 展開分のバイアス
+                if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
+                int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
+                int ifd = info.player.inventory.getInvItemNum(1); // 食料数
+                // 視界内の敵
+                int sum = 0;
+		int maxSum = 0;
+                int countbeat = 0;
+                for(int index = 0; index < info.visibleEnemy.size(); index++) {
+			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
+                            if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
+                                sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].maxHp;
+                                if(info.enemy[index].active == false) countbeat++;
+                                break;
+                            }
+                        }
+		}
+                //System.out.println("enemy:" + sum + "/" + maxSum);
+                //System.out.println("countbeat:" + countbeat);
+                //System.out.println("simuturn:" + simuturn);
+                innerp = (double)(0.0
+                            + (2.0 * (maxSum - sum))
+                            - (info.player.maxHp - info.player.hp)
+                            + ((60 - (5 * simuturn)) * countbeat)
+                            + (1000 * life)
+                            + (1000 * gameclear)
+                            + (70 * ifd) 
+                            + (70 * pt)
+                            + (23 * ar) 
+                            + (70 * st)
+                             );
+                if(life == 0) innerp = -10000;
+            }
+            else if(eval == -3) {
+                int simuturn = info.turn - stturn; // 展開分のバイアス
                 if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
                 int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
                 int ifd = info.player.inventory.getInvItemNum(1); // 食料数
@@ -989,7 +1069,60 @@ public class MonteCarloPlayer implements Agent
                     innerp = 100000;
                 }
             }
-
+            else if(eval == 4){
+                if (curFloor == 0) {
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 31.31)
+                            + ((double) lv * 93.00)
+                            + ((double) sp * -37.59)
+                            + ((double) pt * 1180.67)
+                            + ((double) ar * -224.23)
+                            + ((double) st * 609.08)
+                            + ((double) unknownAreaPer * 8.32)
+                            + ((double) stair * -107.24)
+                            + ((double) -349.66);
+                }
+                else if (curFloor == 1) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 46.95)
+                            + ((double) lv * 44.27)
+                            + ((double) sp * -27.41)
+                            + ((double) pt * 1078.39)
+                            + ((double) ar * -119.27)
+                            + ((double) st * 479.54)
+                            + ((double) unknownAreaPer * -20.92)
+                            + ((double) stair * -117.17)
+                            + ((double) -1149.91);
+                } else if (curFloor == 2) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 85.62)
+                            + ((double) lv * -14.81)
+                            + ((double) sp * -20.66)
+                            + ((double) pt * 961.29)
+                            + ((double) ar * -80.88)
+                            + ((double) st * 421.87)
+                            + ((double) unknownAreaPer * -46.10)
+                            + ((double) stair * -330.53)
+                            + ((double) -1515.51);
+                } else if (curFloor == 3) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 189.04)
+                            + ((double) lv * -230.70)
+                            + ((double) sp * 0.31)
+                            + ((double) pt * 883.37)
+                            + ((double) ar * 111.03)
+                            + ((double) st * 558.56)
+                            + ((double) unknownAreaPer * -23.25)
+                            + ((double) stair * 1658.15)
+                            + ((double) -2284.18);
+                } else if (curFloor == 4) {
+                    innerp = 100000;
+                }
+            }
+            //System.out.println("innerp:" + innerp);
             return innerp;
 	}
 
@@ -1031,13 +1164,9 @@ public class MonteCarloPlayer implements Agent
                                 break;
                             }
                         }
-                        if (eAtkAble == true) {
-                            info.eatknum++;
-                        }
-
-                    } else {
-                        info.eatknum++;
+                        if (eAtkAble == true) info.eatknum++;
                     }
+                    else info.eatknum++;
                 }
             }
         }
@@ -1087,6 +1216,8 @@ public class MonteCarloPlayer implements Agent
         //////////////
         // rulebase //
         //////////////
+        
+        // <editor-fold defaultstate="collapsed" desc="ルールベース用">
         public double RulePlaySimulator(Info info, RuleBasePlayer rbp) 
         {
             //ArrayList<Action> actList = new ArrayList<Action>();
@@ -1252,10 +1383,8 @@ public class MonteCarloPlayer implements Agent
 		// 評価値の最も高いアクションをListの中から探索
 		double maxEvaVal = actList.get(0).evaVal;
 		int maxIndex = 0;
-		for(int index = 1; index < actList.size(); index++)
-		{
-			if(maxEvaVal < actList.get(index).evaVal)
-			{
+		for(int index = 1; index < actList.size(); index++) {
+			if(maxEvaVal < actList.get(index).evaVal) {
 				maxEvaVal = actList.get(index).evaVal;
 				maxIndex = index;
 			}
@@ -1281,6 +1410,7 @@ public class MonteCarloPlayer implements Agent
 
 		return act;
 	}
+        // </editor-fold>
         
         
         
@@ -1372,10 +1502,7 @@ public class MonteCarloPlayer implements Agent
             // 一定のターン経過したとき -> 評価値を計算，値を返す
             return calcEvaVal(info);
         }
-        
-        String logstr;
-        String logsimurand;
-        
+                
         public double actionLimitedSemiRandomPlay(Info info) 
         {
             logstr = new String();
@@ -1539,6 +1666,8 @@ public class MonteCarloPlayer implements Agent
 	{
 		// 評価値の合計
 		double sumEvaVal = 0.0;
+                // 評価値の最大値
+                double maxEvaVal = 0.0;
 		// 1アクションに対する試行回数
 		int trialOneAct = 100;
 
@@ -1576,6 +1705,9 @@ public class MonteCarloPlayer implements Agent
 //                                        info.visibleEnemy.get(e).hp + "/" + info.visibleEnemy.get(e).maxHp);
 //                }
                
+
+
+                // プレイアウト
                 for(int i = 0; i < trialOneAct; i++)
 		{
 			// 不明な盤面情報の補完
@@ -1596,7 +1728,14 @@ public class MonteCarloPlayer implements Agent
                         
                         //System.out.println("");
                         
+                        
                         sumEvaVal += val;
+                        if(i == 0) {
+                            maxEvaVal = val;
+                        } else {
+                            if(maxEvaVal < val) maxEvaVal = val;
+                        }
+                        
                         
                         if(debug > 10) {
                             System.out.print("trial[" + i + "]:" + val);
@@ -1611,7 +1750,8 @@ public class MonteCarloPlayer implements Agent
                     System.out.println("ave:" + (sumEvaVal / (double)trialOneAct) + "\n");
                 }
                 
-		return sumEvaVal / (double)trialOneAct;
+                if(MethodOfEval == 0)   return sumEvaVal / (double)trialOneAct;
+                else                    return maxEvaVal;
 	}
 
         public double mctsdepth(Action act, Info info, int deep)
@@ -1682,10 +1822,8 @@ public class MonteCarloPlayer implements Agent
                 
                 // 評価値の最も高いアクションをListの中から探索
 		double maxEvaVal = actList.get(0).evaVal;
-		for(int index = 1; index < actList.size(); index++)
-		{
-			if(maxEvaVal < actList.get(index).evaVal)
-			{
+		for(int index = 1; index < actList.size(); index++) {
+			if(maxEvaVal < actList.get(index).evaVal) {
 				maxEvaVal = actList.get(index).evaVal;
 			}
 		}
@@ -1771,7 +1909,9 @@ public class MonteCarloPlayer implements Agent
                 
                 curFloor = info.player.curFloor;
                 
-                stturn = info.floorturn[curFloor];
+                stturn = info.turn;
+                info.beatEnemy = false;
+                info.startSimuTurn = info.turn; // シミュレーション開始ターンの記録
                 
                 if(debug > 0)
                 {

@@ -37,6 +37,7 @@ public class ObjectSetSimulator
 			{
 				// 倒した場合，経験値を得る
 				info.player.exp += info.enemy[nextMonsIndex].spoint;
+                                info.beatEnemy = true;
 			}
 //                        if(info.visibleEnemy.get(nextMonsIndex).active == false)
 //			{

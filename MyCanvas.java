@@ -45,9 +45,11 @@ public class MyCanvas extends Canvas {
     // 実行回数
     public static final int TRYNUM = 200;
 
-    // 初期配置，true:ランダム配置，false:配置をいじる
-    public static final boolean DEBUG_INIT = true;
+    // 初期配置，false:ランダム配置，true:配置をいじる
+    public static final boolean DEBUG_INIT = false;
 
+    private static final int MAINLOOP_WAIT = 0; // メインループの待ち時間
+    
     // 現在の階層
     public static int floorNumber = 0;
 
@@ -297,7 +299,7 @@ public class MyCanvas extends Canvas {
 
             if (drawlevel >= 10) {
                 try {
-                    Thread.sleep(50); // ループのウェイト
+                    Thread.sleep(MAINLOOP_WAIT); // ループのウェイト
                 } catch (InterruptedException e) {
                 }
             }
@@ -656,7 +658,7 @@ public class MyCanvas extends Canvas {
                 Logger.appendLog(floorNumber + "F");
                 Logger.appendLog("\n" + "[turn : " + turnmanager.getTurn() + "]");
 
-                if (DEBUG_INIT == true) {
+                if (DEBUG_INIT == false) {
                     // マップの情報の更新
                     background.mapUpdate();
 
@@ -702,7 +704,7 @@ public class MyCanvas extends Canvas {
                 } else {
                     // マップの情報の更新
                     // true:通路ランダム削除あり, false:通路ランダム削除なし
-                    background.mapUpdate("mat/d3.txt", false);
+                    background.mapUpdate("src/mat/d3.txt", false);
 
                     // プレイヤーの配置
                     // プレイヤーの持つマップ情報の初期化・更新を含む
@@ -783,7 +785,8 @@ public class MyCanvas extends Canvas {
             }
             // 一時停止
             if (keyinput.checkAShotKey() == SHOT_DOWN) {
-                scene = SCENE_TITLE;
+                if(scene == SCENE_GAMEMAIN) scene = SCENE_TITLE;
+                else scene = SCENE_GAMEMAIN;
             }
             // ゲームに敗北する
             if (keyinput.checkWShotKey() == SHOT_DOWN) {
@@ -1087,7 +1090,8 @@ public class MyCanvas extends Canvas {
                     currentFlrGetFd++;
                 }
                 else{
-                    System.out.println("ログ収集系統fd，何かしらのエラー:" + fd + "->" + provFd);
+                    // デバッグモードでないとき
+                    if(DEBUG_INIT != true) System.out.println("ログ収集系統fd，何かしらのエラー:" + fd + "->" + provFd);
                 }
                 fd = provFd;
             }
@@ -1099,7 +1103,8 @@ public class MyCanvas extends Canvas {
                     currentFlrGetPt++;
                 }
                 else{
-                    System.out.println("ログ収集系統pt，何かしらのエラー:" + pt + "->" + provPt);
+                    // デバッグモードでないとき
+                    if(DEBUG_INIT != true) System.out.println("ログ収集系統pt，何かしらのエラー:" + pt + "->" + provPt);
                 }
                 pt = provPt;
             }
@@ -1111,7 +1116,8 @@ public class MyCanvas extends Canvas {
                     currentFlrGetAr += 3;
                 }
                 else{
-                    System.out.println("ログ収集系統ar，何かしらのエラー:" + ar + "->" + provAr);
+                    // デバッグモードでないとき
+                    if(DEBUG_INIT != true) System.out.println("ログ収集系統ar，何かしらのエラー:" + ar + "->" + provAr);
                 }
                 ar = provAr;
             }
@@ -1123,7 +1129,8 @@ public class MyCanvas extends Canvas {
                     currentFlrGetSt++;
                 }
                 else{
-                    System.out.println("ログ収集系統st，何かしらのエラー:" + st + "->" + provSt);
+                    // デバッグモードでないとき
+                    if(DEBUG_INIT != true) System.out.println("ログ収集系統st，何かしらのエラー:" + st + "->" + provSt);
                 }
                 st = provSt;
             }

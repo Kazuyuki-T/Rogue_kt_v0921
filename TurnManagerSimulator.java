@@ -82,6 +82,14 @@ public class TurnManagerSimulator
 			// ターンの更新
 			info.turn++;
                         
+                        // countbeat　評価値に使いたいやつ計算
+                        if(info.beatEnemy == true){
+                            int turnIntervalOfBeat = info.turn - info.startSimuTurn;
+                            info.countbeatsum_70_1t5 += 70 - turnIntervalOfBeat * 5;
+                            info.beatEnemy = false;
+                            //System.out.println("turn:" + turnIntervalOfBeat + ", cb_60_1t5:" + info.countbeatsum_60_1t5);
+                        }
+                        
                         // フロアの滞在ターン数の更新
                         if(info.player.curFloor < MyCanvas.TOPFLOOR)
                         {

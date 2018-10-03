@@ -23,6 +23,16 @@ public class Info implements Cloneable
         public int eatknum; // 敵がプレイヤに攻撃できる数
         public int patknum; // プレイヤが敵に攻撃できる数
         
+        /*---急ごしらえのため要注意4つ--*/
+        public int startSimuTurn; // シミュレーション開始ターン数
+        public boolean beatEnemy; // プレイヤの経験値履歴，増えているとき=敵倒した
+        public int countbeat; // 敵を倒した数
+        public int countbeatsum_70_1t5; // 敵を倒したときに増やす
+        
+        
+        
+        
+        
         public boolean stairpos; // 階段の座標
         
         // map
@@ -190,6 +200,11 @@ public class Info implements Cloneable
                 eatknum = 0;
                 patknum = 0;
                 
+                startSimuTurn = 0;
+                beatEnemy = false;
+                countbeat = 0;
+                countbeatsum_70_1t5 = 0;
+                
                 player = new Player();
 		enemy = new Enemy[ObjectSet.ENEMY_MAX];
 		for(int index = 0; index < ObjectSet.ENEMY_MAX; index++)
@@ -232,6 +247,11 @@ public class Info implements Cloneable
 
                         info.eatknum = this.eatknum;
                         info.patknum = this.patknum;
+                        
+                        info.startSimuTurn = this.startSimuTurn;
+                        info.beatEnemy = this.beatEnemy;
+                        info.countbeat = this.countbeat;
+                        info.countbeatsum_70_1t5 = this.countbeatsum_70_1t5;
                         
                         //System.out.println(this.currentRTopLeft.x + "," + this.currentRTopLeft.y);
                         if(this.currentRTopLeft != null)
