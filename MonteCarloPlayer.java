@@ -660,13 +660,83 @@ public class MonteCarloPlayer implements Agent
             //System.out.println();
             
             double innerp = 0.0;
+            //-3:旧評価値，log20171108_021226再現，countbeat係数ターン毎に減少
+            //-2:旧評価値，log20171108_021226再現，敵hp差分2倍
             //-1:旧評価値，log20171108_021226再現
             // 0:実験７重み
             // 1:実験７データ，onehot，sqrt(2x)
             // 2:実験７データ，onehot，sqrt(3)*sqrt(x)
             // 3:実験７データ，onehot，StUn，10*sqrt(x)
-            int eval = -1;
-            if(eval == -1){
+            int eval = -3;
+            if(eval == -3){
+                int simuturn = info.floorturn[curFloor] - stturn; // 展開分のバイアス
+                if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
+                int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
+                int ifd = info.player.inventory.getInvItemNum(1); // 食料数
+                // 視界内の敵
+                int sum = 0;
+		int maxSum = 0;
+                int countbeat = 0;
+                for(int index = 0; index < info.visibleEnemy.size(); index++) {
+			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
+                            if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
+                                sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].maxHp;
+                                if(info.enemy[index].active == false) countbeat++;
+                                break;
+                            }
+                        }
+		}
+                //System.out.println("enemy:" + sum + "/" + maxSum);
+                //System.out.println("countbeat:" + countbeat);
+                //System.out.println("simuturn:" + simuturn);
+                innerp = (double)(0.0
+                            + (maxSum - sum)
+                            - (info.player.maxHp - info.player.hp)
+                            + ((60 - (5 * simuturn)) * countbeat)
+                            + (1000 * life)
+                            + (1000 * gameclear)
+                            + (70 * ifd) 
+                            + (70 * pt)
+                            + (23 * ar) 
+                            + (70 * st)
+                             );
+                if(life == 0) innerp = -10000;
+            }
+            else if(eval == -2){
+                int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
+                int ifd = info.player.inventory.getInvItemNum(1); // 食料数
+                // 視界内の敵
+                int sum = 0;
+		int maxSum = 0;
+                int countbeat = 0;
+                for(int index = 0; index < info.visibleEnemy.size(); index++) {
+			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
+                            if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
+                                sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].maxHp;
+                                if(info.enemy[index].active == false) countbeat++;
+                                break;
+                            }
+                        }
+		}
+                //System.out.println("enemy:" + sum + "/" + maxSum);
+                //System.out.println("countbeat:" + countbeat);
+                
+                innerp = (double)(0.0
+                            + (2.0 * (maxSum - sum))
+                            - (info.player.maxHp - info.player.hp)
+                            + (50 * countbeat)
+                            + (1000 * life)
+                            + (1000 * gameclear)
+                            + (70 * ifd) 
+                            + (70 * pt)
+                            + (23 * ar) 
+                            + (70 * st)
+                             );
+                if(life == 0) innerp = -10000;
+            }
+            else if(eval == -1){
                 int gameclear = (info.player.curFloor == MyCanvas.TOPFLOOR) ? 1 : 0;
                 int ifd = info.player.inventory.getInvItemNum(1); // 食料数
                 // 視界内の敵
