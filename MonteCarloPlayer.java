@@ -669,7 +669,7 @@ public class MonteCarloPlayer implements Agent
             //System.out.println();
             
             double innerp = 0.0;
-            //-5:旧評価値，log20171108_021226再現，countbeat修正版，倒したターンに応じて評価値変化
+            //-5:旧評価値，log20171108_021226再現，-4，countbeat修正版，倒したターンに応じて評価値変化
             //-4:旧評価値，log20171108_021226再現，-2と-3合体版
             //-3:旧評価値，log20171108_021226再現，countbeat係数ターン毎に減少
             //-2:旧評価値，log20171108_021226再現，敵hp差分2倍
@@ -701,7 +701,7 @@ public class MonteCarloPlayer implements Agent
                 //if(info.countbeatsum_60_1t5 != 0)System.out.println("info.countbeatsum_60_1t5:" + info.countbeatsum_60_1t5);
                 //System.out.println("simuturn:" + simuturn);
                 innerp = (double)(0.0
-                            + (maxSum - sum)
+                            + (2.0 * (maxSum - sum))
                             - (info.player.maxHp - info.player.hp)
                             + (info.countbeatsum_70_1t5)
                             + (1000 * life)
