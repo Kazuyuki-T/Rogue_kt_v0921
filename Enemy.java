@@ -65,7 +65,7 @@ public class Enemy extends Unit implements Cloneable
                         enemy.repopCount = this.repopCount;
                         enemy.bg = this.bg;
 
-                        
+                        enemy.spoint = this.spoint;
 
 		}catch(Exception e){
 			e.printStackTrace();

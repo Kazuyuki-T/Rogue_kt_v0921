@@ -29,7 +29,7 @@ public class MonteCarloPlayer implements Agent
 
         int stturn;
         
-        int debug = 0;
+        int debug = 1;
         
         // プレイアウト終了時の評価値の計算方法
         // 0:平均値, 1:最大値
@@ -679,7 +679,7 @@ public class MonteCarloPlayer implements Agent
             // 2:実験７データ，onehot，sqrt(3)*sqrt(x)
             // 3:実験７データ，onehot，StUn，10*sqrt(x)
             // 4:0重み，死亡ペナ減少
-            int eval = -5;
+            int eval = 0;
             if(eval == -5){
                 int simuturn = info.turn - stturn; // 展開分のバイアス
                 if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
@@ -861,6 +861,7 @@ public class MonteCarloPlayer implements Agent
                             + ((double) unknownAreaPer * 8.32)
                             + ((double) stair * -107.24)
                             + ((double) -349.66);
+                    //System.out.println("innerp:" + innerp);
                 }
                 else if (curFloor == 1) {
                     // 死んでいるとき
@@ -901,6 +902,8 @@ public class MonteCarloPlayer implements Agent
                 } else if (curFloor == 4) {
                     innerp = 100000;
                 }
+                
+                System.out.print(" (" + hp + "," + lv + "," + sp + "," + pt + "," + ar + "," + st + "," + unknownAreaPer + "," + stair + ") ");
             }
             else if (eval == 1) {
                 pt = (int)(Math.sqrt(2 * pt) + 0.5);
@@ -1667,7 +1670,7 @@ public class MonteCarloPlayer implements Agent
 		// 評価値の合計
 		double sumEvaVal = 0.0;
                 // 評価値の最大値
-                double maxEvaVal = 0.0;
+                double maxEvaVal = -Double.MAX_VALUE;
 		// 1アクションに対する試行回数
 		int trialOneAct = 100;
 
@@ -1730,11 +1733,7 @@ public class MonteCarloPlayer implements Agent
                         
                         
                         sumEvaVal += val;
-                        if(i == 0) {
-                            maxEvaVal = val;
-                        } else {
-                            if(maxEvaVal < val) maxEvaVal = val;
-                        }
+                        if(maxEvaVal < val) maxEvaVal = val;
                         
                         
                         if(debug > 10) {
@@ -1958,10 +1957,12 @@ public class MonteCarloPlayer implements Agent
                         System.out.println();
                     }
                     System.out.println("player:(" + info.player.gridMapX + "," + info.player.gridMapY + ")");
-                    System.out.println("Lv:" + info.player.level);
+                    System.out.println("Lv:" + calcLevelandExpD(info));
                     System.out.println("Hp:" + info.player.hp + "/" + info.player.maxHp);
                     System.out.println("sp:" + info.player.satiety);
-
+                    System.out.println("unknownAreaPer:" + calcUnknownAreaPer(info));
+                    System.out.println("stair:" + ((info.stairpos == true) ? 1 : -1));
+                    
                     // アイテムの出力
                     for(int i = 0; i < info.player.inventory.itemList.size(); i++)
                     {

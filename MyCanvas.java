@@ -46,10 +46,8 @@ public class MyCanvas extends Canvas {
     public static final int TRYNUM = 200;
 
     // 初期配置，false:ランダム配置，true:配置をいじる
-    public static final boolean DEBUG_INIT = false;
+    public static final boolean DEBUG_INIT = true;
 
-    private static final int MAINLOOP_WAIT = 0; // メインループの待ち時間
-    
     // 現在の階層
     public static int floorNumber = 0;
 
@@ -74,6 +72,7 @@ public class MyCanvas extends Canvas {
     public static final int SCENE_GAMEMAIN = 1;
     public static final int SCENE_RESULT = 2;
     public static final int SCENE_INV = 3;
+    public static final int SCENE_PAUSE = 4;
 
     // 押されている
     public static final int SHOT_PRESSED = 1;
@@ -147,15 +146,15 @@ public class MyCanvas extends Canvas {
 
     public String fileName;
 
-    private static boolean GAMEMODE;
+    private static int GAMEMODE;
     
     public RuleBasePlayer getrbp() {
         return rbp;
     }
 
     // コンストラクタ
-    public MyCanvas(int x, int y, int lv, boolean gmode, String fn) {
-        GAMEMODE = gmode; // 人間プレイヤorAIプレイヤ
+    public MyCanvas(int x, int y, int lv, int gmode, String fn) {
+        GAMEMODE = gmode; // 0:人間,1:AIプレイヤ,2:高速周回
         fileName = fn;
         
         random = new Random();		// 乱数
@@ -291,6 +290,10 @@ public class MyCanvas extends Canvas {
                 case 3:
                     inventoryScene();
                     break;
+                    
+                case 4:
+                    pauseScene();
+                    break;
             }
 
             if(drawlevel >= 10) drawMap(); // マップの描画
@@ -299,7 +302,9 @@ public class MyCanvas extends Canvas {
 
             if (drawlevel >= 10) {
                 try {
-                    Thread.sleep(MAINLOOP_WAIT); // ループのウェイト
+                    if(GAMEMODE == 0)       Thread.sleep(10); // ループのウェイト
+                    else if(GAMEMODE == 1)  Thread.sleep(500);
+                    else if(GAMEMODE == 2)  Thread.sleep(0);
                 } catch (InterruptedException e) {
                 }
             }
@@ -398,6 +403,34 @@ public class MyCanvas extends Canvas {
         }
     }
 
+    // 一時停止画面の処理
+    void pauseScene() {
+        if (drawlevel >= 10) {
+            // 描画タイミングをできるだけ近づける
+            // マップ描画(バッファをクリア)
+            // プレイヤーの座標
+            background.drawGameBG(gBuf, objectset.player);
+            // マップに対してグリッド線の表示
+            background.drawGridBG(gBuf);
+            // ゲームオブジェクトの一括描画処理
+            objectset.drawAll(gBuf);
+            // ステータスバー描画
+            drawStatusBar(gBuf, objectset.player);
+            if (objectset.isGameover()) {
+                // ゲームオーバー文字を表示
+                title.drawGameover(gBuf);
+            } else if (floorNumber == TOPFLOOR) {
+                // ゲームクリア文字表示
+                title.drawClear(gBuf);
+            }
+        }
+
+        // 一時停止解除
+        if (keyinput.checkAShotKey() == SHOT_PRESSED) {
+            scene = SCENE_GAMEMAIN;
+        }
+    }
+    
     // インベントリを開いた状態
     void inventoryScene() {
         // 現在の所持アイテム個数
@@ -710,24 +743,26 @@ public class MyCanvas extends Canvas {
                     // プレイヤーの持つマップ情報の初期化・更新を含む
                     objectset.setObject(new String("player"), -1, 19, 5);
 
+                    //floorNumber = 0;
+                    
                     // プレイヤー情報の変更
-                    if (floorNumber == 0) {
-                        objectset.player.addExp(150); // レベルの調整
+                    //if (floorNumber == 0) { // このif必要？
+                        objectset.player.addExp(50); // レベルの調整
                         objectset.player.hp = objectset.player.maxHp;
                         objectset.player.satiety = objectset.player.maxSatiety;
                         objectset.player.inventory.addItem(4); // wst追加
                         objectset.player.inventory.addItem(4);
                         //objectset.player.inventory.addItem(4);
                         //objectset.player.inventory.addItem(4);
-                    }
+                    //}
 
                     // オブジェクトの初期化
                     objectset.initObjectsetExceptPlayer();
 
                     // オブジェクトの配置
                     // 敵
-                    objectset.setObject(new String("enemy"), 2, 17, 5);
-                    objectset.setObject(new String("enemy"), 2, 17, 6);
+                    objectset.setObject(new String("enemy"), 0, 17, 5);
+                    objectset.setObject(new String("enemy"), 0, 17, 6);
                     //ObjectSet.enemy[1].hp = 45;
                     //objectset.setObject(new String("enemy"), 3, 11, 8);
                     //objectset.setObject(new String("enemy"), 3, 11, 9);
@@ -736,90 +771,98 @@ public class MyCanvas extends Canvas {
                     // 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
                     objectset.setObject(new String("stair"), -1, 15, 22);
 
+                    for (int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++) {
+                        for (int x = 0; x < MyCanvas.MAPGRIDSIZE_X; x++) {
+                            //objectset.setpmap(x, y, true);
+                            //objectset.setpCurmap(x, y, true);
+                        }
+                    }
+                    
                     // マップ視野の描画を開始する
                     //CanvasMap.startDrawmap();
                     startDrawmapFlag = true;
 
                     startFlag = true;
-
+                    
+                    if(GAMEMODE == 1) scene = SCENE_PAUSE;
+                    
                     // ログに現在の状態を出力，0F以外
                     // ゲーム回数，階層数，プレイヤーの各アイテム数
                 }
-            }
+            } else {
+                // ログのデータ収集における情報更新，毎ターンチェック
+                ld[floorNumber].setLData_everyTurn(floorNumber, objectset.player, objectset.getpmap());
 
-            
-            // ログのデータ収集における情報更新，毎ターンチェック
-            ld[floorNumber].setLData_everyTurn(floorNumber, objectset.player, objectset.getpmap());
-            
 
-            info.stairpos = (rbp.getStairRoomID() != -1) ? true : false; // stairRoomID != -1 -> 階段発見済み
+                info.stairpos = (rbp.getStairRoomID() != -1) ? true : false; // stairRoomID != -1 -> 階段発見済み
 
-            // TurnManagerを用いてターン管理を行う
-            // 移動・攻撃によるターン経過を管理する
-            if(GAMEMODE == true){
-                turnmanager.turnCount(objectset, keyinput, background);
-            }
-            else{
-                // エージェント用
-                //turnmanager.turnCount(objectset, background, rbp_bu);
-                turnmanager.turnCount(objectset, background, rbp);
-            }
+                // TurnManagerを用いてターン管理を行う
+                // 移動・攻撃によるターン経過を管理する
+                if(GAMEMODE == 0){
+                    turnmanager.turnCount(objectset, keyinput, background);
+                }
+                else{
+                    // エージェント用
+                    //turnmanager.turnCount(objectset, background, rbp_bu);
+                    turnmanager.turnCount(objectset, background, rbp);
+                }
 
-            // インベントリ
-            if (keyinput.checkEShotKey() == SHOT_DOWN) {
-                scene = SCENE_INV;
-            }
+                // インベントリ
+                if (keyinput.checkEShotKey() == SHOT_DOWN) {
+                    scene = SCENE_INV;
+                }
 
-            /*-- 以下デバッグ用 --*/
-            /*--------------------*/
-            // ダンジョン探索済みとする
-            if (keyinput.checkCShotKey() == SHOT_DOWN) {
-                for (int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++) {
-                    for (int x = 0; x < MyCanvas.MAPGRIDSIZE_X; x++) {
-                        //Player.pmap[y][x] = true;
-                        //Player.pCurmap[y][x] = true;
-                        objectset.setpmap(x, y, true);
-                        objectset.setpCurmap(x, y, true);
+                /*-- 以下デバッグ用 --*/
+                /*--------------------*/
+                
+                if(GAMEMODE == 1) scene = SCENE_PAUSE;
+                
+                // ダンジョン探索済みとする
+                if (keyinput.checkCShotKey() == SHOT_DOWN) {
+                    for (int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++) {
+                        for (int x = 0; x < MyCanvas.MAPGRIDSIZE_X; x++) {
+                            objectset.setpmap(x, y, true);
+                            objectset.setpCurmap(x, y, true);
+                        }
                     }
                 }
-            }
-            // 一時停止
-            if (keyinput.checkAShotKey() == SHOT_DOWN) {
-                if(scene == SCENE_GAMEMAIN) scene = SCENE_TITLE;
-                else scene = SCENE_GAMEMAIN;
-            }
-            // ゲームに敗北する
-            if (keyinput.checkWShotKey() == SHOT_DOWN) {
-                objectset.player.active = false;
-            }
-            // 描画のonoff，sleepタイムの調節
-            // ミニマップはどうする？
-            // スクロール部分は？
-            if (keyinput.checkTShotKey() == SHOT_DOWN) {
-                if (drawlevel >= 10) {
-                    setDrawLevel(-10);
-                } else {
-                    setDrawLevel(10);
+                // 一時停止
+                if (keyinput.checkAShotKey() == SHOT_DOWN) {
+                    scene = SCENE_PAUSE;
                 }
-            }
-            // ミニマップ，ターゲットの描画on
+                // ゲームに敗北する
+                if (keyinput.checkWShotKey() == SHOT_DOWN) {
+                    objectset.player.active = false;
+                }
+                // 描画のonoff，sleepタイムの調節
+                // ミニマップはどうする？
+                // スクロール部分は？
+                if (keyinput.checkTShotKey() == SHOT_DOWN) {
+                    if (drawlevel >= 10) {
+                        setDrawLevel(-10);
+                    } else {
+                        setDrawLevel(10);
+                    }
+                }
+                // ミニマップ，ターゲットの描画on
 
-            // ミニマップ，ターゲットの描画off
-            /*--------------------*/
-            /*--------------------*/
-            // ld_btの追加
-            // 直前の行動が戦闘中 -> 現在の行動が戦闘以外
-            if (rbp.getBattleEnd() == true && floorNumber != TOPFLOOR) {
-                // データをセット
-                ld_bt.setLData_bt(gameCounter, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
-                // ラベルをセット
-                ld_bt.setLabel_bt(true);
-                // 出力
-                ld_bt.sysoutput();
-                // リストに追加
-                LDBT_List.add(ld_bt);
-                // 初期化
-                ld_bt = new LData_bt();
+                // ミニマップ，ターゲットの描画off
+                /*--------------------*/
+                /*--------------------*/
+                // ld_btの追加
+                // 直前の行動が戦闘中 -> 現在の行動が戦闘以外
+                if (rbp.getBattleEnd() == true && floorNumber != TOPFLOOR) {
+                    // データをセット
+                    ld_bt.setLData_bt(gameCounter, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
+                    // ラベルをセット
+                    ld_bt.setLabel_bt(true);
+                    // 出力
+                    ld_bt.sysoutput();
+                    // リストに追加
+                    LDBT_List.add(ld_bt);
+                    // 初期化
+                    ld_bt = new LData_bt();
+                }
             }
         }
 
