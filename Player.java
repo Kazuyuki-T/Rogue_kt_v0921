@@ -41,10 +41,13 @@ public class Player extends Unit implements Cloneable
 	// 累計の回復量，回復した分は引く
 	public double sumSpontRecVal;
 
-        public int[] getItemfloorPotion = {0, 0, 0, 0};
-        public int[] getItemfloorFood =  {0, 0, 0, 0};
-        public int[] getItemfloorLStaff = {0, 0, 0, 0};
-        public int[] getItemfloorWstaff = {0, 0, 0, 0};
+        public int[] getItemfloorPotion;
+        public int[] getItemfloorFood;
+        public int[] getItemfloorLStaff;
+        public int[] getItemfloorWstaff;
+        
+        // 各階の敵を倒した数，シミュ未対応
+        public int[] beatsEnemyCount;
         
 	public Player clone()
 	{
@@ -164,13 +167,20 @@ public class Player extends Unit implements Cloneable
 
 		inventory = new Inventory();
 
-                for(int i = 0; i < 4; i++)
-                {
+                getItemfloorPotion = new int[MyCanvas.TOPFLOOR];
+                getItemfloorFood = new int[MyCanvas.TOPFLOOR];
+                getItemfloorLStaff = new int[MyCanvas.TOPFLOOR];
+                getItemfloorWstaff = new int[MyCanvas.TOPFLOOR];
+                for(int i = 0; i < MyCanvas.TOPFLOOR; i++) {
                     getItemfloorPotion[i] = 0;
                     getItemfloorFood[i] = 0;
                     getItemfloorLStaff[i] = 0;
                     getItemfloorWstaff[i] = 0;
-                    
+                }
+                
+                beatsEnemyCount = new int[MyCanvas.TOPFLOOR];
+                for(int i = 0; i < MyCanvas.TOPFLOOR; i++) {
+                    beatsEnemyCount[i] = 0;
                 }
                 
 		// pmapを初期化
@@ -203,6 +213,18 @@ public class Player extends Unit implements Cloneable
 		updateAtk();
 	}
 
+        public void beatsEnemyCounter(int n){
+                beatsEnemyCount[curFloor] += n;
+        }
+        
+        public void beatsEnemyCounter(int n, int flrn){
+                beatsEnemyCount[flrn] += n;
+        }
+        
+        public int getBeatsEnemyCount(int flrn){
+                return beatsEnemyCount[flrn]; // 引数の階数で倒した敵の数を戻す
+        }
+        
 	// 経験値の獲得
 	public void addExp(int p)
 	{

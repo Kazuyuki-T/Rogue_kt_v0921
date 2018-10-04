@@ -211,6 +211,7 @@ public class Inventory implements Cloneable
 					{
 						// 倒した場合，経験値を得る
 						objectset.player.addExp(ObjectSet.enemy[nextMonsIndex].spoint);
+                                                objectset.player.beatsEnemyCounter(1);
 					}
 					else
 					{

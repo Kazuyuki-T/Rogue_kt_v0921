@@ -29,7 +29,7 @@ public class MonteCarloPlayer implements Agent
 
         int stturn;
         
-        int debug = 1;
+        int debug = 0;
         
         // プレイアウト終了時の評価値の計算方法
         // 0:平均値, 1:最大値
@@ -679,7 +679,7 @@ public class MonteCarloPlayer implements Agent
             // 2:実験７データ，onehot，sqrt(3)*sqrt(x)
             // 3:実験７データ，onehot，StUn，10*sqrt(x)
             // 4:0重み，死亡ペナ減少
-            int eval = 0;
+            int eval = -5;
             if(eval == -5){
                 int simuturn = info.turn - stturn; // 展開分のバイアス
                 if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
@@ -903,7 +903,7 @@ public class MonteCarloPlayer implements Agent
                     innerp = 100000;
                 }
                 
-                System.out.print(" (" + hp + "," + lv + "," + sp + "," + pt + "," + ar + "," + st + "," + unknownAreaPer + "," + stair + ") ");
+                if(debug > 10) System.out.print(" (" + hp + "," + lv + "," + sp + "," + pt + "," + ar + "," + st + "," + unknownAreaPer + "," + stair + ") ");
             }
             else if (eval == 1) {
                 pt = (int)(Math.sqrt(2 * pt) + 0.5);

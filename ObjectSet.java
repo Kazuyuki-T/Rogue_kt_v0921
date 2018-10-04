@@ -1304,6 +1304,7 @@ public class ObjectSet
 			{
 				// 倒した場合，経験値を得る
 				player.addExp(enemy[nextMonsIndex].spoint);
+                                player.beatsEnemyCounter(1);
 				Logger.appendLog("get-exp");
 			}
 		}

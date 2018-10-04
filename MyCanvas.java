@@ -43,10 +43,10 @@ public class MyCanvas extends Canvas {
     private static final int BOUND_REACHCOUNT = 100; // 各階層の最低到達回数
 
     // 実行回数
-    public static final int TRYNUM = 200;
+    public static final int TRYNUM = 1200;
 
     // 初期配置，false:ランダム配置，true:配置をいじる
-    public static final boolean DEBUG_INIT = true;
+    public static final boolean DEBUG_INIT = false;
 
     // 現在の階層
     public static int floorNumber = 0;
@@ -107,26 +107,26 @@ public class MyCanvas extends Canvas {
     public static int useItemLStaff = 0;
     public static int useItemWStaff = 0;
 
-    public static int[] getItemPotion = {0, 0, 0, 0};
-    public static int[] getItemFood = {0, 0, 0, 0};
-    public static int[] getItemLStaff = {0, 0, 0, 0};
-    public static int[] getItemWstaff = {0, 0, 0, 0};
+    public static int[] getItemPotion;
+    public static int[] getItemFood;
+    public static int[] getItemLStaff;
+    public static int[] getItemWstaff;
 
-    public static int[] invItem = {0, 0, 0, 0};
+    public static int[] invItem;
 
     // ダンジョンの最下層
     // この数字の階に到達したらクリア
     public static final int TOPFLOOR = 4;
 
     // 0:死亡した階数，1:餓死の回数
-    private int[] deathFloor = new int[TOPFLOOR];
+    private int[] deathFloor;
 
-    private int[] lvFloor = new int[TOPFLOOR];
-    private int[] lvFloorNum = new int[TOPFLOOR];
+    private int[] lvFloor;
+    private int[] lvFloorNum;
 
     // 餓死回数
     public static int gasi = 0;
-    public static int[] gasif = new int[4];
+    public static int[] gasif;
 
     private static int histCount = 0;
 
@@ -154,7 +154,7 @@ public class MyCanvas extends Canvas {
 
     // コンストラクタ
     public MyCanvas(int x, int y, int lv, int gmode, String fn) {
-        GAMEMODE = gmode; // 0:人間,1:AIプレイヤ,2:高速周回
+        GAMEMODE = gmode; // 0:人間,1:AIプレイヤ,2:高速周回,3:一時停止
         fileName = fn;
         
         random = new Random();		// 乱数
@@ -175,6 +175,14 @@ public class MyCanvas extends Canvas {
         selectItem = 0;
 
         // 初期化
+        deathFloor = new int[TOPFLOOR];
+        gasif = new int[TOPFLOOR];
+        lvFloor = new int[TOPFLOOR];
+        lvFloorNum = new int[TOPFLOOR];
+        getItemPotion = new int[TOPFLOOR];
+        getItemFood = new int[TOPFLOOR];
+        getItemLStaff = new int[TOPFLOOR];
+        getItemWstaff = new int[TOPFLOOR];
         for (int i = 0; i < TOPFLOOR; i++) {
             deathFloor[i] = 0;
             gasif[i] = 0;
@@ -185,6 +193,7 @@ public class MyCanvas extends Canvas {
             getItemLStaff[i] = 0;
             getItemWstaff[i] = 0;
         }
+        invItem = new int[TOPFLOOR];
 
         info = new Info(MAPGRIDSIZE_X, MAPGRIDSIZE_Y);
 
@@ -302,9 +311,18 @@ public class MyCanvas extends Canvas {
 
             if (drawlevel >= 10) {
                 try {
-                    if(GAMEMODE == 0)       Thread.sleep(10); // ループのウェイト
-                    else if(GAMEMODE == 1)  Thread.sleep(500);
-                    else if(GAMEMODE == 2)  Thread.sleep(0);
+//                    if(GAMEMODE == 0)       Thread.sleep(10); // ループのウェイト
+//                    else if(GAMEMODE == 1)  Thread.sleep(500);
+//                    else if(GAMEMODE == 2)  Thread.sleep(0);
+//                    else if(GAMEMODE == 3)  Thread.sleep(10);
+                    
+                    switch(GAMEMODE) {
+                        case 0: Thread.sleep(10); break;
+                        case 1: Thread.sleep(500); break;
+                        case 2: Thread.sleep(0); break;
+                        case 3: Thread.sleep(10); break;
+                        default: Thread.sleep(10); break;
+                    }
                 } catch (InterruptedException e) {
                 }
             }
@@ -525,7 +543,7 @@ public class MyCanvas extends Canvas {
     // ゲーム画面の処理
     void gameScene() {
         // ゲームオーバー判定
-        if (objectset.isGameover()) {
+        if (objectset.isGameover() == true) {
             // データをセット
             ld_bt.setLData_bt(gameCounter, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
             // ラベルをセット
@@ -732,6 +750,8 @@ public class MyCanvas extends Canvas {
 
                     startFlag = true;
 
+                    if(GAMEMODE == 2) Logger.appendLog(floorNumber + "F, win:" + clearCount + "/" + gameCounter, true);
+                    
                     // ログに現在の状態を出力，0F以外
                     // ゲーム回数，階層数，プレイヤーの各アイテム数
                 } else {
@@ -784,7 +804,7 @@ public class MyCanvas extends Canvas {
 
                     startFlag = true;
                     
-                    if(GAMEMODE == 1) scene = SCENE_PAUSE;
+                    if(GAMEMODE == 1 || GAMEMODE == 3) scene = SCENE_PAUSE;
                     
                     // ログに現在の状態を出力，0F以外
                     // ゲーム回数，階層数，プレイヤーの各アイテム数
@@ -815,7 +835,7 @@ public class MyCanvas extends Canvas {
                 /*-- 以下デバッグ用 --*/
                 /*--------------------*/
                 
-                if(GAMEMODE == 1) scene = SCENE_PAUSE;
+                if(GAMEMODE == 3) scene = SCENE_PAUSE;
                 
                 // ダンジョン探索済みとする
                 if (keyinput.checkCShotKey() == SHOT_DOWN) {
@@ -906,41 +926,42 @@ public class MyCanvas extends Canvas {
             int arriveNum = TRYNUM;
             int[] arriveArr = new int[]{arriveNum, 0, 0, 0};
 
-            restr.append("試行回数" + TRYNUM + System.getProperty("line.separator"));
+            restr.append("trials" + "," + TRYNUM + System.getProperty("line.separator"));
             // 計測終了
             end = System.currentTimeMillis();
-            restr.append(((double) (end - start) / 1000) + "sec" + System.getProperty("line.separator"));
-            restr.append("clear:" + clearCount + System.getProperty("line.separator"));
-            restr.append("death:" + deathCount + System.getProperty("line.separator"));
+            restr.append("time" + "," + ((double) (end - start) / 1000) + "," + "sec" + System.getProperty("line.separator"));
+            restr.append("clear" + "," + clearCount + System.getProperty("line.separator"));
+            restr.append("death" + "," + deathCount + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
                 if (i >= 1) {
                     arriveNum -= deathFloor[i - 1];
                     arriveArr[i] = arriveNum;
                 }
-                restr.append("deathFloor" + i + ":" + deathFloor[i] + "(" + gasif[i] + ")" + System.getProperty("line.separator"));
+                restr.append("deathFloor" + i + "," + deathFloor[i] + "," + gasif[i] + System.getProperty("line.separator"));
             }
-            restr.append("gasi:" + gasi + System.getProperty("line.separator"));
-            restr.append("useFood  :" + useItemFood + System.getProperty("line.separator"));
-            restr.append("usePotion:" + useItemPotion + System.getProperty("line.separator"));
-            restr.append("useLStaff:" + useItemLStaff + System.getProperty("line.separator"));
-            restr.append("useWStaff:" + useItemWStaff + System.getProperty("line.separator"));
+            restr.append("gasi" + "," + gasi + System.getProperty("line.separator"));
+            restr.append("useFood" + "," + useItemFood + System.getProperty("line.separator"));
+            restr.append("usePotion" + "," + useItemPotion + System.getProperty("line.separator"));
+            restr.append("useLStaff" + "," + useItemLStaff + System.getProperty("line.separator"));
+            restr.append("useWStaff" + "," + useItemWStaff + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append("Level-ave" + i + ":" + (lvFloor[i] / lvFloorNum[i]) + System.getProperty("line.separator"));
+                restr.append("Level-ave" + i + "," + (lvFloor[i] / lvFloorNum[i]) + System.getProperty("line.separator"));
             }
             for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append(i + "f(arrive:" + arriveArr[i] + ")" + System.getProperty("line.separator"));
-                restr.append("getFood  :" + getItemFood[i] + System.getProperty("line.separator"));
-                restr.append("getPotion:" + getItemPotion[i] + System.getProperty("line.separator"));
-                restr.append("getLStaff:" + getItemLStaff[i] + System.getProperty("line.separator"));
-                restr.append("getWStaff:" + getItemWstaff[i] + System.getProperty("line.separator"));
+                restr.append(i + "farrive" + "," + arriveArr[i] + System.getProperty("line.separator"));
+                restr.append("getFood" + "," + getItemFood[i] + System.getProperty("line.separator"));
+                restr.append("getPotion" + "," + getItemPotion[i] + System.getProperty("line.separator"));
+                restr.append("getLStaff" + "," + getItemLStaff[i] + System.getProperty("line.separator"));
+                restr.append("getWStaff" + "," + getItemWstaff[i] + System.getProperty("line.separator"));
                 int sum = getItemFood[i] + getItemPotion[i] + getItemLStaff[i] + getItemWstaff[i];
-                restr.append("sum:" + sum + System.getProperty("line.separator"));
+                restr.append("sum" + "," + sum + System.getProperty("line.separator"));
             }
 
             System.out.println(new String(restr));
 
             //
-            Logger.OutputFileLog(new String(fileName + ".txt"), new String(restr));
+            Logger.OutputFileLog(new String(fileName + "_result.txt"), new String(restr));
+            Logger.OutputFileLog(new String(fileName + "_result.csv"), new String(restr));
 
             System.exit(0);
         }
@@ -956,49 +977,50 @@ public class MyCanvas extends Canvas {
             int arriveNum = TRYNUM;
             int[] arriveArr = new int[]{arriveNum, 0, 0, 0};
 
-            restr.append("試行回数" + gameCounter + System.getProperty("line.separator"));
+            restr.append("試行回数" + "," + gameCounter + System.getProperty("line.separator"));
             // 計測終了
             end = System.currentTimeMillis();
-            restr.append(((double) (end - start) / 1000) + "sec" + System.getProperty("line.separator"));
-            restr.append("clear:" + clearCount + System.getProperty("line.separator"));
-            restr.append("death:" + deathCount + System.getProperty("line.separator"));
+            restr.append("実験時間" + "," + ((double) (end - start) / 1000) + "," + "sec" + System.getProperty("line.separator"));
+            restr.append("clear" + "," + clearCount + System.getProperty("line.separator"));
+            restr.append("death" + "," + deathCount + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
                 if (i >= 1) {
                     arriveNum -= deathFloor[i - 1];
                     arriveArr[i] = arriveNum;
                 }
-                restr.append("deathFloor" + i + ":" + deathFloor[i] + "(" + gasif[i] + ")" + System.getProperty("line.separator"));
+                restr.append("deathFloor" + i + "," + deathFloor[i] + "," + gasif[i] + System.getProperty("line.separator"));
             }
-            restr.append("gasi:" + gasi + System.getProperty("line.separator"));
-            restr.append("useFood  :" + useItemFood + System.getProperty("line.separator"));
-            restr.append("usePotion:" + useItemPotion + System.getProperty("line.separator"));
-            restr.append("useLStaff:" + useItemLStaff + System.getProperty("line.separator"));
-            restr.append("useWStaff:" + useItemWStaff + System.getProperty("line.separator"));
+            restr.append("gasi" + "," + gasi + System.getProperty("line.separator"));
+            restr.append("useFood" + "," + useItemFood + System.getProperty("line.separator"));
+            restr.append("usePotion" + "," + useItemPotion + System.getProperty("line.separator"));
+            restr.append("useLStaff" + "," + useItemLStaff + System.getProperty("line.separator"));
+            restr.append("useWStaff" + "," + useItemWStaff + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append("Level-ave" + i + ":" + (lvFloor[i] / lvFloorNum[i]) + System.getProperty("line.separator"));
+                restr.append("Level-ave" + i + "," + (lvFloor[i] / lvFloorNum[i]) + System.getProperty("line.separator"));
             }
             for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append(i + "f(arrive:" + arriveArr[i] + ")" + System.getProperty("line.separator"));
-                restr.append("getFood  :" + getItemFood[i] + System.getProperty("line.separator"));
-                restr.append("getPotion:" + getItemPotion[i] + System.getProperty("line.separator"));
-                restr.append("getLStaff:" + getItemLStaff[i] + System.getProperty("line.separator"));
-                restr.append("getWStaff:" + getItemWstaff[i] + System.getProperty("line.separator"));
+                restr.append(i + "farrive" + "," + arriveArr[i] + System.getProperty("line.separator"));
+                restr.append("getFood" + "," + getItemFood[i] + System.getProperty("line.separator"));
+                restr.append("getPotion" + "," + getItemPotion[i] + System.getProperty("line.separator"));
+                restr.append("getLStaff" + "," + getItemLStaff[i] + System.getProperty("line.separator"));
+                restr.append("getWStaff" + "," + getItemWstaff[i] + System.getProperty("line.separator"));
                 int sum = getItemFood[i] + getItemPotion[i] + getItemLStaff[i] + getItemWstaff[i];
-                restr.append("sum:" + sum + System.getProperty("line.separator"));
+                restr.append("sum" + "," + sum + System.getProperty("line.separator"));
             }
             restr.append("reachCount" + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append(i + "f:" + reachCount[i] + System.getProperty("line.separator"));
+                restr.append(i + "f" + "," + reachCount[i] + System.getProperty("line.separator"));
             }
             restr.append("dataCount" + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append(i + "f:" + dataCount[i] + System.getProperty("line.separator"));
+                restr.append(i + "f" + "," + dataCount[i] + System.getProperty("line.separator"));
             }
 
             System.out.println(new String(restr));
 
             //
-            Logger.OutputFileLog(new String(fileName + ".txt"), new String(restr));
+            Logger.OutputFileLog(new String(fileName + "_result.txt"), new String(restr));
+            Logger.OutputFileLog(new String(fileName + "_result.csv"), new String(restr));
 
             System.exit(0);
         }
@@ -1060,6 +1082,8 @@ public class MyCanvas extends Canvas {
         double exp; // 経験値の割合，あとどのくらいでlvupするか
         double unknownAreaPer; // 未知エリアの割合
         
+        int beatsCount; // 現在のフロアで倒した敵の数
+        
         // 現在（降りる前）のフロアで使ったアイテム数
         int currentFlrUseFd;
         int currentFlrUsePt;
@@ -1071,7 +1095,7 @@ public class MyCanvas extends Canvas {
         int currentFlrGetAr;
         int currentFlrGetSt;
         
-        boolean updateFlag;
+        boolean updateFlag; // ファイルへ出力するか否か
         
         public LData() {
             fl = 0;
@@ -1088,6 +1112,7 @@ public class MyCanvas extends Canvas {
             fd = 0;
             exp = 0;
             unknownAreaPer = 0;
+            beatsCount = 0;
             
             currentFlrUseFd = 0;
             currentFlrUsePt = 0;
@@ -1115,6 +1140,8 @@ public class MyCanvas extends Canvas {
             fd = p.inventory.getInvItemNum(1);
             exp = (double)p.exp / p.lvupExp;
             
+            beatsCount = p.getBeatsEnemyCount(fnum);
+            
             updateFlag = true;
         }
         
@@ -1126,52 +1153,44 @@ public class MyCanvas extends Canvas {
             int provSt = p.inventory.getInvItemNum(4);
             // 直前のターンの個数と異なるとき
             if(provFd != fd) {
-                if(provFd == fd - 1){ // アイテム使用で1個減ってる
+                if(provFd == fd - 1) { // アイテム使用で1個減ってる
                     currentFlrUseFd++;
-                }
-                else if(provFd == fd + 1){ // アイテムゲットで1個増えている
+                } else if(provFd == fd + 1) { // アイテムゲットで1個増えている
                     currentFlrGetFd++;
-                }
-                else{
+                } else {
                     // デバッグモードでないとき
                     if(DEBUG_INIT != true) System.out.println("ログ収集系統fd，何かしらのエラー:" + fd + "->" + provFd);
                 }
                 fd = provFd;
             }
             if(provPt != pt) {
-                if(provPt == pt - 1){ // アイテム使用で1個減ってる
+                if(provPt == pt - 1) { // アイテム使用で1個減ってる
                     currentFlrUsePt++;
-                }
-                else if(provPt == pt + 1){ // アイテムゲットで1個増えている
+                } else if(provPt == pt + 1) { // アイテムゲットで1個増えている
                     currentFlrGetPt++;
-                }
-                else{
+                } else {
                     // デバッグモードでないとき
                     if(DEBUG_INIT != true) System.out.println("ログ収集系統pt，何かしらのエラー:" + pt + "->" + provPt);
                 }
                 pt = provPt;
             }
             if(provAr != ar) {
-                if(provAr == ar - 1){ // アイテム使用で1個減ってる
+                if(provAr == ar - 1) { // アイテム使用で1個減ってる
                     currentFlrUseAr++;
-                }
-                else if(provAr == ar + 3){ // アイテムゲットで"3個"増えている
+                } else if(provAr == ar + 3) { // アイテムゲットで"3個"増えている
                     currentFlrGetAr += 3;
-                }
-                else{
+                } else {
                     // デバッグモードでないとき
                     if(DEBUG_INIT != true) System.out.println("ログ収集系統ar，何かしらのエラー:" + ar + "->" + provAr);
                 }
                 ar = provAr;
             }
             if(provSt != st) {
-                if(provSt == st - 1){ // アイテム使用で1個減ってる
+                if(provSt == st - 1) { // アイテム使用で1個減ってる
                     currentFlrUseSt++;
-                }
-                else if(provSt == st + 1){ // アイテムゲットで1個増えている
+                } else if(provSt == st + 1) { // アイテムゲットで1個増えている
                     currentFlrGetSt++;
-                }
-                else{
+                } else {
                     // デバッグモードでないとき
                     if(DEBUG_INIT != true) System.out.println("ログ収集系統st，何かしらのエラー:" + st + "->" + provSt);
                 }
@@ -1210,7 +1229,8 @@ public class MyCanvas extends Canvas {
             String str = new String("fl,hp,lv,sp,pt,ar,st,game clear,next floor clear,"
                     + "stm,fd,exp,unknownAreaPer,"
                     + "currentFlrUseFd,currentFlrUsePt,currentFlrUseAr,currentFlrUseSt,"
-                    + "currentFlrGetFd,currentFlrGetPt,currentFlrGetAr,currentFlrGetSt"
+                    + "currentFlrGetFd,currentFlrGetPt,currentFlrGetAr,currentFlrGetSt,"
+                    + "beatsCount"
                     + System.getProperty("line.separator"));
 
             Logger.OutputFileLog(new String(fileName + ".csv"), str, true);
@@ -1222,6 +1242,7 @@ public class MyCanvas extends Canvas {
                     + "," + stm + "," + fd + "," + exp + "," + unknownAreaPer
                     + "," + currentFlrUseFd + "," + currentFlrUsePt + "," + currentFlrUseAr + "," + currentFlrUseSt
                     + "," + currentFlrGetFd + "," + currentFlrGetPt + "," + currentFlrGetAr + "," + currentFlrGetSt
+                    + "," + beatsCount
                     + System.getProperty("line.separator"));
 
             Logger.OutputFileLog(new String(fileName + ".csv"), new String(data), true);

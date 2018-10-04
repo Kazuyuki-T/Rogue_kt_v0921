@@ -29,6 +29,10 @@ public class Game extends JFrame
                 // フレーム出力あり，入力受付あり
                 if(drawLv != 0)
                 {                    
+                    int oplv = 0; // 0:表示なし，10:表示あり
+                    int gameMode = 2; // 0:人間，1:AI，2:実験用高速周回，3:一時停止
+                    Logger.setLoggerLevel(oplv);
+
                     //<editor-fold defaultstate="collapsed" desc="レイアウトの設定">
                     GridBagLayout layout;
                     GridBagConstraints gbc;
@@ -101,8 +105,6 @@ public class Game extends JFrame
                     int frameSizeX = 1024;
                     int frameSizeY = 900;
                     
-                    int oplv = 10; // 0:表示なし，10:表示あり
-                    int gameMode = 1; // 0:人間，1:AI，2:実験用高速周回
                     // フォルダ・ログ用の名前（日時）作成
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
                     String folderName = simpleDateFormat.format(new Date(System.currentTimeMillis()));

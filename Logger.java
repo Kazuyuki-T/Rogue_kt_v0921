@@ -22,11 +22,16 @@ public class Logger {
 
     public static JTextArea logText; // ログ中のテキスト
     public static JViewport view; // ログのスクロール部分？
-
+    private static int loggerLevel;
+    
     private Logger() {
 
     }
 
+    public static void setLoggerLevel(int lv) {
+        loggerLevel = lv;
+    }
+    
     public static void OutputFileLog(String name, String str) {
         try {
             File file = new File(name);
@@ -84,9 +89,22 @@ public class Logger {
 
     // ログの更新
     public static void appendLog(String str) {
-        logText.append(str + "\n"); // 末尾に str を追加
-        int textPosY = logText.getPreferredSize().height - 200; // 16:1行当たりのおおよその高さ
-        view.setViewPosition(new Point(0, textPosY >= 0 ? textPosY : 0));
+        if(loggerLevel == 0){
+            // 表示しない
+        } else {
+            logText.append(str + "\n"); // 末尾に str を追加
+            int textPosY = logText.getPreferredSize().height - 200; // 16:1行当たりのおおよその高さ
+            view.setViewPosition(new Point(0, textPosY >= 0 ? textPosY : 0));
+        }
+    }
+    
+    public static void appendLog(String str, boolean tf) {
+        // 正直ほとんど使ってない，jar用
+        if(tf == true) {
+            logText.append(str + "\n"); // 末尾に str を追加
+            int textPosY = logText.getPreferredSize().height - 200; // 16:1行当たりのおおよその高さ
+            view.setViewPosition(new Point(0, textPosY >= 0 ? textPosY : 0));
+        }
     }
 
     public static String getLog() {
