@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Inventory implements Cloneable
 {
-	static final int MAX_INV = 20;
+	private static final int MAX_INV = 20;
 
 	// 所持アイテムのリスト
 	ArrayList<ItemData> itemList = new ArrayList<ItemData>();
@@ -46,12 +46,18 @@ public class Inventory implements Cloneable
 	}
 
 	// コンストラクタ
-	Inventory()
+	public Inventory()
 	{
 		//
 		itemList.clear();
 	}
 
+        // インベントリの最大アイテム所持数を返す
+        public int getInvMaxItemNum()
+	{
+		return MAX_INV;
+	}
+        
 	// 所持アイテム数を返す
 	public int getInvItemNum()
 	{

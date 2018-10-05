@@ -24,6 +24,8 @@ public class Logger {
     public static JViewport view; // ログのスクロール部分？
     private static int loggerLevel;
     
+    // xml追加するかどうか
+    
     private Logger() {
 
     }
@@ -114,4 +116,6 @@ public class Logger {
     public static void initLog() {
         logText.setText("");
     }
+    
+    
 }

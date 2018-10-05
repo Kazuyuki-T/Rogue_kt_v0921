@@ -46,7 +46,7 @@ public class MyCanvas extends Canvas {
     public static final int TRYNUM = 1200;
 
     // 初期配置，false:ランダム配置，true:配置をいじる
-    public static final boolean DEBUG_INIT = false;
+    public static final boolean DEBUG_INIT = true;
 
     // 現在の階層
     public static int floorNumber = 0;
@@ -451,23 +451,21 @@ public class MyCanvas extends Canvas {
     
     // インベントリを開いた状態
     void inventoryScene() {
-        // 現在の所持アイテム個数
-        int itemnum = objectset.player.inventory.getInvItemNum();
-        // インベントリ：1ページ10個まで
-        int oneItemSize = 523 / 10;
-        // 現在のターン数
-        int crrentTurn = turnmanager.getTurn();
+        int maxItemNum = objectset.player.inventory.getInvMaxItemNum(); // 所持できる最大のアイテム数
+        int currentItemNum = objectset.player.inventory.getInvItemNum(); // 現在の所持アイテム個数
+        int oneItemHeight = (frameSizeY - (frameSizeY / maxItemNum)) / maxItemNum; // そのままのフレームサイズでは，はみ出る
+        int crrentTurn = turnmanager.getTurn(); // 現在のターン数
 
         // 所持アイテム数が1個以上あるとき，
         // ターンの経過管理を行う
-        if (itemnum > 0) {
+        if (currentItemNum > 0) {
             // TurnManagerを用いてターン管理を行う
             // インベントリ画面とゲーム画面では引数が異なる
             // アイテムの使用，投擲，配置によるターン経過を管理する
             turnmanager.turnCount(objectset, keyinput, selectItem, background);
 
             // 所持アイテム数の更新
-            itemnum = objectset.player.inventory.getInvItemNum();
+            currentItemNum = objectset.player.inventory.getInvItemNum();
         }
 
         // マップ描画(バッファをクリア)
@@ -485,51 +483,57 @@ public class MyCanvas extends Canvas {
 
         // インベントリのbg表示
         gBuf.setColor(Color.white);
-        gBuf.fillRect(frameSizeX / 2, 0, frameSizeX / 2, frameSizeY);
+        gBuf.fillRect(frameSizeX * 2 / 3, 0, frameSizeX / 3, frameSizeY);
 
         // frameSizeY 523がちょうど？
         //gBuf.setColor(Color.red);
         //gBuf.fillRect(frameSizeX/2, 0, frameSizeX/2, 1);
         //System.out.println(MAPCHIP_MAGY / 2 + SCREENSIZE_Y);
+        
         // インベントリの中身の表示
-        for (int i = 0; i < itemnum; i++) {
-            //System.out.println(objectset.player.inventory.getInvItemNum());
-            if (i == selectItem) {
-                gBuf.setColor(Color.ORANGE);
-                gBuf.fillRect(frameSizeX / 2, i * oneItemSize, frameSizeX / 2, oneItemSize - 1);
-            } else {
-                gBuf.setColor(Color.LIGHT_GRAY);
-                gBuf.fillRect(frameSizeX / 2, i * oneItemSize, frameSizeX / 2, oneItemSize - 1);
-            }
+        for (int i = 0; i < maxItemNum; i++) {
+            // 所持しているアイテム欄
+            if(i < currentItemNum){
+                // 欄の表示，未選択：グレー、選択中：オレンジ
+                if (i == selectItem) {
+                    gBuf.setColor(Color.ORANGE);
+                    gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
+                } else {
+                    gBuf.setColor(Color.gray);
+                    gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
+                }
 
-            String iName = objectset.player.inventory.getInvItemName(i);
-            int iUCount = objectset.player.inventory.getInvItemUsageCount(i);
-            gBuf.setColor(Color.red);
-            gBuf.setFont(new Font("Alial", Font.BOLD, 20));
-            gBuf.drawString(iName + " (" + iUCount + ")", frameSizeX / 2 + 10, i * oneItemSize + oneItemSize / 2);
+                // 該当アイテムの表示
+                String iName = objectset.player.inventory.getInvItemName(i);
+                int iUCount = objectset.player.inventory.getInvItemUsageCount(i);
+                gBuf.setColor(Color.white);
+                gBuf.setFont(new Font("Meiryo", Font.PLAIN, 15));
+                gBuf.drawString(iName + " (" + iUCount + ")", frameSizeX * 2 / 3 + 10, i * oneItemHeight + oneItemHeight / 2);
+            }
+            // 所持していないアイテム欄
+            else{
+                gBuf.setColor(Color.gray);
+                gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
+            }
         }
 
         // 表示されたインベントリ内の移動
-        if (keyinput.checkDownShotKey() == SHOT_DOWN && selectItem < itemnum - 1) {
-            selectItem++;
+        if (keyinput.checkDownShotKey() == SHOT_DOWN) {
+            if(selectItem < currentItemNum - 1) selectItem++;
+            else selectItem = 0;
         }
-        if (keyinput.checkUpShotKey() == SHOT_DOWN && selectItem > 0) {
-            selectItem--;
+        if (keyinput.checkUpShotKey() == SHOT_DOWN) {
+            if(selectItem > 0) selectItem--;
+            else selectItem = currentItemNum - 1;
         }
-        /*
-		if (keyinput.checkLeftShotKey() == SHOT_DOWN && selectItem > 10)
-		{
-			selectItem-=10;
-		}
-		if (keyinput.checkRightShotKey() == SHOT_DOWN && selectItem <= 10 && itemnum > 10)
-		{
-			selectItem+=10;
-			if(selectItem > itemnum)
-			{
-				selectItem = itemnum;
-			}
-		}
-         */
+        if (keyinput.checkLeftShotKey() == SHOT_DOWN) {
+            selectItem-=5;
+            if(selectItem < 0) selectItem = 0;
+        }
+	if (keyinput.checkRightShotKey() == SHOT_DOWN) {
+            selectItem+=5;
+            if(selectItem >= currentItemNum - 1) selectItem = currentItemNum - 1;
+	}
 
         // eが押された，アイテムの使用・投擲によりターンが進む
         if (keyinput.checkEShotKey() == SHOT_DOWN || crrentTurn != turnmanager.getTurn()) {
@@ -772,6 +776,25 @@ public class MyCanvas extends Canvas {
                         objectset.player.satiety = objectset.player.maxSatiety;
                         objectset.player.inventory.addItem(4); // wst追加
                         objectset.player.inventory.addItem(4);
+                        objectset.player.inventory.addItem(3);
+                        objectset.player.inventory.addItem(2);
+                        objectset.player.inventory.addItem(1);
+                        objectset.player.inventory.addItem(4);
+                        objectset.player.inventory.addItem(3);
+                        objectset.player.inventory.addItem(2);
+                        objectset.player.inventory.addItem(1);
+                        objectset.player.inventory.addItem(4);
+                        objectset.player.inventory.addItem(3);
+                        objectset.player.inventory.addItem(2);
+                        objectset.player.inventory.addItem(1);
+                        objectset.player.inventory.addItem(4);
+                        objectset.player.inventory.addItem(3);
+                        objectset.player.inventory.addItem(2);
+                        objectset.player.inventory.addItem(1);
+                        objectset.player.inventory.addItem(4);
+                        objectset.player.inventory.addItem(3);
+                        //objectset.player.inventory.addItem(2);
+                        
                         //objectset.player.inventory.addItem(4);
                         //objectset.player.inventory.addItem(4);
                     //}
