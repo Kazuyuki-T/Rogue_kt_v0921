@@ -39,9 +39,9 @@ public class MyCanvas extends Canvas
     private static final boolean DATA_COLLECTED = false; // true:データ収集,false:通常の実験
     private static final int BOUND_REACHCOUNT = 100; // 各階層の最低到達回数
 
-    public static final int TRYNUM = 1200; // 実行回数
+    public static final int TRYNUM = 200; // 実行回数
 
-    public static final boolean DEBUG_INIT = true; // 初期配置，true:配置をいじる，false:ランダム配置
+    public static final boolean DEBUG_INIT = false; // 初期配置，true:配置をいじる，false:ランダム配置
 
     private static final int initFlr = 0; // 初期化時のフロア階層，開始フロアを変更する際に使用
     public static int floorNumber;  // 現在の階層
@@ -89,6 +89,8 @@ public class MyCanvas extends Canvas
     // マップチップ1枚のサイズ
     public static final int MAPCHIP_X = 32;
     public static final int MAPCHIP_Y = 32;
+    
+    public static final int TOPFLOOR = 4; // ダンジョンの最下層，この数字の階に到達したらクリア
 
     public static int useItemPotion = 0;
     public static int useItemFood = 0;
@@ -101,9 +103,6 @@ public class MyCanvas extends Canvas
     public static int[] getItemWstaff;
 
     public static int[] invItem;
-
-    
-    public static final int TOPFLOOR = 4; // ダンジョンの最下層，この数字の階に到達したらクリア
 
     private int[] loseFloor; // 0:死亡した階数，1:餓死の回数
 
@@ -156,7 +155,7 @@ public class MyCanvas extends Canvas
         frameSizeX = x;
         frameSizeY = y;
 
-        floorNumber = 0;
+        floorNumber = initFlr;
 
         selectItem = -1; // 初期は未選択状態
 
@@ -223,10 +222,9 @@ public class MyCanvas extends Canvas
 
         resultFlag = false;
 
-        floorNumber = 0;
+        floorNumber = initFlr;
 
         // submap-update
-        //Game.canvm.init(this, 10);
         startDrawmapFlag = false;
 
         for (int i = 0; i < ld.length; i++) {
@@ -296,11 +294,11 @@ public class MyCanvas extends Canvas
                 try {
                     // ループのウェイト管理
                     switch(GAMEMODE) {
-                        case 0: Thread.sleep(10); break;
-                        case 1: Thread.sleep(500); break;
-                        case 2: Thread.sleep(0); break;
-                        case 3: Thread.sleep(10); break;
-                        default: Thread.sleep(10); break;
+                        case 0:  Thread.sleep(10);   break;
+                        case 1:  Thread.sleep(500);  break;
+                        case 2:  Thread.sleep(0);    break;
+                        case 3:  Thread.sleep(10);   break;
+                        default: Thread.sleep(10);   break;
                     }
                 } catch (InterruptedException e) {
                     // エラー時の処理
@@ -313,8 +311,8 @@ public class MyCanvas extends Canvas
     {
         // マップ描画
         if (startFlag == true) {
-            int biasX = 0; // x方向のバイアス，表示領域調整用
-            int biasY = 600; // y方向のバイアス，表示領域調整用
+            int biasX = 0;      // x方向のバイアス，表示領域調整用
+            int biasY = 600;    // y方向のバイアス，表示領域調整用
 
             // プレイヤーの持つマップと比較し，描画する
             for (int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++) {
@@ -356,8 +354,8 @@ public class MyCanvas extends Canvas
                         gBuf.fillRect(x * 8 + biasX, y * 8 + biasY, 8, 8);
                         continue;
                     }
-                    if (false) // ルールベース時の目標点を表示 
-                    {
+                    // ルールベース時の目標点を表示 
+                    if (false) {
                         Point tg = rbp.getTarget();
                         if (tg.x == x && tg.y == y) {
                             gBuf.setColor(Color.yellow);
@@ -375,8 +373,6 @@ public class MyCanvas extends Canvas
             }
         }
     }
-
-
 
     // 結果出力画面の処理
     void resultScene() {
@@ -418,7 +414,7 @@ public class MyCanvas extends Canvas
         }
         
         if(selectItem == -1) selectItem = 0; // インベントリ画面を開くたびに0選択
-            
+        
         int crrentTurn = turnmanager.getTurn(); // 現在のターン数
 
         // 所持アイテム数が1個以上あるとき，
@@ -591,9 +587,7 @@ public class MyCanvas extends Canvas
         else {
             // ゲーム開始直後の場合，オブジェクトを設置する
             if (startFlag == false) {
-                if (floorNumber == 0) {
-                    System.out.println("num:" + gameCount);
-                }
+                if (floorNumber == 0) System.out.println("num:" + gameCount);
 
                 // フロア数が1より大きいとき
                 if (floorNumber >= 1) {
@@ -602,7 +596,8 @@ public class MyCanvas extends Canvas
                 }
 
                 // 階層が1より大きいとき，現在のプレイヤ情報を格納
-                if (floorNumber >= 1) {
+                // かつ，初期化階層と異なるとき
+                if (floorNumber >= 1 && floorNumber != initFlr) {
                     ld[floorNumber - 1].setLData(floorNumber - 1, objectset.player);
                     
                     // 獲得アイテム数のために
@@ -753,11 +748,9 @@ public class MyCanvas extends Canvas
                     // ゲーム回数，階層数，プレイヤーの各アイテム数
                 }
             } else {
-                // ログのデータ収集における情報更新，毎ターンチェック
-                ld[floorNumber].setLData_everyTurn(floorNumber, objectset.player, objectset.getpmap());
-
-
                 info.stairpos = (rbp.getStairRoomID() != -1) ? true : false; // stairRoomID != -1 -> 階段発見済み
+                ld[floorNumber].setLData_everyTurn(floorNumber, objectset.player, objectset.getpmap(), info.stairpos); // ログのデータ収集における情報更新，毎ターンチェック
+                
 
                 // TurnManagerを用いてターン管理を行う
                 // 移動・攻撃によるターン経過を管理する
@@ -839,8 +832,8 @@ public class MyCanvas extends Canvas
         if (histCount != gameCount) {
             // ログに追加がここ？初期化のタイミングとの兼ね合い
 
-            // logの初期化
-            Logger.initLog();
+            
+            Logger.initLog(); // logの初期化
 
             histCount = gameCount;
         }
@@ -893,7 +886,6 @@ public class MyCanvas extends Canvas
 
             System.exit(0);
         }
-        //*/
 
         // 各階層への到達数が上限以上 -> 終了
         // かつ，ゲームが一区切りついたとき
@@ -1070,7 +1062,7 @@ public class MyCanvas extends Canvas
         int fd; // 食料数
         double exp; // 経験値の割合，あとどのくらいでlvupするか
         double unknownAreaPer; // 未知エリアの割合
-        
+        boolean stairflag; // 階段発見の有無
         int beatsCount; // 現在のフロアで倒した敵の数
         
         // 現在（降りる前）のフロアで使ったアイテム数
@@ -1101,6 +1093,7 @@ public class MyCanvas extends Canvas
             fd = 0;
             exp = 0;
             unknownAreaPer = 0;
+            stairflag = false;
             beatsCount = 0;
             
             currentFlrUseFd = 0;
@@ -1128,13 +1121,12 @@ public class MyCanvas extends Canvas
             stm = p.satiety;
             fd = p.inventory.getInvItemNum(1);
             exp = (double)p.exp / p.lvupExp;
-            
             beatsCount = p.getBeatsEnemyCount(fnum);
             
             updateFlag = true;
         }
         
-        public void setLData_everyTurn(int fnum, Player p, boolean[][] pmap) {
+        public void setLData_everyTurn(int fnum, Player p, boolean[][] pmap, boolean stflag) {
             // アイテム数の変化や未知領域の割合など毎ターン更新する（必要ないかも）
             int provFd = p.inventory.getInvItemNum(1); // 現在の食料数
             int provPt = p.inventory.getInvItemNum(2);
@@ -1196,6 +1188,8 @@ public class MyCanvas extends Canvas
                 }
             }
             unknownAreaPer = (count * 100.0) / (double) (MAPGRIDSIZE_Y * MAPGRIDSIZE_X);
+            
+            stairflag = stflag;
         }
 
         public void setNextFlabel(boolean tf) {
@@ -1219,7 +1213,7 @@ public class MyCanvas extends Canvas
                     + "stm,fd,exp,unknownAreaPer,"
                     + "currentFlrUseFd,currentFlrUsePt,currentFlrUseAr,currentFlrUseSt,"
                     + "currentFlrGetFd,currentFlrGetPt,currentFlrGetAr,currentFlrGetSt,"
-                    + "beatsCount"
+                    + "beatsCount,stairFlag"
                     + System.getProperty("line.separator"));
 
             Logger.OutputFileLog(new String(fileName + ".csv"), str, true);
@@ -1231,7 +1225,7 @@ public class MyCanvas extends Canvas
                     + "," + stm + "," + fd + "," + exp + "," + unknownAreaPer
                     + "," + currentFlrUseFd + "," + currentFlrUsePt + "," + currentFlrUseAr + "," + currentFlrUseSt
                     + "," + currentFlrGetFd + "," + currentFlrGetPt + "," + currentFlrGetAr + "," + currentFlrGetSt
-                    + "," + beatsCount
+                    + "," + beatsCount + "," + ((stairflag == true) ? 1 : -1)
                     + System.getProperty("line.separator"));
 
             Logger.OutputFileLog(new String(fileName + ".csv"), new String(data), true);
