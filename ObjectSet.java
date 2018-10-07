@@ -251,7 +251,7 @@ public class ObjectSet
 	// 描画処理。すべてのゲームオブジェクトを描画する。
 	// 描画順序が需要
 	// ユニットは上に来るよう，後に描画
-	public void drawAll(Graphics g)
+	public void drawAllobject(Graphics g)
 	{
 		doGameObjects(g, stair); // 階段
 		doGameObjects(g, item); // アイテム

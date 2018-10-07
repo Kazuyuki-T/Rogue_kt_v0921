@@ -1,4 +1,3 @@
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
@@ -9,8 +8,8 @@ import java.io.BufferedWriter;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class MyCanvas extends Canvas {
-
+public class MyCanvas extends Canvas
+{
     private ObjectSet objectset;
     private KeyInput keyinput;
     private Random random;
@@ -23,18 +22,16 @@ public class MyCanvas extends Canvas {
     private Image imgBuf;
     private Graphics gBuf;
     private boolean gameover;
-    private int counter;
 
-    // 選択部分(インベントリのハイライト)
-    private int selectItem;
+    private int selectItem; // インベントリの選択部分(インベントリのハイライト)
 
     // ルールベースプレイヤー
     private RuleBasePlayer rbp;
     private RuleBasePlayer_bu rbp_bu;
 
-    private int deathCount = 0;
-    private int clearCount = 0;
-    private int gameCounter = 0;
+    private int loseCount = 0; // 敗北回数
+    private int winCount = 0; // 勝利回数
+    private int gameCount = 0; // ゲーム回数
 
     private long start; // 処理開始前の時間を保持する
     private long end; // 実行時間を保持する
@@ -42,31 +39,24 @@ public class MyCanvas extends Canvas {
     private static final boolean DATA_COLLECTED = false; // true:データ収集,false:通常の実験
     private static final int BOUND_REACHCOUNT = 100; // 各階層の最低到達回数
 
-    // 実行回数
-    public static final int TRYNUM = 1200;
+    public static final int TRYNUM = 1200; // 実行回数
 
-    // 初期配置，false:ランダム配置，true:配置をいじる
-    public static final boolean DEBUG_INIT = true;
+    public static final boolean DEBUG_INIT = true; // 初期配置，true:配置をいじる，false:ランダム配置
 
-    // 現在の階層
-    public static int floorNumber = 0;
+    private static final int initFlr = 0; // 初期化時のフロア階層，開始フロアを変更する際に使用
+    public static int floorNumber;  // 現在の階層
 
     // フレームのサイズ
     private int frameSizeX;
     private int frameSizeY;
 
-    // 初回判定
-    static boolean startFlag;
+    static boolean startFlag; // 初回判定
 
-    // マップの表示開始フラグ
-    private boolean startDrawmapFlag;
+    private boolean startDrawmapFlag; // マップの表示開始フラグ
 
-    // リザルト表示判定
-    private boolean resultFlag;
+    private boolean resultFlag; // リザルト表示判定
 
-    // シーン管理変数
-    // 0:タイトル画面, 1:ゲームのメイン画面
-    private int scene;
+    private int scene; // シーン管理変数，0:タイトル画面, 1:ゲームのメイン画面
 
     public static final int SCENE_TITLE = 0;
     public static final int SCENE_GAMEMAIN = 1;
@@ -74,12 +64,10 @@ public class MyCanvas extends Canvas {
     public static final int SCENE_INV = 3;
     public static final int SCENE_PAUSE = 4;
 
-    // 押されている
-    public static final int SHOT_PRESSED = 1;
-    // 今押されたばかり
-    public static final int SHOT_DOWN = 2;
-    int shotSPkey_state;
-
+    int shotSPkey_state; // スペースキーの状態
+    public static final int SHOT_PRESSED = 1; // 押されている
+    public static final int SHOT_DOWN = 2; // 今押されたばかり
+    
     // ダンジョンのマップサイズ(グリッド)
     public static final int MAPGRIDSIZE_X = 50;
     public static final int MAPGRIDSIZE_Y = 30;
@@ -114,12 +102,10 @@ public class MyCanvas extends Canvas {
 
     public static int[] invItem;
 
-    // ダンジョンの最下層
-    // この数字の階に到達したらクリア
-    public static final int TOPFLOOR = 4;
+    
+    public static final int TOPFLOOR = 4; // ダンジョンの最下層，この数字の階に到達したらクリア
 
-    // 0:死亡した階数，1:餓死の回数
-    private int[] deathFloor;
+    private int[] loseFloor; // 0:死亡した階数，1:餓死の回数
 
     private int[] lvFloor;
     private int[] lvFloorNum;
@@ -132,9 +118,7 @@ public class MyCanvas extends Canvas {
 
     private Info info;
 
-    // 10未満：表示なし
-    // 10以上：表示あり
-    private int drawlevel;
+    private int drawlevel; // 10未満：表示なし，10以上：表示あり
 
     private LData[] ld; // 1->2, 2->3, 3->4における状況
 
@@ -146,15 +130,17 @@ public class MyCanvas extends Canvas {
 
     public String fileName;
 
-    private static int GAMEMODE;
+    private static int GAMEMODE; // 0:人間,1:AIプレイヤ,2:高速周回,3:一時停止
     
-    public RuleBasePlayer getrbp() {
+    public RuleBasePlayer getrbp()
+    {
         return rbp;
     }
 
     // コンストラクタ
-    public MyCanvas(int x, int y, int lv, int gmode, String fn) {
-        GAMEMODE = gmode; // 0:人間,1:AIプレイヤ,2:高速周回,3:一時停止
+    public MyCanvas(int x, int y, int lv, int gmode, String fn)
+    {
+        GAMEMODE = gmode;
         fileName = fn;
         
         random = new Random();		// 乱数
@@ -172,10 +158,10 @@ public class MyCanvas extends Canvas {
 
         floorNumber = 0;
 
-        selectItem = 0;
+        selectItem = -1; // 初期は未選択状態
 
         // 初期化
-        deathFloor = new int[TOPFLOOR];
+        loseFloor = new int[TOPFLOOR];
         gasif = new int[TOPFLOOR];
         lvFloor = new int[TOPFLOOR];
         lvFloorNum = new int[TOPFLOOR];
@@ -184,7 +170,7 @@ public class MyCanvas extends Canvas {
         getItemLStaff = new int[TOPFLOOR];
         getItemWstaff = new int[TOPFLOOR];
         for (int i = 0; i < TOPFLOOR; i++) {
-            deathFloor[i] = 0;
+            loseFloor[i] = 0;
             gasif[i] = 0;
             lvFloor[i] = 0;
             lvFloorNum[i] = 0;
@@ -221,16 +207,15 @@ public class MyCanvas extends Canvas {
     }
 
     // 初期化
-    public void init() {
+    public void init()
+    {
         objectset = new ObjectSet(background);
         turnmanager = new TurnManager(background, MAPGRIDSIZE_X, MAPGRIDSIZE_Y);
 
         rbp = new RuleBasePlayer();
         rbp_bu = new RuleBasePlayer_bu();
 
-        //シーンはタイトル画面
-        //scene = SCENE_TITLE;
-        scene = SCENE_GAMEMAIN;
+        scene = SCENE_GAMEMAIN; // 初期化直後の場面
 
         gameover = false;
 
@@ -239,8 +224,6 @@ public class MyCanvas extends Canvas {
         resultFlag = false;
 
         floorNumber = 0;
-
-        counter = 0;
 
         // submap-update
         //Game.canvm.init(this, 10);
@@ -255,67 +238,63 @@ public class MyCanvas extends Canvas {
     }
 
     // 描画
-    public void paint(Graphics g) {
+    public void paint(Graphics g)
+    {
         // ちらつき防止 -> オフスクリーンバッファ使用
         // オフスクリーンバッファの内容を自分にコピー
         g.drawImage(imgBuf, 0, 0, this);
     }
 
-    public void gBufClear(Graphics g) {
+    // バッファのクリア
+    public void gBufClear(Graphics g)
+    {
         g.setColor(Color.black);
         g.fillRect(0, 0, frameSizeX, frameSizeY);
     }
+    
+    // オーバーライド
+    // クリア防止のため
+    public void update(Graphics g)
+    {
+        paint(g);
+    }
 
-    public void run() {
+    public void run()
+    {
         //オフスクリーンバッファ作成
         imgBuf = createImage(frameSizeX, frameSizeY);
         gBuf = imgBuf.getGraphics();
 
-        // counterにより経過管理
-        for (counter = 0;; counter++) {
-            shotSPkey_state = keyinput.checkSpaceShotKey();
+        // 経過管理
+        while (true) {
+            shotSPkey_state = keyinput.checkSpaceShotKey(); // スペースキーの状態を管理
 
-            // バッファをクリア
-            gBufClear(gBuf);
+            gBufClear(gBuf); // バッファをクリア
 
             //シーン遷移用の変数で分岐
             switch (scene) {
-                //タイトル画面
-                case 0:
+                case 0: //タイトル画面
                     //titleScene();
                     break;
-
-                //ゲームのメイン画面
-                case 1:
+                case 1: //ゲームのメイン画面
                     gameScene();
                     break;
-
-                // リザルト表示
-                case 2:
+                case 2: // リザルト表示
                     resultScene();
                     break;
-
-                // ゲーム中インベントリを開いている画面
-                case 3:
+                case 3: // ゲーム中インベントリを開いている画面
                     inventoryScene();
                     break;
-                    
-                case 4:
+                case 4: // 一時停止
                     pauseScene();
                     break;
             }
-
-            if(drawlevel >= 10) drawMap(); // マップの描画
 
             repaint(); // 再描画
 
             if (drawlevel >= 10) {
                 try {
-//                    if(GAMEMODE == 0)       Thread.sleep(10); // ループのウェイト
-//                    else if(GAMEMODE == 1)  Thread.sleep(500);
-//                    else if(GAMEMODE == 2)  Thread.sleep(0);
-//                    else if(GAMEMODE == 3)  Thread.sleep(10);
-                    
+                    // ループのウェイト管理
                     switch(GAMEMODE) {
                         case 0: Thread.sleep(10); break;
                         case 1: Thread.sleep(500); break;
@@ -324,12 +303,14 @@ public class MyCanvas extends Canvas {
                         default: Thread.sleep(10); break;
                     }
                 } catch (InterruptedException e) {
+                    // エラー時の処理
                 }
             }
         }
     }
 
-    public void drawMap() {
+    public void drawMap()
+    {
         // マップ描画
         if (startFlag == true) {
             int biasX = 0; // x方向のバイアス，表示領域調整用
@@ -395,11 +376,7 @@ public class MyCanvas extends Canvas {
         }
     }
 
-    // オーバーライド
-    // クリア防止のため
-    public void update(Graphics g) {
-        paint(g);
-    }
+
 
     // 結果出力画面の処理
     void resultScene() {
@@ -422,38 +399,26 @@ public class MyCanvas extends Canvas {
     }
 
     // 一時停止画面の処理
-    void pauseScene() {
-        if (drawlevel >= 10) {
-            // 描画タイミングをできるだけ近づける
-            // マップ描画(バッファをクリア)
-            // プレイヤーの座標
-            background.drawGameBG(gBuf, objectset.player);
-            // マップに対してグリッド線の表示
-            background.drawGridBG(gBuf);
-            // ゲームオブジェクトの一括描画処理
-            objectset.drawAll(gBuf);
-            // ステータスバー描画
-            drawStatusBar(gBuf, objectset.player);
-            if (objectset.isGameover()) {
-                // ゲームオーバー文字を表示
-                title.drawGameover(gBuf);
-            } else if (floorNumber == TOPFLOOR) {
-                // ゲームクリア文字表示
-                title.drawClear(gBuf);
-            }
-        }
-
+    void pauseScene()
+    {
+        // キャンバス内すべての描画
+        if (drawlevel >= 10) drawAll();
         // 一時停止解除
-        if (keyinput.checkAShotKey() == SHOT_PRESSED) {
-            scene = SCENE_GAMEMAIN;
-        }
+        if (keyinput.checkAShotKey() == SHOT_PRESSED) scene = SCENE_GAMEMAIN;
     }
     
     // インベントリを開いた状態
-    void inventoryScene() {
-        int maxItemNum = objectset.player.inventory.getInvMaxItemNum(); // 所持できる最大のアイテム数
+    void inventoryScene()
+    {
         int currentItemNum = objectset.player.inventory.getInvItemNum(); // 現在の所持アイテム個数
-        int oneItemHeight = (frameSizeY - (frameSizeY / maxItemNum)) / maxItemNum; // そのままのフレームサイズでは，はみ出る
+        // そもそもアイテム持ってないとき，
+        if(currentItemNum == 0) {
+            scene = SCENE_GAMEMAIN;
+            return;
+        }
+        
+        if(selectItem == -1) selectItem = 0; // インベントリ画面を開くたびに0選択
+            
         int crrentTurn = turnmanager.getTurn(); // 現在のターン数
 
         // 所持アイテム数が1個以上あるとき，
@@ -468,55 +433,9 @@ public class MyCanvas extends Canvas {
             currentItemNum = objectset.player.inventory.getInvItemNum();
         }
 
-        // マップ描画(バッファをクリア)
-        // プレイヤーの座標
-        background.drawGameBG(gBuf, objectset.player);
-
-        // マップに対してグリッド線の表示
-        background.drawGridBG(gBuf);
-
-        // ゲームオブジェクトの一括描画処理
-        objectset.drawAll(gBuf);
-
-        // ステータスバー描画
-        drawStatusBar(gBuf, objectset.player);
-
-        // インベントリのbg表示
-        gBuf.setColor(Color.white);
-        gBuf.fillRect(frameSizeX * 2 / 3, 0, frameSizeX / 3, frameSizeY);
-
-        // frameSizeY 523がちょうど？
-        //gBuf.setColor(Color.red);
-        //gBuf.fillRect(frameSizeX/2, 0, frameSizeX/2, 1);
-        //System.out.println(MAPCHIP_MAGY / 2 + SCREENSIZE_Y);
+        // キャンバス内すべての描画
+        drawAll();
         
-        // インベントリの中身の表示
-        for (int i = 0; i < maxItemNum; i++) {
-            // 所持しているアイテム欄
-            if(i < currentItemNum){
-                // 欄の表示，未選択：グレー、選択中：オレンジ
-                if (i == selectItem) {
-                    gBuf.setColor(Color.ORANGE);
-                    gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
-                } else {
-                    gBuf.setColor(Color.gray);
-                    gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
-                }
-
-                // 該当アイテムの表示
-                String iName = objectset.player.inventory.getInvItemName(i);
-                int iUCount = objectset.player.inventory.getInvItemUsageCount(i);
-                gBuf.setColor(Color.white);
-                gBuf.setFont(new Font("Meiryo", Font.PLAIN, 15));
-                gBuf.drawString(iName + " (" + iUCount + ")", frameSizeX * 2 / 3 + 10, i * oneItemHeight + oneItemHeight / 2);
-            }
-            // 所持していないアイテム欄
-            else{
-                gBuf.setColor(Color.gray);
-                gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
-            }
-        }
-
         // 表示されたインベントリ内の移動
         if (keyinput.checkDownShotKey() == SHOT_DOWN) {
             if(selectItem < currentItemNum - 1) selectItem++;
@@ -537,140 +456,143 @@ public class MyCanvas extends Canvas {
 
         // eが押された，アイテムの使用・投擲によりターンが進む
         if (keyinput.checkEShotKey() == SHOT_DOWN || crrentTurn != turnmanager.getTurn()) {
-            // インベントリ画面が閉じるたびに選択アイテムは先頭に戻る
-            selectItem = 0;
+            // インベントリ画面が閉じるたびに未選択状態
+            selectItem = -1;
             // メイン画面に行く
             scene = SCENE_GAMEMAIN;
         }
     }
 
+    // ゲームオーバーの処理
+    public void gameOverProcess() {
+        // データをセット
+        ld_bt.setLData_bt(gameCount, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
+        // ラベルをセット
+        ld_bt.setLabel_bt(false);
+        // 出力
+        ld_bt.sysoutput();
+        // リストに追加
+        LDBT_List.add(ld_bt);
+        // 初期化
+        ld_bt = new LData_bt();
+
+        //System.out.println("set-label");
+        // 勝敗ラベルの設定
+        for (int i = 0; i < LDBT_List.size(); i++) {
+            dataCount[LDBT_List.get(i).fl]++;
+            LDBT_List.get(i).dcountnum = dataCount[LDBT_List.get(i).fl];
+            LDBT_List.get(i).rcountnum = reachCount[LDBT_List.get(i).fl];
+            LDBT_List.get(i).setLabel(false);
+            LDBT_List.get(i).sysoutput();
+            LDBT_List.get(i).csvFileOutput(new String("data"));
+        }
+
+        lvFloor[floorNumber] += objectset.player.level;
+        lvFloorNum[floorNumber]++;
+
+        // 敗北時の状態反映
+        ld[floorNumber].setLData(floorNumber, objectset.player);
+
+        for (int i = 0; i < ld.length; i++) {
+            if (i < floorNumber - 1) {
+                ld[i].setNextFlabel(true);
+            } else {
+                ld[i].setNextFlabel(false);
+            }
+
+            ld[i].setLabel(false);
+            ld[i].sysoutput();
+
+            if (ld[i].updateFlag == true) {
+                ld[i].csvFileOutput(new String("data"));
+            }
+        }
+
+        loseCount++;
+        loseFloor[floorNumber]++;
+        gameCount++;
+        sysoutputCurrentRate(); // ゲーム数，勝率のコンソール上への出力
+
+        init(); // 次のゲームに向けて初期化
+
+        if (shotSPkey_state == SHOT_DOWN) {
+            //メイン画面に行く
+            scene = SCENE_RESULT;
+        }
+    }
+    
+    // ゲームクリアの処理
+    public void gameClearProcess() {
+        // 直前の階層におけるフラグを更新
+        for (int i = 0; i < LDBT_List.size(); i++) {
+            if (LDBT_List.get(i).fl == floorNumber - 1) {
+                // フラグを更新
+                LDBT_List.get(i).setLabel_cf(true);
+            }
+        }
+
+        // 前前の階層におけるフラグを更新
+        for (int i = 0; i < LDBT_List.size(); i++) {
+            if (LDBT_List.get(i).fl == floorNumber - 2) {
+                // フラグを更新
+                LDBT_List.get(i).setLabel_nf(true);
+            }
+        }
+
+        //System.out.println("set-label");
+        // 勝敗ラベルの設定
+        for (int i = 0; i < LDBT_List.size(); i++) {
+            dataCount[LDBT_List.get(i).fl]++;
+            LDBT_List.get(i).dcountnum = dataCount[LDBT_List.get(i).fl];
+            LDBT_List.get(i).rcountnum = reachCount[LDBT_List.get(i).fl];
+            LDBT_List.get(i).setLabel(true);
+            LDBT_List.get(i).sysoutput();
+            LDBT_List.get(i).csvFileOutput(new String("data"));
+        }
+
+        lvFloor[floorNumber - 1] += objectset.player.level;
+        lvFloorNum[floorNumber - 1]++;
+
+        // クリア時の状態反映
+        ld[floorNumber - 1].setLData(floorNumber - 1, objectset.player);
+
+        //System.out.println("down the stairs");
+        for (int i = 0; i < ld.length; i++) {
+            if (i < floorNumber - 1) {
+                ld[i].setNextFlabel(true);
+            } else {
+                ld[i].setNextFlabel(false);
+            }
+
+            ld[i].setLabel(true);
+            ld[i].sysoutput();
+
+            if (ld[i].updateFlag == true) {
+                ld[i].csvFileOutput(new String("data"));
+            }
+        }
+
+        winCount++;
+        gameCount++;
+        sysoutputCurrentRate(); // コンソール上への出力
+
+        init(); // 初期化
+
+        if (shotSPkey_state == SHOT_DOWN) {
+            //メイン画面に行く
+            scene = SCENE_RESULT;
+        }
+    }
+    
     // ゲーム画面の処理
-    void gameScene() {
-        // ゲームオーバー判定
-        if (objectset.isGameover() == true) {
-            // データをセット
-            ld_bt.setLData_bt(gameCounter, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
-            // ラベルをセット
-            ld_bt.setLabel_bt(false);
-            // 出力
-            ld_bt.sysoutput();
-            // リストに追加
-            LDBT_List.add(ld_bt);
-            // 初期化
-            ld_bt = new LData_bt();
-
-            //System.out.println("set-label");
-            // 勝敗ラベルの設定
-            for (int i = 0; i < LDBT_List.size(); i++) {
-                dataCount[LDBT_List.get(i).fl]++;
-                LDBT_List.get(i).dcountnum = dataCount[LDBT_List.get(i).fl];
-                LDBT_List.get(i).rcountnum = reachCount[LDBT_List.get(i).fl];
-                LDBT_List.get(i).setLabel(false);
-                LDBT_List.get(i).sysoutput();
-                LDBT_List.get(i).csvFileOutput(new String("data"));
-            }
-
-            lvFloor[floorNumber] += objectset.player.level;
-            lvFloorNum[floorNumber]++;
-
-            // 敗北時の状態反映
-            ld[floorNumber].setLData(floorNumber, objectset.player);
-            
-            for (int i = 0; i < ld.length; i++) {
-                if (i < floorNumber - 1) {
-                    ld[i].setNextFlabel(true);
-                } else {
-                    ld[i].setNextFlabel(false);
-                }
-
-                ld[i].setLabel(false);
-                ld[i].sysoutput();
-
-                if (ld[i].updateFlag == true) {
-                    ld[i].csvFileOutput(new String("data"));
-                }
-            }
-
-//                        for(int fnum = 0; fnum < TOPFLOOR; fnum++)
-//                        {
-//                            System.out.println("f" + fnum + ":" + turnmanager.getTurn(fnum));
-//                        }
-//                        System.out.println("sum:" + turnmanager.getTurn());
-            deathCount++;
-            deathFloor[floorNumber]++;
-            gameCounter++;
-            System.out.println("win:" + clearCount + "/" + gameCounter);
-            init();
-
-            if (shotSPkey_state == SHOT_DOWN) {
-                //メイン画面に行く
-                scene = SCENE_RESULT;
-            }
-        } // ゲームクリア判定
-        else if (floorNumber == TOPFLOOR) {
-            // 直前の階層におけるフラグを更新
-            for (int i = 0; i < LDBT_List.size(); i++) {
-                if (LDBT_List.get(i).fl == floorNumber - 1) {
-                    // フラグを更新
-                    LDBT_List.get(i).setLabel_cf(true);
-                }
-            }
-
-            // 前前の階層におけるフラグを更新
-            for (int i = 0; i < LDBT_List.size(); i++) {
-                if (LDBT_List.get(i).fl == floorNumber - 2) {
-                    // フラグを更新
-                    LDBT_List.get(i).setLabel_nf(true);
-                }
-            }
-
-            //System.out.println("set-label");
-            // 勝敗ラベルの設定
-            for (int i = 0; i < LDBT_List.size(); i++) {
-                dataCount[LDBT_List.get(i).fl]++;
-                LDBT_List.get(i).dcountnum = dataCount[LDBT_List.get(i).fl];
-                LDBT_List.get(i).rcountnum = reachCount[LDBT_List.get(i).fl];
-                LDBT_List.get(i).setLabel(true);
-                LDBT_List.get(i).sysoutput();
-                LDBT_List.get(i).csvFileOutput(new String("data"));
-            }
-
-            lvFloor[floorNumber - 1] += objectset.player.level;
-            lvFloorNum[floorNumber - 1]++;
-
-            // クリア時の状態反映
-            ld[floorNumber - 1].setLData(floorNumber - 1, objectset.player);
-            
-            //System.out.println("down the stairs");
-            for (int i = 0; i < ld.length; i++) {
-                if (i < floorNumber - 1) {
-                    ld[i].setNextFlabel(true);
-                } else {
-                    ld[i].setNextFlabel(false);
-                }
-
-                ld[i].setLabel(true);
-                ld[i].sysoutput();
-
-                if (ld[i].updateFlag == true) {
-                    ld[i].csvFileOutput(new String("data"));
-                }
-            }
-
-            clearCount++;
-            gameCounter++;
-            System.out.println("win:" + clearCount + "/" + gameCounter);
-            init();
-
-            if (shotSPkey_state == SHOT_DOWN) {
-                //メイン画面に行く
-                scene = SCENE_RESULT;
-            }
-        } else {
+    public void gameScene() {
+        if (objectset.isGameover() == true) gameOverProcess();     // ゲームオーバー判定なら
+        else if (floorNumber == TOPFLOOR)   gameClearProcess();    // ゲームクリア判定なら
+        else {
             // ゲーム開始直後の場合，オブジェクトを設置する
             if (startFlag == false) {
                 if (floorNumber == 0) {
-                    System.out.println("num:" + gameCounter);
+                    System.out.println("num:" + gameCount);
                 }
 
                 // フロア数が1より大きいとき
@@ -754,7 +676,8 @@ public class MyCanvas extends Canvas {
 
                     startFlag = true;
 
-                    if(GAMEMODE == 2) Logger.appendLog(floorNumber + "F, win:" + clearCount + "/" + gameCounter, true);
+                    // 高速周回（jar用）の際に，ゲーム数及び勝率がわかりやすいように
+                    if(GAMEMODE == 2) Logger.appendLog(floorNumber + "F, " + gameCount + " / " + TRYNUM + " game (win:" + winCount + ", lose:" + loseCount + ")", true);
                     
                     // ログに現在の状態を出力，0F以外
                     // ゲーム回数，階層数，プレイヤーの各アイテム数
@@ -776,27 +699,24 @@ public class MyCanvas extends Canvas {
                         objectset.player.satiety = objectset.player.maxSatiety;
                         objectset.player.inventory.addItem(4); // wst追加
                         objectset.player.inventory.addItem(4);
-                        objectset.player.inventory.addItem(3);
-                        objectset.player.inventory.addItem(2);
-                        objectset.player.inventory.addItem(1);
-                        objectset.player.inventory.addItem(4);
-                        objectset.player.inventory.addItem(3);
-                        objectset.player.inventory.addItem(2);
-                        objectset.player.inventory.addItem(1);
-                        objectset.player.inventory.addItem(4);
-                        objectset.player.inventory.addItem(3);
-                        objectset.player.inventory.addItem(2);
-                        objectset.player.inventory.addItem(1);
-                        objectset.player.inventory.addItem(4);
-                        objectset.player.inventory.addItem(3);
-                        objectset.player.inventory.addItem(2);
-                        objectset.player.inventory.addItem(1);
-                        objectset.player.inventory.addItem(4);
-                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
                         //objectset.player.inventory.addItem(2);
-                        
-                        //objectset.player.inventory.addItem(4);
-                        //objectset.player.inventory.addItem(4);
                     //}
 
                     // オブジェクトの初期化
@@ -896,7 +816,7 @@ public class MyCanvas extends Canvas {
                 // 直前の行動が戦闘中 -> 現在の行動が戦闘以外
                 if (rbp.getBattleEnd() == true && floorNumber != TOPFLOOR) {
                     // データをセット
-                    ld_bt.setLData_bt(gameCounter, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
+                    ld_bt.setLData_bt(gameCount, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
                     // ラベルをセット
                     ld_bt.setLabel_bt(true);
                     // 出力
@@ -910,38 +830,23 @@ public class MyCanvas extends Canvas {
         }
 
         if (drawlevel >= 10) {
-            // 描画タイミングをできるだけ近づける
-            // マップ描画(バッファをクリア)
-            // プレイヤーの座標
-            background.drawGameBG(gBuf, objectset.player);
-            // マップに対してグリッド線の表示
-            background.drawGridBG(gBuf);
-            // ゲームオブジェクトの一括描画処理
-            objectset.drawAll(gBuf);
-            // ステータスバー描画
-            drawStatusBar(gBuf, objectset.player);
-            if (objectset.isGameover()) {
-                // ゲームオーバー文字を表示
-                title.drawGameover(gBuf);
-            } else if (floorNumber == TOPFLOOR) {
-                // ゲームクリア文字表示
-                title.drawClear(gBuf);
-            }
+            // キャンバス内すべての描画
+            drawAll();
         }
 
         ///*
         // 1ゲーム毎に終了時
-        if (histCount != gameCounter) {
+        if (histCount != gameCount) {
             // ログに追加がここ？初期化のタイミングとの兼ね合い
 
             // logの初期化
             Logger.initLog();
 
-            histCount = gameCounter;
+            histCount = gameCount;
         }
 
         // 既定のゲーム回数終了時
-        if (gameCounter == TRYNUM && DATA_COLLECTED == false) {
+        if (gameCount == TRYNUM && DATA_COLLECTED == false) {
             scene = SCENE_TITLE;
 
             // 結果をstrに
@@ -953,14 +858,14 @@ public class MyCanvas extends Canvas {
             // 計測終了
             end = System.currentTimeMillis();
             restr.append("time" + "," + ((double) (end - start) / 1000) + "," + "sec" + System.getProperty("line.separator"));
-            restr.append("clear" + "," + clearCount + System.getProperty("line.separator"));
-            restr.append("death" + "," + deathCount + System.getProperty("line.separator"));
+            restr.append("clear" + "," + winCount + System.getProperty("line.separator"));
+            restr.append("death" + "," + loseCount + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
                 if (i >= 1) {
-                    arriveNum -= deathFloor[i - 1];
+                    arriveNum -= loseFloor[i - 1];
                     arriveArr[i] = arriveNum;
                 }
-                restr.append("deathFloor" + i + "," + deathFloor[i] + "," + gasif[i] + System.getProperty("line.separator"));
+                restr.append("deathFloor" + i + "," + loseFloor[i] + "," + gasif[i] + System.getProperty("line.separator"));
             }
             restr.append("gasi" + "," + gasi + System.getProperty("line.separator"));
             restr.append("useFood" + "," + useItemFood + System.getProperty("line.separator"));
@@ -1000,18 +905,18 @@ public class MyCanvas extends Canvas {
             int arriveNum = TRYNUM;
             int[] arriveArr = new int[]{arriveNum, 0, 0, 0};
 
-            restr.append("試行回数" + "," + gameCounter + System.getProperty("line.separator"));
+            restr.append("試行回数" + "," + gameCount + System.getProperty("line.separator"));
             // 計測終了
             end = System.currentTimeMillis();
             restr.append("実験時間" + "," + ((double) (end - start) / 1000) + "," + "sec" + System.getProperty("line.separator"));
-            restr.append("clear" + "," + clearCount + System.getProperty("line.separator"));
-            restr.append("death" + "," + deathCount + System.getProperty("line.separator"));
+            restr.append("clear" + "," + winCount + System.getProperty("line.separator"));
+            restr.append("death" + "," + loseCount + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
                 if (i >= 1) {
-                    arriveNum -= deathFloor[i - 1];
+                    arriveNum -= loseFloor[i - 1];
                     arriveArr[i] = arriveNum;
                 }
-                restr.append("deathFloor" + i + "," + deathFloor[i] + "," + gasif[i] + System.getProperty("line.separator"));
+                restr.append("deathFloor" + i + "," + loseFloor[i] + "," + gasif[i] + System.getProperty("line.separator"));
             }
             restr.append("gasi" + "," + gasi + System.getProperty("line.separator"));
             restr.append("useFood" + "," + useItemFood + System.getProperty("line.separator"));
@@ -1049,6 +954,10 @@ public class MyCanvas extends Canvas {
         }
     }
 
+    public void sysoutputCurrentRate() {
+        System.out.println(gameCount + " / " + TRYNUM + " game (win:" + winCount + ", lose:" + loseCount + ")");
+    }
+    
     // 各階層への到達回数が一定数を超えているか
     public boolean isReachCount() {
         for (int flr = 0; flr < TOPFLOOR; flr++) {
@@ -1065,6 +974,63 @@ public class MyCanvas extends Canvas {
 
     public int getDrawLevel() {
         return drawlevel;
+    }
+    
+    // キャンバス内に必要なものをすべて描画
+    public void drawAll() {
+        // 描画タイミングをできるだけ近づける
+        background.drawGameBG(gBuf, objectset.player);  // マップ描画(バッファをクリア)，プレイヤーの座標
+        background.drawGridBG(gBuf);                    // マップに対してグリッド線の表示
+        objectset.drawAllobject(gBuf);                  // ゲームオブジェクトの一括描画処理
+        drawStatusBar(gBuf, objectset.player);          // ステータスバー描画
+        drawInventory();                                // インベントリの描画
+        drawMap();                                      // マップの描画
+        
+        if (objectset.isGameover() == true) title.drawGameover(gBuf);   // ゲームオーバー文字を表示
+        else if (floorNumber == TOPFLOOR)   title.drawClear(gBuf);      // ゲームクリア文字表示
+    }
+    
+    // インベントリの描画
+    public void drawInventory() {
+        int cItemNum = objectset.player.inventory.getInvItemNum(); // 現在の所持アイテム個数
+        int maxItemNum = Inventory.MAX_INV; // 所持できる最大のアイテム数
+        int oneItemHeight = (frameSizeY - (frameSizeY / maxItemNum)) / maxItemNum; // そのままのフレームサイズでは，はみ出る
+
+        // インベントリのbg表示
+        gBuf.setColor(Color.white);
+        gBuf.fillRect(frameSizeX * 2 / 3, 0, frameSizeX / 3, frameSizeY);
+
+        // frameSizeY 523がちょうど？
+        //gBuf.setColor(Color.red);
+        //gBuf.fillRect(frameSizeX/2, 0, frameSizeX/2, 1);
+        //System.out.println(MAPCHIP_MAGY / 2 + SCREENSIZE_Y);
+        
+        // インベントリの中身の表示
+        for (int i = 0; i < maxItemNum; i++) {
+            // 所持しているアイテム欄
+            if(i < cItemNum){
+                // 欄の表示，未選択：グレー、選択中：オレンジ
+                if (i == selectItem) {
+                    gBuf.setColor(Color.ORANGE);
+                    gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
+                } else {
+                    gBuf.setColor(Color.gray);
+                    gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
+                }
+
+                // 該当アイテムの表示
+                String iName = objectset.player.inventory.getInvItemName(i);
+                int iUCount = objectset.player.inventory.getInvItemUsageCount(i);
+                gBuf.setColor(Color.white);
+                gBuf.setFont(new Font("Meiryo", Font.PLAIN, 15));
+                gBuf.drawString(iName + " (" + iUCount + ")", frameSizeX * 2 / 3 + 10, i * oneItemHeight + oneItemHeight / 2);
+            }
+            // 所持していないアイテム欄
+            else{
+                gBuf.setColor(Color.gray);
+                gBuf.fillRect(frameSizeX * 2 / 3, i * oneItemHeight, frameSizeX / 3, oneItemHeight - 1);
+            }
+        }
     }
 
     // ステータスの描画

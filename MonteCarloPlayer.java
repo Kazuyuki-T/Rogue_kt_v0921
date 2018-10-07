@@ -54,8 +54,7 @@ public class MonteCarloPlayer implements Agent
 	// セットされたアクションの実行
 	public void playAction(Action act, Info info)
 	{
-		if(0 > act.dir || act.dir >= 10)
-		{
+		if(0 > act.dir || act.dir >= 10) {
 			System.out.println("dir-error:" + act.dir);
 		}
 

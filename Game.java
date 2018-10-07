@@ -27,20 +27,16 @@ public class Game extends JFrame
         public Game(int drawLv)
         {
                 // フレーム出力あり，入力受付あり
-                if(drawLv != 0)
-                {                    
-                    int gameMode = 0; // 0:人間，1:AI，2:実験用高速周回，3:AI１行動一時停止確認用
+                if(drawLv != 0) {
+                    int gameMode = 2; // 0:人間，1:AI，2:実験用高速周回，3:AI１行動一時停止確認用
                     int oplv = (gameMode == 2) ? 0 : 10; // 0:表示なし，10:表示あり
                     Logger.setLoggerLevel(oplv);
+                    
 
                     //<editor-fold defaultstate="collapsed" desc="レイアウトの設定">
-                    GridBagLayout layout;
-                    GridBagConstraints gbc;
-                    JPanel p;
-                    gbc = new GridBagConstraints();
-
-                    layout = new GridBagLayout();
-                    p = new JPanel();
+                    GridBagLayout layout = new GridBagLayout();
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    JPanel p = new JPanel();
                     p.setLayout(layout);
                     //</editor-fold>
 		
@@ -133,8 +129,7 @@ public class Game extends JFrame
 
                     
                     //<editor-fold defaultstate="collapsed" desc="Jフレームの作成">
-                    JFrame frame;
-                    frame = new JFrame();
+                    JFrame frame = new JFrame();
                 
                     frame.setSize(frameSizeX, frameSizeY); // ウィンドウのサイズ，実際のサイズはもう少し小さい
                     frame.setResizable(false); // サイズ変更不可
@@ -155,8 +150,9 @@ public class Game extends JFrame
                     mc.run(); // ゲームの開始
                 }
                 // フレーム出力なし，入力受付なし
-                else
-                {
+                else {
+                    // 未実装？
+                    
                     NoCanvas nc = new NoCanvas(0); // 初期化
                     
                     nc.init(); // 初期化
