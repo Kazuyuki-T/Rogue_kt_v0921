@@ -139,7 +139,7 @@ public class MyCanvas extends Canvas
     File fname;
     BufferedReader br = null;
     String line = "";
-    String csvFile = "src/mat/test2f.csv";
+    String csvFile = "src/mat/ar2fStartFormatData.csv";
     
     public RuleBasePlayer getrbp()
     {

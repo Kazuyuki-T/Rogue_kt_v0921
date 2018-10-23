@@ -146,7 +146,7 @@ public class Game extends JFrame
                     //</editor-fold>
                     
                     
-                    mc.init(); // ゲームデータの初期化
+                    boolean tf = mc.init(); // ゲームデータの初期化
                     mc.run(); // ゲームの開始
                 }
                 // フレーム出力なし，入力受付なし
