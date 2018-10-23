@@ -4,7 +4,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -41,8 +45,8 @@ public class MyCanvas extends Canvas
 
     public static final int TRYNUM = 200; // 実行回数
 
-    public static final boolean DEBUG_INIT = false; // 初期配置，true:配置をいじる，false:ランダム配置
-
+    public static final int DEBUG_INIT = 2; // 初期配置，0:ランダム配置, 1:配置をいじる，2:csv準拠
+    
     private static final int initFlr = 0; // 初期化時のフロア階層，開始フロアを変更する際に使用
     public static int floorNumber;  // 現在の階層
 
@@ -131,6 +135,12 @@ public class MyCanvas extends Canvas
 
     private static int GAMEMODE; // 0:人間,1:AIプレイヤ,2:高速周回,3:一時停止
     
+    // csv読み込みに使用
+    File fname;
+    BufferedReader br = null;
+    String line = "";
+    String csvFile = "src/mat/test2f.csv";
+    
     public RuleBasePlayer getrbp()
     {
         return rbp;
@@ -142,11 +152,11 @@ public class MyCanvas extends Canvas
         GAMEMODE = gmode;
         fileName = fn;
         
-        random = new Random();		// 乱数
+        random = new Random(); // 乱数
 
         keyinput = new KeyInput();
-        addKeyListener(keyinput);	// キーリスナ
-        setFocusable(true);			// フォーカス
+        addKeyListener(keyinput); // キーリスナ
+        setFocusable(true); // フォーカス
         title = new Title();
         background = new Background(x, y);
 
@@ -200,13 +210,24 @@ public class MyCanvas extends Canvas
             reachCount[flr] = 0;
             dataCount[flr] = 0;
         }
-
-        // 計測開始
-        start = System.currentTimeMillis();
+        
+        // 読み込むcsvファイルの準備
+        if(DEBUG_INIT == 2){
+            try {
+                fname = new File(csvFile);
+                br = new BufferedReader(new FileReader(fname));
+                line = br.readLine(); // 1行目のラベルを読み込んでおく
+            } catch (IOException e) {
+                System.out.println(e); // エラー吐き
+                System.out.println("constractar error");
+            }
+        }
+        
+        start = System.currentTimeMillis(); // 計測開始
     }
 
     // 初期化
-    public void init()
+    public boolean init()
     {
         objectset = new ObjectSet(background);
         turnmanager = new TurnManager(background, MAPGRIDSIZE_X, MAPGRIDSIZE_Y);
@@ -233,6 +254,47 @@ public class MyCanvas extends Canvas
 
         ld_bt = new LData_bt();
         LDBT_List.clear();
+        
+        // ここでプレイヤの開始状態を変更する，csvから1行ずつ
+        if(DEBUG_INIT == 2){
+            try {
+                line = br.readLine(); // 1行ずつ読み込み
+                // 最終行の処理が終了しているとき
+                if(line == null){
+                    br.close(); // 最後まで読み込んでからstreamをクローズ
+                    return false;
+                } 
+                
+                double[] ele = new double[10]; // flr,hp,lv,sp,pt,ar,st,unk,st,gc
+                String[] str = line.split(",", 0);
+                for(int i = 0; i < str.length -1 ; i++){
+                    ele[i] = Double.parseDouble(str[i]);
+                }
+                
+                floorNumber = (int)ele[0] + 1; // flr, 階段を下りた際に収集したデータならば，次の階層の開始状態にしたいため
+                objectset.player.hp = (int)ele[1]; // hp
+                objectset.player.setLevel((int)ele[2]); // lv
+                objectset.player.maxSatiety = (int)ele[3]; // 最大値
+                objectset.player.satiety = (int)ele[3]; // stm + food
+                for(int n = 0; n < (int)ele[4]; n++){
+                    objectset.player.inventory.addItem(2); // pt
+                }
+                int arUsagecount = objectset.player.inventory.setDetail(3).usageCount; // 矢の使用回数
+                for(int n = 0; n < (int)ele[5] / arUsagecount; n++){
+                    objectset.player.inventory.addItem(3); // ar
+                }
+                int remainder = (int)ele[5] % arUsagecount; // 余り
+                if(remainder != 0) objectset.player.inventory.addItem(3, remainder); // 使用回数調節
+                for(int n = 0; n < (int)ele[6]; n++){
+                    objectset.player.inventory.addItem(4); // st
+                }
+            } catch (IOException e) {
+                System.out.println(e); // エラー吐き
+                System.out.println("init error");
+            }
+        }
+        
+        return true;
     }
 
     // 描画
@@ -252,10 +314,7 @@ public class MyCanvas extends Canvas
     
     // オーバーライド
     // クリア防止のため
-    public void update(Graphics g)
-    {
-        paint(g);
-    }
+    public void update(Graphics g) { paint(g); }
 
     public void run()
     {
@@ -377,20 +436,31 @@ public class MyCanvas extends Canvas
     // 結果出力画面の処理
     void resultScene() {
         // マップ描画(バッファをクリア)
-        // プレイヤーの座標
-        background.drawGameBG(gBuf, objectset.player);
-        // マップに対してグリッド線の表示
-        background.drawGridBG(gBuf);
+        background.drawGameBG(gBuf, objectset.player); // プレイヤーの座標
+        background.drawGridBG(gBuf); // マップに対してグリッド線の表示
 
         if (resultFlag == false) {
-            Logger.appendLog("*-- result --*");
+            //Logger.appendLog("*-- result --*");
             resultFlag = true;
         }
 
-        //スペースキーが押された
-        if (shotSPkey_state == SHOT_DOWN) {
-            // ゲームの再初期化
-            init();
+        // 1ゲーム毎の処理
+        if (histCount != gameCount) {
+            // ログに追加がここ？初期化のタイミングとの兼ね合い
+            Logger.initLog(); // logの初期化，必須
+            histCount = gameCount;
+        }
+ 
+        if(DEBUG_INIT != 2) outputResultLog(); // ログ吐き，規定回数終了時やデータ収集DATACORRECTではここで終了
+        
+        if(GAMEMODE == 0){
+            // 人間操作で，スペースキーが押されたとき
+            if (shotSPkey_state == SHOT_DOWN) init(); // ゲームの再初期化
+        }
+        else{
+            // 人間操作以外でゲームが終了したとき
+            boolean tf = init(); // ゲームの初期化
+            if(tf == false) System.exit(0); // 初期化に失敗しているとき（csvファイル処理が終了したとき）
         }
     }
 
@@ -442,35 +512,28 @@ public class MyCanvas extends Canvas
             else selectItem = currentItemNum - 1;
         }
         if (keyinput.checkLeftShotKey() == SHOT_DOWN) {
-            selectItem-=5;
+            selectItem -= 5;
             if(selectItem < 0) selectItem = 0;
         }
 	if (keyinput.checkRightShotKey() == SHOT_DOWN) {
-            selectItem+=5;
+            selectItem += 5;
             if(selectItem >= currentItemNum - 1) selectItem = currentItemNum - 1;
 	}
 
         // eが押された，アイテムの使用・投擲によりターンが進む
         if (keyinput.checkEShotKey() == SHOT_DOWN || crrentTurn != turnmanager.getTurn()) {
-            // インベントリ画面が閉じるたびに未選択状態
-            selectItem = -1;
-            // メイン画面に行く
-            scene = SCENE_GAMEMAIN;
+            selectItem = -1; // インベントリ画面が閉じるたびに未選択状態
+            scene = SCENE_GAMEMAIN; // メイン画面に行く
         }
     }
 
     // ゲームオーバーの処理
     public void gameOverProcess() {
-        // データをセット
-        ld_bt.setLData_bt(gameCount, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap());
-        // ラベルをセット
-        ld_bt.setLabel_bt(false);
-        // 出力
-        ld_bt.sysoutput();
-        // リストに追加
-        LDBT_List.add(ld_bt);
-        // 初期化
-        ld_bt = new LData_bt();
+        ld_bt.setLData_bt(gameCount, floorNumber, objectset.player, rbp.getStairRoomID(), objectset.getpmap()); // データをセット
+        ld_bt.setLabel_bt(false); // ラベルをセット
+        ld_bt.sysoutput(); // 出力
+        LDBT_List.add(ld_bt); // リストに追加
+        ld_bt = new LData_bt(); // 初期化
 
         //System.out.println("set-label");
         // 勝敗ラベルの設定
@@ -486,22 +549,16 @@ public class MyCanvas extends Canvas
         lvFloor[floorNumber] += objectset.player.level;
         lvFloorNum[floorNumber]++;
 
-        // 敗北時の状態反映
-        ld[floorNumber].setLData(floorNumber, objectset.player);
+        ld[floorNumber].setLData(floorNumber, objectset.player); // 敗北時の状態反映
 
         for (int i = 0; i < ld.length; i++) {
-            if (i < floorNumber - 1) {
-                ld[i].setNextFlabel(true);
-            } else {
-                ld[i].setNextFlabel(false);
-            }
+            if (i < floorNumber - 1) ld[i].setNextFlabel(true);
+            else                     ld[i].setNextFlabel(false);
 
             ld[i].setLabel(false);
             ld[i].sysoutput();
 
-            if (ld[i].updateFlag == true) {
-                ld[i].csvFileOutput(new String("data"));
-            }
+            if (ld[i].updateFlag == true) ld[i].csvFileOutput(new String("data"));
         }
 
         loseCount++;
@@ -509,30 +566,19 @@ public class MyCanvas extends Canvas
         gameCount++;
         sysoutputCurrentRate(); // ゲーム数，勝率のコンソール上への出力
 
-        init(); // 次のゲームに向けて初期化
-
-        if (shotSPkey_state == SHOT_DOWN) {
-            //メイン画面に行く
-            scene = SCENE_RESULT;
-        }
+        scene = SCENE_RESULT; // リザルト画面に行く
     }
     
     // ゲームクリアの処理
     public void gameClearProcess() {
         // 直前の階層におけるフラグを更新
         for (int i = 0; i < LDBT_List.size(); i++) {
-            if (LDBT_List.get(i).fl == floorNumber - 1) {
-                // フラグを更新
-                LDBT_List.get(i).setLabel_cf(true);
-            }
+            if (LDBT_List.get(i).fl == floorNumber - 1) LDBT_List.get(i).setLabel_cf(true); // フラグを更新
         }
 
         // 前前の階層におけるフラグを更新
         for (int i = 0; i < LDBT_List.size(); i++) {
-            if (LDBT_List.get(i).fl == floorNumber - 2) {
-                // フラグを更新
-                LDBT_List.get(i).setLabel_nf(true);
-            }
+            if (LDBT_List.get(i).fl == floorNumber - 2) LDBT_List.get(i).setLabel_nf(true); // フラグを更新
         }
 
         //System.out.println("set-label");
@@ -549,35 +595,25 @@ public class MyCanvas extends Canvas
         lvFloor[floorNumber - 1] += objectset.player.level;
         lvFloorNum[floorNumber - 1]++;
 
-        // クリア時の状態反映
-        ld[floorNumber - 1].setLData(floorNumber - 1, objectset.player);
+        
+        ld[floorNumber - 1].setLData(floorNumber - 1, objectset.player); // クリア時の状態反映
 
         //System.out.println("down the stairs");
         for (int i = 0; i < ld.length; i++) {
-            if (i < floorNumber - 1) {
-                ld[i].setNextFlabel(true);
-            } else {
-                ld[i].setNextFlabel(false);
-            }
+            if (i < floorNumber - 1)    ld[i].setNextFlabel(true);
+            else                        ld[i].setNextFlabel(false);
 
             ld[i].setLabel(true);
             ld[i].sysoutput();
 
-            if (ld[i].updateFlag == true) {
-                ld[i].csvFileOutput(new String("data"));
-            }
+            if (ld[i].updateFlag == true) ld[i].csvFileOutput(new String("data"));
         }
 
         winCount++;
         gameCount++;
         sysoutputCurrentRate(); // コンソール上への出力
 
-        init(); // 初期化
-
-        if (shotSPkey_state == SHOT_DOWN) {
-            //メイン画面に行く
-            scene = SCENE_RESULT;
-        }
+        scene = SCENE_RESULT; // リザルト画面に行く
     }
     
     // ゲーム画面の処理
@@ -607,20 +643,14 @@ public class MyCanvas extends Canvas
                 // フロア数が1より大きいとき，直前の階層におけるフラグを更新
                 if (floorNumber >= 1) {
                     for (int i = 0; i < LDBT_List.size(); i++) {
-                        if (LDBT_List.get(i).fl == floorNumber - 1) {
-                            // フラグを更新
-                            LDBT_List.get(i).setLabel_cf(true);
-                        }
+                        if (LDBT_List.get(i).fl == floorNumber - 1) LDBT_List.get(i).setLabel_cf(true); // フラグを更新
                     }
                 }
 
                 // フロア数が2より大きいとき，前前の階層におけるフラグを更新
                 if (floorNumber >= 2) {
                     for (int i = 0; i < LDBT_List.size(); i++) {
-                        if (LDBT_List.get(i).fl == floorNumber - 2) {
-                            // フラグを更新
-                            LDBT_List.get(i).setLabel_nf(true);
-                        }
+                        if (LDBT_List.get(i).fl == floorNumber - 2) LDBT_List.get(i).setLabel_nf(true); // フラグを更新
                     }
                 }
 
@@ -630,123 +660,7 @@ public class MyCanvas extends Canvas
                 Logger.appendLog(floorNumber + "F");
                 Logger.appendLog("\n" + "[turn : " + turnmanager.getTurn() + "]");
 
-                if (DEBUG_INIT == false) {
-                    // マップの情報の更新
-                    background.mapUpdate();
-
-                    // プレイヤーの配置
-                    // プレイヤーの持つマップ情報の初期化・更新を含む
-                    objectset.setObjectRand(new String("player"));
-
-                    // オブジェクトの初期化
-                    objectset.initObjectsetExceptPlayer();
-
-                    // オブジェクトの配置
-                    // 敵
-                    for (int i = 0; i < ObjectSet.ENEMY_MAX; i++) {
-                        objectset.setObjectRand(new String("enemy"));
-                    }
-
-                    // (x, y, アイテム種類)
-                    // 1/2の確率で4個
-                    int randItemNum = ObjectSet.ITEM_MAX - 1;
-                    if (random.nextInt(2) == 0) {
-                        if (random.nextInt(2) == 0) {
-                            randItemNum--;
-                        } else {
-                            randItemNum++;
-                        }
-                    }
-                    for (int i = 0; i < randItemNum; i++) {
-                        objectset.setObjectRand(new String("item"));
-                    }
-
-                    // 階段
-                    // 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
-                    objectset.setObjectRand(new String("stair"));
-
-                    // マップ視野の描画を開始する
-                    //CanvasMap.startDrawmap();
-                    startDrawmapFlag = true;
-
-                    startFlag = true;
-
-                    // 高速周回（jar用）の際に，ゲーム数及び勝率がわかりやすいように
-                    if(GAMEMODE == 2) Logger.appendLog(floorNumber + "F, " + gameCount + " / " + TRYNUM + " game (win:" + winCount + ", lose:" + loseCount + ")", true);
-                    
-                    // ログに現在の状態を出力，0F以外
-                    // ゲーム回数，階層数，プレイヤーの各アイテム数
-                } else {
-                    // マップの情報の更新
-                    // true:通路ランダム削除あり, false:通路ランダム削除なし
-                    background.mapUpdate("src/mat/d3.txt", false);
-
-                    // プレイヤーの配置
-                    // プレイヤーの持つマップ情報の初期化・更新を含む
-                    objectset.setObject(new String("player"), -1, 19, 5);
-
-                    //floorNumber = 0;
-                    
-                    // プレイヤー情報の変更
-                    //if (floorNumber == 0) { // このif必要？
-                        objectset.player.addExp(50); // レベルの調整
-                        objectset.player.hp = objectset.player.maxHp;
-                        objectset.player.satiety = objectset.player.maxSatiety;
-                        objectset.player.inventory.addItem(4); // wst追加
-                        objectset.player.inventory.addItem(4);
-//                        objectset.player.inventory.addItem(3);
-//                        objectset.player.inventory.addItem(2);
-//                        objectset.player.inventory.addItem(1);
-//                        objectset.player.inventory.addItem(4);
-//                        objectset.player.inventory.addItem(3);
-//                        objectset.player.inventory.addItem(2);
-//                        objectset.player.inventory.addItem(1);
-//                        objectset.player.inventory.addItem(4);
-//                        objectset.player.inventory.addItem(3);
-//                        objectset.player.inventory.addItem(2);
-//                        objectset.player.inventory.addItem(1);
-//                        objectset.player.inventory.addItem(4);
-//                        objectset.player.inventory.addItem(3);
-//                        objectset.player.inventory.addItem(2);
-//                        objectset.player.inventory.addItem(1);
-//                        objectset.player.inventory.addItem(4);
-//                        objectset.player.inventory.addItem(3);
-                        //objectset.player.inventory.addItem(2);
-                    //}
-
-                    // オブジェクトの初期化
-                    objectset.initObjectsetExceptPlayer();
-
-                    // オブジェクトの配置
-                    // 敵
-                    objectset.setObject(new String("enemy"), 0, 17, 5);
-                    objectset.setObject(new String("enemy"), 0, 17, 6);
-                    //ObjectSet.enemy[1].hp = 45;
-                    //objectset.setObject(new String("enemy"), 3, 11, 8);
-                    //objectset.setObject(new String("enemy"), 3, 11, 9);
-
-                    // 階段
-                    // 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
-                    objectset.setObject(new String("stair"), -1, 15, 22);
-
-                    for (int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++) {
-                        for (int x = 0; x < MyCanvas.MAPGRIDSIZE_X; x++) {
-                            //objectset.setpmap(x, y, true);
-                            //objectset.setpCurmap(x, y, true);
-                        }
-                    }
-                    
-                    // マップ視野の描画を開始する
-                    //CanvasMap.startDrawmap();
-                    startDrawmapFlag = true;
-
-                    startFlag = true;
-                    
-                    if(GAMEMODE == 1 || GAMEMODE == 3) scene = SCENE_PAUSE;
-                    
-                    // ログに現在の状態を出力，0F以外
-                    // ゲーム回数，階層数，プレイヤーの各アイテム数
-                }
+                flrSetting(DEBUG_INIT); // フロアの設定，デバッグモードにより変化
             } else {
                 info.stairpos = (rbp.getStairRoomID() != -1) ? true : false; // stairRoomID != -1 -> 階段発見済み
                 ld[floorNumber].setLData_everyTurn(floorNumber, objectset.player, objectset.getpmap(), info.stairpos); // ログのデータ収集における情報更新，毎ターンチェック
@@ -823,23 +737,14 @@ public class MyCanvas extends Canvas
         }
 
         if (drawlevel >= 10) {
-            // キャンバス内すべての描画
-            drawAll();
+            drawAll(); // キャンバス内すべての描画
         }
-
-        ///*
-        // 1ゲーム毎に終了時
-        if (histCount != gameCount) {
-            // ログに追加がここ？初期化のタイミングとの兼ね合い
-
-            
-            Logger.initLog(); // logの初期化
-
-            histCount = gameCount;
-        }
-
+    }
+    
+    public void outputResultLog() {
+        //<editor-fold defaultstate="collapsed" desc="ログ取り">
         // 既定のゲーム回数終了時
-        if (gameCount == TRYNUM && DATA_COLLECTED == false) {
+        if (DATA_COLLECTED == false && gameCount == TRYNUM) {
             scene = SCENE_TITLE;
 
             // 結果をstrに
@@ -889,7 +794,7 @@ public class MyCanvas extends Canvas
 
         // 各階層への到達数が上限以上 -> 終了
         // かつ，ゲームが一区切りついたとき
-        if (isReachCount() == true && startFlag == false && floorNumber == 0 && DATA_COLLECTED == true) {
+        if (DATA_COLLECTED == true && isReachCount() == true && startFlag == false && floorNumber == 0) {
             scene = SCENE_TITLE;
 
             // 結果をstrに
@@ -944,10 +849,161 @@ public class MyCanvas extends Canvas
 
             System.exit(0);
         }
+        //</editor-fold>
+    }
+    
+    public void flrSetting(int debugInit){
+        // 階またいだ時の更新
+        if (debugInit == 0) {
+            // ランダム配置
+            // マップの情報の更新
+            background.mapUpdate();
+
+            // プレイヤーの配置
+            // プレイヤーの持つマップ情報の初期化・更新を含む
+            objectset.setObjectRand(new String("player"));
+
+            // オブジェクトの初期化
+            objectset.initObjectsetExceptPlayer();
+
+            // オブジェクトの配置
+            // 敵
+            for (int i = 0; i < ObjectSet.ENEMY_MAX; i++) {
+                objectset.setObjectRand(new String("enemy"));
+            }
+
+            // (x, y, アイテム種類)
+            // 1/2の確率で4個
+            int randItemNum = ObjectSet.ITEM_MAX - 1;
+            if (random.nextInt(2) == 0) {
+                if (random.nextInt(2) == 0) randItemNum--;
+                else                        randItemNum++;
+            }
+            for (int i = 0; i < randItemNum; i++) {
+                objectset.setObjectRand(new String("item"));
+            }
+
+            // 階段
+            // 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
+            objectset.setObjectRand(new String("stair"));
+
+            // マップ視野の描画を開始する
+            //CanvasMap.startDrawmap();
+            startDrawmapFlag = true;
+
+            startFlag = true;
+
+            // 高速周回（jar用）の際に，ゲーム数及び勝率がわかりやすいように
+            if (GAMEMODE == 2) {
+                if(DEBUG_INIT != 0) Logger.appendLog(floorNumber + "F, " + gameCount + " game (win:" + winCount + ", lose:" + loseCount + ")", true);
+                else                Logger.appendLog(floorNumber + "F, " + gameCount + " / " + TRYNUM + " game (win:" + winCount + ", lose:" + loseCount + ")", true);
+            }
+
+            // ログに現在の状態を出力，0F以外
+            // ゲーム回数，階層数，プレイヤーの各アイテム数
+        } else if (debugInit == 1) {
+            // 固定配置
+            // マップの情報の更新
+            // true:通路ランダム削除あり, false:通路ランダム削除なし
+            background.mapUpdate("src/mat/d3.txt", false);
+
+            // プレイヤーの配置
+            // プレイヤーの持つマップ情報の初期化・更新を含む
+            objectset.setObject(new String("player"), -1, 19, 5);
+
+            //floorNumber = 0;
+            // プレイヤー情報の変更
+            //if (floorNumber == 0) { // このif必要？
+            objectset.player.addExp(50); // レベルの調整
+            objectset.player.hp = objectset.player.maxHp;
+            objectset.player.satiety = objectset.player.maxSatiety;
+            objectset.player.inventory.addItem(4); // wst追加
+            objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+//                        objectset.player.inventory.addItem(2);
+//                        objectset.player.inventory.addItem(1);
+//                        objectset.player.inventory.addItem(4);
+//                        objectset.player.inventory.addItem(3);
+            //objectset.player.inventory.addItem(2);
+            //}
+
+            // オブジェクトの初期化
+            objectset.initObjectsetExceptPlayer();
+
+            // オブジェクトの配置
+            // 敵
+            objectset.setObject(new String("enemy"), 0, 17, 5);
+            objectset.setObject(new String("enemy"), 0, 17, 6);
+            //ObjectSet.enemy[1].hp = 45;
+            //objectset.setObject(new String("enemy"), 3, 11, 8);
+            //objectset.setObject(new String("enemy"), 3, 11, 9);
+
+            // 階段
+            // 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
+            objectset.setObject(new String("stair"), -1, 15, 22);
+
+            for (int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++) {
+                for (int x = 0; x < MyCanvas.MAPGRIDSIZE_X; x++) {
+                    //objectset.setpmap(x, y, true);
+                    //objectset.setpCurmap(x, y, true);
+                }
+            }
+
+            // マップ視野の描画を開始する
+            //CanvasMap.startDrawmap();
+            startDrawmapFlag = true;
+
+            startFlag = true;
+
+            if (GAMEMODE == 1 || GAMEMODE == 3) {
+                scene = SCENE_PAUSE;
+            }
+
+            // ログに現在の状態を出力，0F以外
+            // ゲーム回数，階層数，プレイヤーの各アイテム数
+        } else if (debugInit == 2) {
+            // csvから，プレイヤ以外更新
+            background.mapUpdate(); // マップの情報の更新
+            objectset.setObjectRand(new String("player")); // プレイヤーの配置, プレイヤーの持つマップ情報の初期化・更新を含む
+            objectset.initObjectsetExceptPlayer(); // オブジェクトの初期化
+            // オブジェクトの配置
+            // 敵
+            for (int i = 0; i < ObjectSet.ENEMY_MAX; i++) {
+                objectset.setObjectRand(new String("enemy"));
+            }
+
+            // (x, y, アイテム種類)
+            // 1/2の確率で4個
+            int randItemNum = ObjectSet.ITEM_MAX - 1;
+            if (random.nextInt(2) == 0) {
+                if (random.nextInt(2) == 0) randItemNum--;
+                else                        randItemNum++;
+            }
+            for (int i = 0; i < randItemNum; i++) {
+                objectset.setObjectRand(new String("item"));
+            }
+
+            objectset.setObjectRand(new String("stair")); // 階段, 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
+            startDrawmapFlag = true; // マップ視野の描画を開始する
+            startFlag = true; // 階層初回判定
+        }
     }
 
     public void sysoutputCurrentRate() {
-        System.out.println(gameCount + " / " + TRYNUM + " game (win:" + winCount + ", lose:" + loseCount + ")");
+        if(DEBUG_INIT != 0) System.out.println(gameCount + " game (win:" + winCount + ", lose:" + loseCount + ")");
+        else                System.out.println(gameCount + " / " + TRYNUM + " game (win:" + winCount + ", lose:" + loseCount + ")");
     }
     
     // 各階層への到達回数が一定数を超えているか
@@ -1140,7 +1196,7 @@ public class MyCanvas extends Canvas
                     currentFlrGetFd++;
                 } else {
                     // デバッグモードでないとき
-                    if(DEBUG_INIT != true) System.out.println("ログ収集系統fd，何かしらのエラー:" + fd + "->" + provFd);
+                    if(DEBUG_INIT == 0) System.out.println("ログ収集系統fd，何かしらのエラー:" + fd + "->" + provFd);
                 }
                 fd = provFd;
             }
@@ -1151,7 +1207,7 @@ public class MyCanvas extends Canvas
                     currentFlrGetPt++;
                 } else {
                     // デバッグモードでないとき
-                    if(DEBUG_INIT != true) System.out.println("ログ収集系統pt，何かしらのエラー:" + pt + "->" + provPt);
+                    if(DEBUG_INIT == 0) System.out.println("ログ収集系統pt，何かしらのエラー:" + pt + "->" + provPt);
                 }
                 pt = provPt;
             }
@@ -1162,7 +1218,7 @@ public class MyCanvas extends Canvas
                     currentFlrGetAr += 3;
                 } else {
                     // デバッグモードでないとき
-                    if(DEBUG_INIT != true) System.out.println("ログ収集系統ar，何かしらのエラー:" + ar + "->" + provAr);
+                    if(DEBUG_INIT == 0) System.out.println("ログ収集系統ar，何かしらのエラー:" + ar + "->" + provAr);
                 }
                 ar = provAr;
             }
@@ -1173,7 +1229,7 @@ public class MyCanvas extends Canvas
                     currentFlrGetSt++;
                 } else {
                     // デバッグモードでないとき
-                    if(DEBUG_INIT != true) System.out.println("ログ収集系統st，何かしらのエラー:" + st + "->" + provSt);
+                    if(DEBUG_INIT == 0) System.out.println("ログ収集系統st，何かしらのエラー:" + st + "->" + provSt);
                 }
                 st = provSt;
             }

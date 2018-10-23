@@ -257,6 +257,17 @@ public class Inventory implements Cloneable
                 }
         }
         
+        public void addItem(int itemIndex, int usageNum)
+        {
+                if(itemList.size() < MAX_INV)
+		{
+                    itemList.add(setDetail(itemIndex));
+                }
+                
+                // 使用回数を調節
+                itemList.get(itemList.size() - 1).usageCount = usageNum;
+        }
+        
 	// アイテムをリストへ追加
 	public boolean addItem(int itemIndex, Player p)
 	{

@@ -203,6 +203,13 @@ public class Player extends Unit implements Cloneable
 		spontRecVal = (double)maxHp / SPONTREC_PER;
 	}
 
+        public void setLevel(int lv){
+            // 与えられたLvから現在の累計経験値や最大体力を算出
+            for(int nlv = 1; nlv < lv; nlv++){
+                addExp(lvupExp); // 現在の必要経験値分の経験値を与える，レベルアップ＆必要経験値更新
+            }
+        }
+        
 	public void levelUp(int addp)
 	{
 		//System.out.println("level-up:" + level + "->" + (level+1));
