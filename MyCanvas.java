@@ -139,7 +139,7 @@ public class MyCanvas extends Canvas
     File fname;
     BufferedReader br = null;
     String line = "";
-    String csvFile = "src/mat/ar1fStartFormatData.csv";
+    String csvFile = "src/mat/ar2fStartFormatData_ar12.csv";
     
     public RuleBasePlayer getrbp()
     {
@@ -267,7 +267,7 @@ public class MyCanvas extends Canvas
                 
                 double[] ele = new double[10]; // flr,hp,lv,sp,pt,ar,st,unk,st,gc
                 String[] str = line.split(",", 0);
-                for(int i = 0; i < str.length -1 ; i++){
+                for(int i = 0; i < str.length ; i++){
                     ele[i] = Double.parseDouble(str[i]);
                 }
                 
@@ -288,6 +288,16 @@ public class MyCanvas extends Canvas
                 for(int n = 0; n < (int)ele[6]; n++){
                     objectset.player.inventory.addItem(4); // st
                 }
+                
+//                System.out.println("line: " + line);
+//                System.out.println("flr : " + (int)ele[0]);
+//                System.out.println("hp  : " + (int)ele[1]);
+//                System.out.println("lv  : " + (int)ele[2]);
+//                System.out.println("st  : " + (int)ele[3]);
+//                System.out.println("pt  : " + (int)ele[4]);
+//                System.out.println("ar  : " + (int)ele[5]);
+//                System.out.println("stf : " + (int)ele[6]);
+                
             } catch (IOException e) {
                 System.out.println(e); // エラー吐き
                 System.out.println("init error");
@@ -451,7 +461,7 @@ public class MyCanvas extends Canvas
             histCount = gameCount;
         }
  
-        if(DEBUG_INIT != 2) outputResultLog(); // ログ吐き，規定回数終了時やデータ収集DATACORRECTではここで終了
+        if(DEBUG_INIT != 2) outputResultLog(true); // ログ吐き，規定回数終了時やデータ収集DATACORRECTではここで終了
         
         if(GAMEMODE == 0){
             // 人間操作で，スペースキーが押されたとき
@@ -460,7 +470,10 @@ public class MyCanvas extends Canvas
         else{
             // 人間操作以外でゲームが終了したとき
             boolean tf = init(); // ゲームの初期化
-            if(tf == false) System.exit(0); // 初期化に失敗しているとき（csvファイル処理が終了したとき）
+            if(tf == false) {
+                outputResultLog(tf);
+                System.exit(0);
+            } // 初期化に失敗しているとき（csvファイル処理が終了したとき）
         }
     }
 
@@ -741,10 +754,10 @@ public class MyCanvas extends Canvas
         }
     }
     
-    public void outputResultLog() {
+    public void outputResultLog(boolean tf) {
         //<editor-fold defaultstate="collapsed" desc="ログ取り">
         // 既定のゲーム回数終了時
-        if (DATA_COLLECTED == false && gameCount == TRYNUM) {
+        if (DATA_COLLECTED == false && gameCount == TRYNUM && tf == true) {
             scene = SCENE_TITLE;
 
             // 結果をstrに
@@ -794,7 +807,7 @@ public class MyCanvas extends Canvas
 
         // 各階層への到達数が上限以上 -> 終了
         // かつ，ゲームが一区切りついたとき
-        if (DATA_COLLECTED == true && isReachCount() == true && startFlag == false && floorNumber == 0) {
+        if (DATA_COLLECTED == true && isReachCount() == true && startFlag == false && floorNumber == 0 && tf == true) {
             scene = SCENE_TITLE;
 
             // 結果をstrに
@@ -849,6 +862,61 @@ public class MyCanvas extends Canvas
 
             System.exit(0);
         }
+        
+        if(DEBUG_INIT == 2 && tf == false){
+            scene = SCENE_TITLE;
+
+            // 結果をstrに
+            StringBuilder restr = new StringBuilder();
+            int arriveNum = TRYNUM;
+            int[] arriveArr = new int[]{arriveNum, 0, 0, 0};
+
+            restr.append("試行回数" + "," + gameCount + System.getProperty("line.separator"));
+            // 計測終了
+            end = System.currentTimeMillis();
+            restr.append("実験時間" + "," + ((double) (end - start) / 1000) + "," + "sec" + System.getProperty("line.separator"));
+            restr.append("clear" + "," + winCount + System.getProperty("line.separator"));
+            restr.append("death" + "," + loseCount + System.getProperty("line.separator"));
+            for (int i = 0; i < TOPFLOOR; i++) {
+                if (i >= 1) {
+                    arriveNum -= loseFloor[i - 1];
+                    arriveArr[i] = arriveNum;
+                }
+                restr.append("deathFloor" + i + "," + loseFloor[i] + "," + gasif[i] + System.getProperty("line.separator"));
+            }
+            restr.append("gasi" + "," + gasi + System.getProperty("line.separator"));
+            restr.append("useFood" + "," + useItemFood + System.getProperty("line.separator"));
+            restr.append("usePotion" + "," + useItemPotion + System.getProperty("line.separator"));
+            restr.append("useLStaff" + "," + useItemLStaff + System.getProperty("line.separator"));
+            restr.append("useWStaff" + "," + useItemWStaff + System.getProperty("line.separator"));
+            for (int i = 0; i < TOPFLOOR; i++) {
+                restr.append("Level-ave" + i + "," + (lvFloor[i] / lvFloorNum[i]) + System.getProperty("line.separator"));
+            }
+            for (int i = 0; i < TOPFLOOR; i++) {
+                restr.append(i + "farrive" + "," + arriveArr[i] + System.getProperty("line.separator"));
+                restr.append("getFood" + "," + getItemFood[i] + System.getProperty("line.separator"));
+                restr.append("getPotion" + "," + getItemPotion[i] + System.getProperty("line.separator"));
+                restr.append("getLStaff" + "," + getItemLStaff[i] + System.getProperty("line.separator"));
+                restr.append("getWStaff" + "," + getItemWstaff[i] + System.getProperty("line.separator"));
+                int sum = getItemFood[i] + getItemPotion[i] + getItemLStaff[i] + getItemWstaff[i];
+                restr.append("sum" + "," + sum + System.getProperty("line.separator"));
+            }
+            restr.append("reachCount" + System.getProperty("line.separator"));
+            for (int i = 0; i < TOPFLOOR; i++) {
+                restr.append(i + "f" + "," + reachCount[i] + System.getProperty("line.separator"));
+            }
+            restr.append("dataCount" + System.getProperty("line.separator"));
+            for (int i = 0; i < TOPFLOOR; i++) {
+                restr.append(i + "f" + "," + dataCount[i] + System.getProperty("line.separator"));
+            }
+
+            System.out.println(new String(restr));
+
+            //
+            Logger.OutputFileLog(new String(fileName + "_result.txt"), new String(restr));
+            Logger.OutputFileLog(new String(fileName + "_result.csv"), new String(restr));
+        }
+        
         //</editor-fold>
     }
     
