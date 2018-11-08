@@ -131,7 +131,7 @@ public class MyCanvas extends Canvas
     private int[] reachCount; // 各階層への到達回数
     private int[] dataCount; // 各階層の取得データ数
 
-    public String fileName;
+    public String fileName; // ディレクトリ名（日付）
 
     private static int GAMEMODE; // 0:人間,1:AIプレイヤ,2:高速周回,3:一時停止
     
@@ -139,7 +139,8 @@ public class MyCanvas extends Canvas
     File fname;
     BufferedReader br = null;
     String line = "";
-    String csvFile = "src/mat/ar2fStartFormatData_ar12.csv";
+    String csvFile = "src/mat/ar2fStartFormatData_ar9.csv";
+    //String csvFile = "src/mat/test2f.csv";
     
     public RuleBasePlayer getrbp()
     {
@@ -765,6 +766,9 @@ public class MyCanvas extends Canvas
             int arriveNum = TRYNUM;
             int[] arriveArr = new int[]{arriveNum, 0, 0, 0};
 
+            // 実験設定
+            
+            
             restr.append("trials" + "," + TRYNUM + System.getProperty("line.separator"));
             // 計測終了
             end = System.currentTimeMillis();
@@ -871,6 +875,12 @@ public class MyCanvas extends Canvas
             int arriveNum = TRYNUM;
             int[] arriveArr = new int[]{arriveNum, 0, 0, 0};
 
+            // 実験設定
+            restr.append("csv" + "," + csvFile + System.getProperty("line.separator")); // 初期状態に使用したcsv
+            // aiプレイヤの種類
+            // それに応じた諸々設定
+            
+            
             restr.append("試行回数" + "," + gameCount + System.getProperty("line.separator"));
             // 計測終了
             end = System.currentTimeMillis();
@@ -890,7 +900,7 @@ public class MyCanvas extends Canvas
             restr.append("useLStaff" + "," + useItemLStaff + System.getProperty("line.separator"));
             restr.append("useWStaff" + "," + useItemWStaff + System.getProperty("line.separator"));
             for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append("Level-ave" + i + "," + (lvFloor[i] / lvFloorNum[i]) + System.getProperty("line.separator"));
+                if(lvFloorNum[i] != 0) restr.append("Level-ave" + i + "," + (lvFloor[i] / lvFloorNum[i]) + System.getProperty("line.separator"));
             }
             for (int i = 0; i < TOPFLOOR; i++) {
                 restr.append(i + "farrive" + "," + arriveArr[i] + System.getProperty("line.separator"));
@@ -901,15 +911,7 @@ public class MyCanvas extends Canvas
                 int sum = getItemFood[i] + getItemPotion[i] + getItemLStaff[i] + getItemWstaff[i];
                 restr.append("sum" + "," + sum + System.getProperty("line.separator"));
             }
-            restr.append("reachCount" + System.getProperty("line.separator"));
-            for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append(i + "f" + "," + reachCount[i] + System.getProperty("line.separator"));
-            }
-            restr.append("dataCount" + System.getProperty("line.separator"));
-            for (int i = 0; i < TOPFLOOR; i++) {
-                restr.append(i + "f" + "," + dataCount[i] + System.getProperty("line.separator"));
-            }
-
+            
             System.out.println(new String(restr));
 
             //
