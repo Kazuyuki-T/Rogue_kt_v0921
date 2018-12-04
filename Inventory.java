@@ -128,15 +128,25 @@ public class Inventory implements Cloneable
 		// 使用したアイテムのタイプが食料の時
 		if(itemList.get(num).type.equals(new String("food")))
 		{
-			int oldPlayerHp = objectset.player.hp;
+			//int oldPlayerHp = objectset.player.hp;
+                        int oldPlayerHp = objectset.player.getHp();
 			// 選択されたアイテムによるHPの回復
-			objectset.player.hp += itemList.get(num).hpHealVal;
+			//objectset.player.hp += itemList.get(num).hpHealVal;
+                        objectset.player.addHp(itemList.get(num).hpHealVal);
+                        
+                        int newPlayerHp = objectset.player.getHp();
+                        //int maxPlayerHp = objectset.player.getMaxHp();
+                        
 			// 上限を越さないように
-			if(objectset.player.hp > objectset.player.maxHp)
-			{
-				objectset.player.hp = objectset.player.maxHp;
-			}
-			Logger.appendLog("HP : " + oldPlayerHp + "->" + objectset.player.hp);
+//			if(objectset.player.hp > objectset.player.maxHp)
+//			{
+//				objectset.player.hp = objectset.player.maxHp;
+//			}
+//			if(newPlayerHp > maxPlayerHp) {
+//				objectset.player.setHp(maxPlayerHp);
+//                                newPlayerHp = objectset.player.getHp();
+//			}
+			Logger.appendLog("HP : " + oldPlayerHp + "->" + newPlayerHp);
 
 			int oldPlayerSatiety = objectset.player.satiety;
 			// 選択されたアイテムによる満腹度の回復
@@ -155,15 +165,26 @@ public class Inventory implements Cloneable
 		// 使用したアイテムのタイプがポーションの時
 		else if(itemList.get(num).type.equals(new String("potion")))
 		{
-			int oldPlayerHp = objectset.player.hp;
+			//int oldPlayerHp = objectset.player.hp;
+                        int oldPlayerHp = objectset.player.getHp();
 			// 選択されたアイテムによるHPの回復
-			objectset.player.hp += itemList.get(num).hpHealVal;
-			// 上限を越さないように
-			if(objectset.player.hp > objectset.player.maxHp)
-			{
-				objectset.player.hp = objectset.player.maxHp;
-			}
-			Logger.appendLog("HP : " + oldPlayerHp + "->" + objectset.player.hp);
+			//objectset.player.hp += itemList.get(num).hpHealVal;
+			objectset.player.addHp(itemList.get(num).hpHealVal);
+                        
+                        int newPlayerHp = objectset.player.getHp();
+                        //int maxPlayerHp = objectset.player.getMaxHp();
+                        
+                        // 上限を越さないように
+//			if(objectset.player.hp > objectset.player.maxHp)
+//			{
+//				objectset.player.hp = objectset.player.maxHp;
+//			}
+//                        if(newPlayerHp > maxPlayerHp) {
+//				objectset.player.setHp(maxPlayerHp);
+//                                newPlayerHp = objectset.player.getHp();
+//			}
+			//Logger.appendLog("HP : " + oldPlayerHp + "->" + objectset.player.hp);
+                        Logger.appendLog("HP : " + oldPlayerHp + "->" + newPlayerHp);
 
 			int oldPlayerSatiety = objectset.player.satiety;
 			// 選択されたアイテムによる満腹度の回復
@@ -193,7 +214,8 @@ public class Inventory implements Cloneable
 			for(int i = 0; i < itemList.get(num).range; i++)
 			{
 				// 次のマス
-				np = objectset.nextGridAxis(np.x, np.y, objectset.player.dir);
+				//np = objectset.nextGridAxis(np.x, np.y, objectset.player.dir);
+                                np = objectset.nextGridAxis(np.x, np.y, objectset.player.getDir());
 
 				// 1マス先に敵がいるとき
 				int nextMonsIndex = objectset.inNextGridMonster(np);
@@ -204,9 +226,13 @@ public class Inventory implements Cloneable
                                         // 使用した杖の攻撃力が0より大きいとき
 					if(itemList.get(num).damage > 0)
 					{
-						int oldhp = ObjectSet.enemy[nextMonsIndex].hp;
+						//int oldhp = ObjectSet.enemy[nextMonsIndex].hp;
+                                                int oldhp = ObjectSet.enemy[nextMonsIndex].getHp();
 						ObjectSet.enemy[nextMonsIndex].damageCalc(itemList.get(num).damage);
-						int newhp = ObjectSet.enemy[nextMonsIndex].hp < 0 ? 0 : ObjectSet.enemy[nextMonsIndex].hp;
+						//int newhp = ObjectSet.enemy[nextMonsIndex].hp < 0 ? 0 : ObjectSet.enemy[nextMonsIndex].hp;
+                                                int newhp = ObjectSet.enemy[nextMonsIndex].getHp();
+                                                if(newhp < 0) ObjectSet.enemy[nextMonsIndex].setHp(0);
+                                                
 						Logger.appendLog("hit!! enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
 
 						MyCanvas.useItemLStaff++;
@@ -337,12 +363,14 @@ public class Inventory implements Cloneable
 		   info.player.inventory.itemList.get(num).type.equals(new String("potion")))
 		{
 			// 選択されたアイテムによるHPの回復
-			info.player.hp += info.player.inventory.itemList.get(num).hpHealVal;
-			// 上限を越さないように
-			if(info.player.hp > info.player.maxHp)
-			{
-				info.player.hp = info.player.maxHp;
-			}
+			//info.player.hp += info.player.inventory.itemList.get(num).hpHealVal;
+			info.player.addHp(info.player.inventory.itemList.get(num).hpHealVal); // hp上限調整含み
+                        
+                        // 上限を越さないように
+//			if(info.player.hp > info.player.maxHp)
+//			{
+//				info.player.hp = info.player.maxHp;
+//			}
 
 			// 選択されたアイテムによる満腹度の回復
 			info.player.satiety += info.player.inventory.itemList.get(num).satietyHealVal;
@@ -368,7 +396,8 @@ public class Inventory implements Cloneable
 			for(int i = 0; i < info.player.inventory.itemList.get(num).range; i++)
 			{
 				// 次のマス
-				np = objSimu.nextGridAxis(np.x, np.y, info.player.dir);
+				//np = objSimu.nextGridAxis(np.x, np.y, info.player.dir);
+                                np = objSimu.nextGridAxis(np.x, np.y, info.player.getDir());
 
 				// 1マス先に敵がいるとき
 				int nextMonsIndex = objSimu.inNextGridMonster(np, info);

@@ -826,18 +826,20 @@ public class ObjectSet
 
 				// 向いている方向と同じ
 				// かつ，移動可能
-				if(player.dir == BOTTOM_LEFT && player.moveobj(-1, 1) == true)
-				{
+				//if(player.dir == BOTTOM_LEFT && player.moveobj(-1, 1) == true) {
+                                if(player.getDir() == BOTTOM_LEFT && player.moveobj(-1, 1) == true) {
 					// 移動
-					player.action_flag = true;
-					player.dir = BOTTOM_LEFT;
+					//player.action_flag = true;
+                                        player.setActionFlag(true);
+					//player.dir = BOTTOM_LEFT;
+                                        player.setDir(BOTTOM_LEFT);
 					return true;
 				}
 				// 向いている方向と異なる
-				else
-				{
+                                else {
 					// 向き変更
-					player.dir = BOTTOM_LEFT;
+					//player.dir = BOTTOM_LEFT;
+                                        player.setDir(BOTTOM_LEFT);
 					return false;
 				}
 			}
@@ -846,85 +848,89 @@ public class ObjectSet
 			else if(keyinput.keyDown == true)
 			{
 				keyinput.keyDown = false;
-				if(player.dir == BOTTOM && player.moveobj(0, 1) == true)
-				{
-					player.action_flag = true;
-					player.dir = BOTTOM;
-					return true;
+				//if(player.dir == BOTTOM && player.moveobj(0, 1) == true) {
+                                if(player.getDir() == BOTTOM && player.moveobj(0, 1) == true) {
+					//player.action_flag = true;
+					//player.dir = BOTTOM;
+					player.setActionFlag(true);;
+					player.setDir(BOTTOM);
+                                        return true;
 				}
-				else
-				{
-					player.dir = BOTTOM;
+                                else {
+					//player.dir = BOTTOM;
+                                        player.setDir(BOTTOM);
 					return false;
 				}
 			}
 
 			// 右下
-			else if(keyinput.keyDown == true && keyinput.keyRight == true)
-			{
+			else if(keyinput.keyDown == true && keyinput.keyRight == true) {
 				keyinput.keyDown = false;
 				keyinput.keyRight = false;
-				if(player.dir == BOTTOM_RIGHT && player.moveobj(1, 1) == true)
-				{
-					player.action_flag = true;
-					player.dir = BOTTOM_RIGHT;
+				//if(player.dir == BOTTOM_RIGHT && player.moveobj(1, 1) == true) {
+				if(player.getDir() == BOTTOM_RIGHT && player.moveobj(1, 1) == true) {
+                                        //player.action_flag = true;
+					//player.dir = BOTTOM_RIGHT;
+					player.setActionFlag(true);
+					player.setDir(BOTTOM_RIGHT);
 					return true;
 				}
-				else
-				{
-					player.dir = BOTTOM_RIGHT;
+                                else {
+					//player.dir = BOTTOM_RIGHT;
+					player.setDir(BOTTOM_RIGHT);
 					return false;
 				}
 			}
 
 			// 左
-			else if(keyinput.keyLeft == true)
-			{
+			else if(keyinput.keyLeft == true) {
 				keyinput.keyLeft = false;
-				if(player.dir == LEFT && player.moveobj(-1, 0) == true)
-				{
-					player.action_flag = true;
-					player.dir = LEFT;
+				//if(player.dir == LEFT && player.moveobj(-1, 0) == true){
+                                if(player.getDir() == LEFT && player.moveobj(-1, 0) == true){
+					//player.action_flag = true;
+					//player.dir = LEFT;
+					player.setActionFlag(true);
+					player.setDir(LEFT);
 					return true;
 				}
-				else
-				{
-					player.dir = LEFT;
+                                else {
+					//player.dir = LEFT;
+					player.setDir(LEFT);
 					return false;
 				}
 			}
 
 			// 右
-			else if(keyinput.keyRight == true)
-			{
+			else if(keyinput.keyRight == true) {
 				keyinput.keyRight = false;
-				if(player.dir == RIGHT && player.moveobj(1, 0) == true)
-				{
-					player.action_flag = true;
-					player.dir = RIGHT;
+				//if(player.dir == RIGHT && player.moveobj(1, 0) == true) {
+                                if(player.getDir() == RIGHT && player.moveobj(1, 0) == true) {
+					//player.action_flag = true;
+					//player.dir = RIGHT;
+					player.setActionFlag(true);
+					player.setDir(RIGHT);
 					return true;
 				}
-				else
-				{
-					player.dir = RIGHT;
+                                else {
+					//player.dir = RIGHT;
+					player.setDir(RIGHT);
 					return false;
 				}
 			}
 
 			// 左上
-			else if(keyinput.keyUp == true && keyinput.keyLeft == true)
-			{
+			else if(keyinput.keyUp == true && keyinput.keyLeft == true) {
 				keyinput.keyUp = false;
 				keyinput.keyLeft = false;
-				if(player.dir == TOP_LEFT && player.moveobj(-1, -1) == true)
-				{
-					player.action_flag = true;
-					player.dir = TOP_LEFT;
+				//if(player.dir == TOP_LEFT && player.moveobj(-1, -1) == true) {
+				if(player.getDir() == TOP_LEFT && player.moveobj(-1, -1) == true) {
+                                        //player.action_flag = true;
+					player.setActionFlag(true);
+                                        player.setDir(TOP_LEFT);//player.dir = TOP_LEFT;
 					return true;
 				}
-				else
-				{
-					player.dir = TOP_LEFT;
+                                else {
+					player.setDir(TOP_LEFT);//player.dir = TOP_LEFT;
 					return false;
 				}
 			}
@@ -932,29 +938,28 @@ public class ObjectSet
 
 
 			// 右上
-			else if(keyinput.keyUp == true && keyinput.keyRight == true)
-			{
+			else if(keyinput.keyUp == true && keyinput.keyRight == true) {
 				keyinput.keyUp = false;
 				keyinput.keyRight = false;
-				if(player.dir == TOP_RIGHT && player.moveobj(1, -1) == true)
-				{
-					player.action_flag = true;
-					player.dir = TOP_RIGHT;
+				//if(player.dir == TOP_RIGHT && player.moveobj(1, -1) == true) {
+                                if(player.getDir() == TOP_RIGHT && player.moveobj(1, -1) == true) {
+					//player.action_flag = true;
+					player.setActionFlag(true);
+                                        player.setDir(TOP_RIGHT);//player.dir = TOP_RIGHT;
 					return true;
 				}
-				else
-				{
-					player.dir = TOP_RIGHT;
+                                else {
+					player.setDir(TOP_RIGHT);//player.dir = TOP_RIGHT;
 					return false;
 				}
 			}
 
 			// 待機
-			else if(keyinput.keyS == true)
-			{
+			else if(keyinput.keyS == true) {
 				keyinput.keyS = false;
-				player.action_flag = true;
-				return true;
+				//player.action_flag = true;
+				player.setActionFlag(true);
+                                return true;
 			}
 			
 
@@ -972,13 +977,14 @@ public class ObjectSet
 			{
 				if(player.moveobj(-1, -1) == true)
 				{
-					player.action_flag = true;
-					player.dir = 7;
+					//player.action_flag = true;
+					player.setActionFlag(true);
+                                        player.setDir(7);//player.dir = 7;
 					return true;
 				}
 				else
 				{
-					player.dir = 7;
+					player.setDir(7);//player.dir = 7;
 					return false;
 				}
 			}
@@ -987,13 +993,14 @@ public class ObjectSet
 			{
 				if(player.moveobj(1, 1) == true)
 				{
-					player.action_flag = true;
-					player.dir = 3;
+					//player.action_flag = true;
+					player.setActionFlag(true);
+                                        player.setDir(3);//player.dir = 3;
 					return true;
 				}
 				else
 				{
-					player.dir = 3;
+					player.setDir(3);//player.dir = 3;
 					return false;
 				}
 			}
@@ -1002,13 +1009,14 @@ public class ObjectSet
 			{
 				if(player.moveobj(1, -1))
 				{
-					player.action_flag = true;
-					player.dir = 9;
+					//player.action_flag = true;
+					player.setActionFlag(true);
+                                        player.setDir(9);//player.dir = 9;
 					return true;
 				}
 				else
 				{
-					player.dir = 9;
+					player.setDir(9);//player.dir = 9;
 					return false;
 				}
 			}
@@ -1017,13 +1025,13 @@ public class ObjectSet
 			{
 				if(player.moveobj(-1, 1))
 				{
-					player.action_flag = true;
-					player.dir = 1;
+					player.setActionFlag(true); //player.action_flag = true;
+					player.setDir(1);//player.dir = 1;
 					return true;
 				}
 				else
 				{
-					player.dir = 1;
+					player.setDir(1);//player.dir = 1;
 					return false;
 				}
 			}
@@ -1037,25 +1045,25 @@ public class ObjectSet
 			// Shift + Left -> 左
 			if(keyinput.checkLeftShotKey() == 2)
 			{
-				player.dir = 4;
+				player.setDir(1);//player.dir = 4;
 				return true;
 			}
 			// Shift + Right -> 右
 			else if(keyinput.checkRightShotKey() == 2)
 			{
-				player.dir = 6;
+				player.setDir(6);//player.dir = 6;
 				return true;
 			}
 			// Shift + Up -> 上
 			else if(keyinput.checkUpShotKey() == 2)
 			{
-				player.dir = 8;
+				player.setDir(8);//player.dir = 8;
 				return true;
 			}
 			// Shift + Down -> 下
 			else if(keyinput.checkDownShotKey() == 2)
 			{
-				player.dir = 2;
+				player.setDir(2);//player.dir = 2;
 				return true;
 			}
 		}
@@ -1071,7 +1079,7 @@ public class ObjectSet
 			if(keyinput.keyLEshot == 2)
 			{
 				keyinput.keyLEshot = 1;
-				player.dir = 7;
+				player.setDir(7);//player.dir = 7;
 				return true;
 			}
 			// 右が押されているとき
@@ -1079,7 +1087,7 @@ public class ObjectSet
 			else if(keyinput.keyRIshot == 2)
 			{
 				keyinput.keyRIshot = 1;
-				player.dir = 3;
+				player.setDir(3);//player.dir = 3;
 				return true;
 			}
 			// 上が押されているとき
@@ -1087,7 +1095,7 @@ public class ObjectSet
 			else if(keyinput.keyUPshot == 2)
 			{
 				keyinput.keyUPshot = 1;
-				player.dir = 9;
+				player.setDir(9);//player.dir = 9;
 				return true;
 			}
 			// 下が押されているとき
@@ -1095,7 +1103,7 @@ public class ObjectSet
 			else if(keyinput.keyDOshot == 2)
 			{
 				keyinput.keyDOshot = 1;
-				player.dir = 1;
+				player.setDir(1);//player.dir = 1;
 				return true;
 			}
 		}
@@ -1111,13 +1119,13 @@ public class ObjectSet
 			{
 				if(player.moveobj(-1, 0))
 				{
-					player.action_flag = true;
-					player.dir = 4;
+					player.setActionFlag(true);//player.action_flag = true;
+					player.setDir(4);//player.dir = 4;
 					return true;
 				}
 				else
 				{
-					player.dir = 4;
+					player.setDir(4);//player.dir = 4;
 					return false;
 				}
 			}
@@ -1126,13 +1134,13 @@ public class ObjectSet
 			{
 				if(player.moveobj(1, 0))
 				{
-					player.action_flag = true;
-					player.dir = 6;
+					player.setActionFlag(true);//player.action_flag = true;
+					player.setDir(6);//player.dir = 6;
 					return true;
 				}
 				else
 				{
-					player.dir = 6;
+					player.setDir(6);//player.dir = 6;
 					return false;
 				}
 			}
@@ -1141,13 +1149,13 @@ public class ObjectSet
 			{
 				if(player.moveobj(0, -1))
 				{
-					player.action_flag = true;
-					player.dir = 8;
+					player.setActionFlag(true);//player.action_flag = true;
+					player.setDir(8);//player.dir = 8;
 					return true;
 				}
 				else
 				{
-					player.dir = 8;
+					player.setDir(8);//player.dir = 8;
 					return false;
 				}
 			}
@@ -1156,20 +1164,20 @@ public class ObjectSet
 			{
 				if(player.moveobj(0, 1))
 				{
-					player.action_flag = true;
-					player.dir = 2;
+					player.setActionFlag(true);//player.action_flag = true;
+					player.setDir(2);//player.dir = 2;
 					return true;
 				}
 				else
 				{
-					player.dir = 2;
+					player.setDir(2);//player.dir = 2;
 					return false;
 				}
 			}
 			// 待機
 			else if(keyinput.keyS == true)
 			{
-				player.action_flag = true;
+				player.setActionFlag(true);//player.action_flag = true;
 				//System.out.println("s");
 				return true;
 			}
@@ -1180,11 +1188,11 @@ public class ObjectSet
 	}
 
 	// プレイヤがアイテムを使用したとき
-	public boolean useItemPlayer(KeyInput keyinput)
-	{
-		if(keyinput.checkUShotKey() == 2)
-		{
-			player.action_flag = true;
+	public boolean useItemPlayer(KeyInput keyinput) 
+        {
+		if(keyinput.checkUShotKey() == 2) {
+			//player.action_flag = true;
+                        player.setActionFlag(true);
 			return true;
 		}
 
@@ -1192,11 +1200,11 @@ public class ObjectSet
 	}
 
 	// プレイヤがアイテムを投げた時
-	public boolean throwItemPlayer(KeyInput keyinput)
-	{
-		if(keyinput.checkTShotKey() == 2)
-		{
-			player.action_flag = true;
+	public boolean throwItemPlayer(KeyInput keyinput) 
+        {
+		if(keyinput.checkTShotKey() == 2) {
+			//player.action_flag = true;
+                        player.setActionFlag(true);
 			return true;
 		}
 
@@ -1255,28 +1263,31 @@ public class ObjectSet
 		if(keyinput.checkEnterShotKey() == 2)
 		{
 			// 隣の座標
-			Point np = nextGridAxis(player.gridMapX, player.gridMapY, player.dir);
+			//Point np = nextGridAxis(player.gridMapX, player.gridMapY, player.dir);
+                        Point np = nextGridAxis(player.gridMapX, player.gridMapY, player.getDir());
 
 			// 1マス先に敵がいるとき
 			int nextMonsIndex = inNextGridMonster(np);
 			// なおかつ，斜め攻撃で地形に阻まれないとき
 			if(nextMonsIndex != -1 && player.isDiagonalAtkCheck(np.x - player.gridMapX, np.y - player.gridMapY, bg) == false)
 			{
-				int oldhp = enemy[nextMonsIndex].hp;
+				//int oldhp = enemy[nextMonsIndex].hp;
+                                int oldhp = enemy[nextMonsIndex].getHp();
 				enemy[nextMonsIndex].damageCalc(player); // ダメージ計算・アクティブ処理
-				int newhp = enemy[nextMonsIndex].hp < 0 ? 0 : enemy[nextMonsIndex].hp;
+				//int newhp = enemy[nextMonsIndex].hp < 0 ? 0 : enemy[nextMonsIndex].hp;
+                                int newhp = enemy[nextMonsIndex].getHp() < 0 ? 0 : enemy[nextMonsIndex].getHp();
 				Logger.appendLog("enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
 
 				// 敵を倒したか否かのチェック
-				if(enemy[nextMonsIndex].active == false)
-				{
+				if(enemy[nextMonsIndex].active == false) {
 					// 倒した場合，経験値を得る
 					player.addExp(enemy[nextMonsIndex].spoint);
 				}
 			}
 			// いないときもターンはカウントする
 
-			player.action_flag = true;
+			//player.action_flag = true;
+                        player.setActionFlag(true);
 			return true;
 		}
 
@@ -1286,7 +1297,8 @@ public class ObjectSet
 	public void attackPlayer()
 	{
 		// 隣の座標
-		Point np = nextGridAxis(player.gridMapX, player.gridMapY, player.dir);
+		//Point np = nextGridAxis(player.gridMapX, player.gridMapY, player.dir);
+                Point np = nextGridAxis(player.gridMapX, player.gridMapY, player.getDir());
 
 		// 1マス先に敵がいるとき
 		int nextMonsIndex = inNextGridMonster(np);
@@ -1294,10 +1306,12 @@ public class ObjectSet
 		if(nextMonsIndex != -1 &&
 		   player.isDiagonalAtkCheck(np.x - player.gridMapX, np.y - player.gridMapY, bg) == false)
 		{
-			int oldhp = enemy[nextMonsIndex].hp;
+			//int oldhp = enemy[nextMonsIndex].hp;
+                        int oldhp = enemy[nextMonsIndex].getHp();
 			enemy[nextMonsIndex].damageCalc(player); // ダメージ計算・アクティブ処理
-			int newhp = enemy[nextMonsIndex].hp < 0 ? 0 : enemy[nextMonsIndex].hp;
-			Logger.appendLog("enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
+			//int newhp = enemy[nextMonsIndex].hp < 0 ? 0 : enemy[nextMonsIndex].hp;
+			int newhp = enemy[nextMonsIndex].getHp() < 0 ? 0 : enemy[nextMonsIndex].getHp();
+                        Logger.appendLog("enemy" + nextMonsIndex + ":" + oldhp + "->" + newhp);
 
 			// 敵を倒したか否かのチェック
 			if(enemy[nextMonsIndex].active == false)

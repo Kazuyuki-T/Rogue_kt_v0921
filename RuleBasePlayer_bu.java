@@ -56,7 +56,7 @@ public class RuleBasePlayer_bu implements Agent
                 
 	public Action ruleBased(Info info)
 	{
-		Action ruleBesedAct = new Action(info.player.dir);
+		Action ruleBesedAct = new Action(info.player.getDir()); //Action ruleBesedAct = new Action(info.player.dir);
 
 		// 階層が変化したとき
 		if(playerFloor !=  info.player.curFloor)
@@ -203,7 +203,7 @@ public class RuleBasePlayer_bu implements Agent
 			if(foodIndex != -1)
 			{
 				ruleBesedAct.action = Action.USE_ITEM;
-				ruleBesedAct.dir = info.player.dir;
+				ruleBesedAct.dir = info.player.getDir(); //ruleBesedAct.dir = info.player.dir;
 				ruleBesedAct.itemIndex = foodIndex;
 			}
 			// ない
@@ -242,7 +242,8 @@ public class RuleBasePlayer_bu implements Agent
 			System.out.println("rulebased-5");
 		}
 		// hpが7割以下であり，満腹度が半分以上
-		else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 50)
+		//else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 50)
+                else if(info.player.getHp() < info.player.getMaxHp() * 0.7 && info.player.satiety > 50)
 		{
 			ruleBesedAct.action = Action.STAY;
 
@@ -318,7 +319,7 @@ public class RuleBasePlayer_bu implements Agent
 	}
         public Action ruleBasedOnly(Info info)
 	{
-		Action ruleBesedAct = new Action(info.player.dir);
+		Action ruleBesedAct = new Action(info.player.getDir()); //Action ruleBesedAct = new Action(info.player.dir);
 
 		// 階層が変化したとき
 		if(playerFloor !=  info.player.curFloor)
@@ -359,24 +360,24 @@ public class RuleBasePlayer_bu implements Agent
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
 				// ダメージの合計
-				sumDamage += aroundEnemy.get(eNum).e.attack;
+				sumDamage += aroundEnemy.get(eNum).e.getAttack(); //sumDamage += aroundEnemy.get(eNum).e.attack;
 			}
 			// くらう最大のダメージ
 			int maxSumDamage = sumDamage;
 			int targetEnemyIndex = 0;
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
-				if(aroundEnemy.get(eNum).e.hp <= info.player.attack &&
-				   maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.attack)
+				if(aroundEnemy.get(eNum).e.getHp() <= info.player.getAttack() && maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.getAttack())
+                                //if(aroundEnemy.get(eNum).e.hp <= info.player.attack && maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.attack)
 				{
 					targetEnemyIndex = eNum;
-					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
+					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.getAttack(); //maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
 				}
 			}
 			//System.out.println(maxSumDamage);
 
 			// hpが敵から受ける攻撃力超過->攻撃
-			if(info.player.hp > maxSumDamage)
+			if(info.player.getHp() > maxSumDamage) //if(info.player.hp > maxSumDamage)
 			{
 				// ターゲットを攻撃
 				ruleBesedAct.action = Action.ATTACK;
@@ -619,7 +620,8 @@ public class RuleBasePlayer_bu implements Agent
 			if(foodIndex != -1)
 			{
 				ruleBesedAct.action = Action.USE_ITEM;
-				ruleBesedAct.dir = info.player.dir;
+				//ruleBesedAct.dir = info.player.dir;
+				ruleBesedAct.dir = info.player.getDir();
 				ruleBesedAct.itemIndex = foodIndex;
 			}
 			// ない
@@ -656,7 +658,8 @@ public class RuleBasePlayer_bu implements Agent
 			}
 		}
 		// hpが7割以下であり，満腹度が半分以上
-		else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 50)
+		//else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 50)
+		else if(info.player.getHp() < info.player.getMaxHp() * 0.7 && info.player.satiety > 50)
 		{
 			ruleBesedAct.action = Action.STAY;
 		}
@@ -960,7 +963,7 @@ public class RuleBasePlayer_bu implements Agent
 
 	public Action passSearchMove(Info info)
 	{
-		Action rbAct = new Action(info.player.dir);
+		Action rbAct = new Action(info.player.getDir()); //Action rbAct = new Action(info.player.dir);
 
 		// リストに要素がない
 		if(passList.size() == 0)
@@ -1506,7 +1509,7 @@ public class RuleBasePlayer_bu implements Agent
 
 	public Action makeAction(Info info)
 	{
-		Action act = new Action(info.player.dir);
+		Action act = new Action(info.player.getDir()); //Action act = new Action(info.player.dir);
 		//act.difPos = new Point();
 
 		act = ruleBased(info);

@@ -140,7 +140,7 @@ public class MyCanvas extends Canvas
     BufferedReader br = null;
     String line = "";
     //String csvFile = "src/mat/ar2fStartFormatData_ar9.csv";
-    String csvFile = "src/mat/ar2fStartFormatData.csv";
+    String csvFile = "src/mat/2flrStartFormatData.csv";
     //String csvFile = "src/mat/test2f.csv";
     
     public RuleBasePlayer getrbp() { return rbp; }
@@ -271,9 +271,11 @@ public class MyCanvas extends Canvas
                 }
                 
                 floorNumber = (int)ele[0] + 1; // flr, 階段を下りた際に収集したデータならば，次の階層の開始状態にしたいため
-                objectset.player.hp = (int)ele[1]; // hp
+                objectset.player.curFloor = floorNumber;
+                //objectset.player.hp = (int)ele[1]; // hp
+                objectset.player.setHp((int)ele[1]); // hp
                 objectset.player.setLevel((int)ele[2]); // lv
-                objectset.player.maxSatiety = (int)ele[3]; // 最大値
+                objectset.player.maxSatiety = ((int)ele[3] > 100) ? (int)ele[3] : 100; // 最大値，100より大きいときはその値，小さいときは100
                 objectset.player.satiety = (int)ele[3]; // stm + food
                 for(int n = 0; n < (int)ele[4]; n++){
                     objectset.player.inventory.addItem(2); // pt
@@ -456,6 +458,7 @@ public class MyCanvas extends Canvas
         // 1ゲーム毎の処理
         if (histCount != gameCount) {
             // ログに追加がここ？初期化のタイミングとの兼ね合い
+            Logger.OutputFileLog(new String(fileName + "_gamelog.txt"), Logger.getLog(), true);
             Logger.initLog(); // logの初期化，必須
             histCount = gameCount;
         }
@@ -920,8 +923,8 @@ public class MyCanvas extends Canvas
         //</editor-fold>
     }
     
+    // 階またいだ時の更新
     public void flrSetting(int debugInit){
-        // 階またいだ時の更新
         if (debugInit == 0) {
             // ランダム配置
             // マップの情報の更新
@@ -983,7 +986,8 @@ public class MyCanvas extends Canvas
             // プレイヤー情報の変更
             //if (floorNumber == 0) { // このif必要？
             objectset.player.addExp(50); // レベルの調整
-            objectset.player.hp = objectset.player.maxHp;
+            //objectset.player.hp = objectset.player.maxHp;
+            objectset.player.setHp(objectset.player.getMaxHp());
             objectset.player.satiety = objectset.player.maxSatiety;
             objectset.player.inventory.addItem(4); // wst追加
             objectset.player.inventory.addItem(4);
@@ -1155,7 +1159,8 @@ public class MyCanvas extends Canvas
 
         g.setColor(Color.white);
         g.setFont(statusFont);
-        g.drawString("hp : " + iplayer.hp + "/" + iplayer.maxHp, 30, 30);
+        //g.drawString("hp : " + iplayer.hp + "/" + iplayer.maxHp, 30, 30);
+        g.drawString("hp : " + iplayer.getHp() + "/" + iplayer.getMaxHp(), 30, 30);
 
         g.setColor(Color.white);
         g.setFont(statusFont);
@@ -1235,7 +1240,8 @@ public class MyCanvas extends Canvas
 
         public void setLData(int fnum, Player p) {
             fl = fnum;
-            hp = p.hp;
+            //hp = p.hp;
+            hp = p.getHp();
             lv = p.level;
             sp = p.satiety + (p.inventory.getInvItemNum(1) * p.inventory.getFoodHealVal());
             pt = p.inventory.getInvItemNum(2);
@@ -1421,7 +1427,8 @@ public class MyCanvas extends Canvas
             number = gcount;
 
             fl = fnum;
-            hp = p.hp;
+            //hp = p.hp;
+            hp = p.getHp();
             lv = p.level;
             sp = p.satiety + (p.inventory.getInvItemNum(1) * p.inventory.getFoodHealVal());
             pt = p.inventory.getInvItemNum(2);

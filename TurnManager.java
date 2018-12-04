@@ -70,11 +70,12 @@ public class TurnManager
 	{
 		player.sumSpontRecVal += player.spontRecVal;
 		while(player.sumSpontRecVal >= 1.0){
-			player.hp += 1;
-			if(player.hp > player.maxHp)
-			{
-				player.hp = player.maxHp;
-			}
+			//player.hp += 1;
+                        player.addHp(1);
+//			if(player.hp > player.maxHp)
+//			{
+//				player.hp = player.maxHp;
+//			}
 			player.sumSpontRecVal -= 1.0;
 		}
 	}
@@ -93,24 +94,24 @@ public class TurnManager
 		if(objectset.player.active == true && objectset.player.curFloor != MyCanvas.TOPFLOOR)
 		{
 			// アクションフラグリセット
-			objectset.player.action_flag = false;
-
+			//objectset.player.action_flag = false;
+                        objectset.player.setActionFlag(false);
+                    
 			// 満腹度の減少
 			spDec(objectset.player);
 
 			// 満腹度0の際のHP減少
-			if(objectset.player.satiety == 0)
-			{
+			if(objectset.player.satiety == 0) {
 				spZeroHpDec(objectset.player);
 				// ０になったとき
-				if(objectset.player.hp <= 0)
+				//if(objectset.player.hp <= 0)
+                                if(objectset.player.getHp() <= 0)
 				{
 					MyCanvas.gasi++;
                                         MyCanvas.gasif[MyCanvas.floorNumber]++;
 				}
 			}
-			else
-			{
+                        else {
 				// HPの自然回復
 				spontRecovery(objectset.player);
 			}
@@ -166,7 +167,8 @@ public class TurnManager
 		}
 
 		// もしプレイヤーが動作をしたならば
-		if(objectset.player.action_flag == true){
+		//if(objectset.player.action_flag == true){
+                if(objectset.player.isActionFlag() == true){
 			turnFlow(objectset, bg);
 		}
 	}
@@ -190,7 +192,8 @@ public class TurnManager
 		}
 
 		// もしプレイヤーが動作をしているならば
-		if(objectset.player.action_flag == true){
+		//if(objectset.player.action_flag == true){
+                if(objectset.player.isActionFlag() == true){
 			turnFlow(objectset, bg);
 		}
 	}
@@ -199,7 +202,8 @@ public class TurnManager
 	public void turnCount(ObjectSet objectset, Background bg, Agent ag)
 	{
 		// objset，bgを与えられてアクションを返す
-		Action act = new Action(objectset.player.dir);
+		//Action act = new Action(objectset.player.dir);
+                Action act = new Action(objectset.player.getDir());
 
                 // agent に info を渡すための変換
                 
@@ -355,40 +359,46 @@ public class TurnManager
                 
 		// 攻撃のとき
 		if(act.action == Action.ATTACK){
-			objectset.player.dir = act.dir;
+			//objectset.player.dir = act.dir;
+                        objectset.player.setDir(act.dir);
 			objectset.attackPlayer();
-			objectset.player.action_flag = true;
+			//objectset.player.action_flag = true;
+                        objectset.player.setActionFlag(true);;
 		}
 		// 移動のとき
 		else if(act.action == Action.MOVE)
 		{
-			objectset.player.dir = act.dir;
-			if(objectset.player.moveobj(act.difPos.x, act.difPos.y) == true)
-			{
-				objectset.player.action_flag = true;
+			//objectset.player.dir = act.dir;
+                        objectset.player.setDir(act.dir);
+			if(objectset.player.moveobj(act.difPos.x, act.difPos.y) == true) {
+				//objectset.player.action_flag = true;
+                                objectset.player.setActionFlag(true);
 			}
 		}
 		// アイテム使用
 		else if(act.action == Action.USE_ITEM)
 		{
-			objectset.player.dir = act.dir;
+			//objectset.player.dir = act.dir;
+                        objectset.player.setDir(act.dir);
 			objectset.player.inventory.useItem(objectset, act.itemIndex, bg);
-			objectset.player.action_flag = true;
+			//objectset.player.action_flag = true;
+                        objectset.player.setActionFlag(true);
 		}
 		else if(act.action == Action.STAY)
 		{
-			objectset.player.dir = act.dir;
-			objectset.player.action_flag = true;
+			//objectset.player.dir = act.dir;
+                        objectset.player.setDir(act.dir);
+			//objectset.player.action_flag = true;
+                        objectset.player.setActionFlag(true);
 		}
 
 		// もしプレイヤーが行動しているならば
-		if(objectset.player.action_flag == true)
-		{
-			turnFlow(objectset, bg);
+		//if(objectset.player.action_flag == true) {
+		if(objectset.player.isActionFlag() == true) {
+                    turnFlow(objectset, bg);
 		}
 		// 行動していないとき
-		else
-		{
+                else {
 			System.out.println("do-nothing(act:" + act.action + ", dir(1~9):" + act.dir + ")");
 		}
 	}

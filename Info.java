@@ -419,7 +419,8 @@ public class Info implements Cloneable
         // 更新した場面からの呼び出し
 	public ArrayList<Action> makeActionList(ArrayList<Action> actList)
 	{
-		Action actSimu = new Action(player.dir);
+		//Action actSimu = new Action(player.dir);
+                Action actSimu = new Action(player.getDir());
 
                 // 攻撃できる１できない０
 		int[] attakable = {0,0,0,0,0,0,0,0,0};
@@ -487,7 +488,8 @@ public class Info implements Cloneable
 					continue;
 				}
 
-				actSimu = new Action(player.dir);
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
 
 				// アクションの種類の設定
 				actSimu.action = actType;
@@ -549,8 +551,9 @@ public class Info implements Cloneable
 			// アクションリストに追加する
 			if(player.inventory.getInvItemName(index).equals(new String("normal-bread")))
 			{
-				actSimu = new Action(player.dir);
-				actSimu.action = Action.USE_ITEM;
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
+                                actSimu.action = Action.USE_ITEM;
 				actSimu.itemIndex = index;
 				// リストに追加
 				actList.add(actSimu);
@@ -567,7 +570,8 @@ public class Info implements Cloneable
 			// アクションリストに追加する
 			if(player.inventory.getInvItemName(index).equals(new String("normal-potion")))
 			{
-				actSimu = new Action(player.dir);
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
 				actSimu.action = Action.USE_ITEM;
 				actSimu.itemIndex = index;
 				// リストに追加
@@ -663,7 +667,8 @@ public class Info implements Cloneable
 		{
 			for(int dirType = 0; dirType < 9; dirType++)
 			{
-				actSimu = new Action(player.dir);
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
 				actSimu.action = Action.USE_ITEM;
 
 				if(usable[dirType] == 0)
@@ -713,7 +718,8 @@ public class Info implements Cloneable
 		{
 			for(int dirType = 0; dirType < 9; dirType++)
 			{
-				actSimu = new Action(player.dir);
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
 				actSimu.action = Action.USE_ITEM;
 
 				if(usable[dirType] == 0)
@@ -747,8 +753,9 @@ public class Info implements Cloneable
 			}
 		}
                 
-                actSimu = new Action(player.dir);
-		// アクションの種類の設定
+                //actSimu = new Action(player.dir);
+                actSimu = new Action(player.getDir());
+                // アクションの種類の設定
 		actSimu.action = Action.STAY;
 		// リストに追加
 		actList.add(actSimu);
@@ -758,10 +765,13 @@ public class Info implements Cloneable
         
         public ArrayList<Action> makeActionLimitedList(ArrayList<Action> actList)
 	{
-		Action actSimu = new Action(player.dir);
+		//Action actSimu = new Action(player.dir);
+                Action actSimu = new Action(player.getDir());
                 
-                int playerMaxHP = player.maxHp;
-                int playerHP = player.hp;
+                //int playerMaxHP = player.maxHp;
+                int playerMaxHP = player.getMaxHp();
+                //int playerHP = player.hp;
+                int playerHP = player.getHp();
                 
                 int playerMaxSP = player.maxSatiety;
                 int playerSP = player.satiety;
@@ -778,7 +788,8 @@ public class Info implements Cloneable
                 int[] diffsx = {1 , 0 , -1 , 0};
                 int[] diffsy = {0 , 1 ,  0 ,-1};
                 
-                actSimu = new Action(player.dir);
+                //actSimu = new Action(player.dir);
+                actSimu = new Action(player.getDir());
 		// アクションの種類の設定
 		actSimu.action = Action.STAY;
 		// リストに追加
@@ -901,7 +912,8 @@ public class Info implements Cloneable
 					continue;
 				}
 
-				actSimu = new Action(player.dir);
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
 
 				// アクションの種類の設定
 				actSimu.action = actType;
@@ -964,8 +976,9 @@ public class Info implements Cloneable
 			if(player.inventory.getInvItemName(index).equals(new String("normal-bread")) && playerHP < playerMaxHP)
                         //if(player.inventory.getInvItemName(index).equals(new String("normal-bread")) && playerHP <= (int)(playerMaxHP * 0.7d))
 			{
-				actSimu = new Action(player.dir);
-				actSimu.action = Action.USE_ITEM;
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
+                                actSimu.action = Action.USE_ITEM;
 				actSimu.itemIndex = index;
 				// リストに追加
 				actList.add(actSimu);
@@ -983,7 +996,8 @@ public class Info implements Cloneable
 			if(player.inventory.getInvItemName(index).equals(new String("normal-potion")) && playerSP <= (int)(playerMaxSP * 0.5d))
                         //if(player.inventory.getInvItemName(index).equals(new String("normal-potion")) && playerSP <= (int)(playerMaxSP * 0.3d))
 			{
-				actSimu = new Action(player.dir);
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
 				actSimu.action = Action.USE_ITEM;
 				actSimu.itemIndex = index;
 				// リストに追加
@@ -1079,8 +1093,9 @@ public class Info implements Cloneable
 		{
 			for(int dirType = 0; dirType < 9; dirType++)
 			{
-				actSimu = new Action(player.dir);
-				actSimu.action = Action.USE_ITEM;
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
+                                actSimu.action = Action.USE_ITEM;
 
 				if(usable[dirType] == 0)
 				{
@@ -1129,7 +1144,8 @@ public class Info implements Cloneable
 		{
 			for(int dirType = 0; dirType < 9; dirType++)
 			{
-				actSimu = new Action(player.dir);
+				//actSimu = new Action(player.dir);
+                                actSimu = new Action(player.getDir());
 				actSimu.action = Action.USE_ITEM;
 
 				if(usable[dirType] == 0)

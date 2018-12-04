@@ -71,13 +71,20 @@ public class Player extends Unit implements Cloneable
 			player.sizeY = this.sizeY;
 			player.sizeMagX = this.sizeMagX;
 			player.sizeMagY = this.sizeMagY;
-			player.action_flag = this.action_flag;
-			player.dir = this.dir;
-			player.speed = this.speed;
-			player.maxHp = this.maxHp;
-			player.hp = this.hp;
-			player.attack = this.attack;
-			player.view = this.view;
+			//player.action_flag = this.action_flag;
+                        player.setActionFlag(this.isActionFlag());
+			//player.dir = this.dir;
+			player.setDir(this.getDir());
+                        //player.speed = this.speed;
+                        player.setSpeed(this.getSpeed());
+			//player.maxHp = this.maxHp;
+                        player.setMaxHp(this.getMaxHp());
+			//player.hp = this.hp;
+                        player.setHp(this.getHp());
+			//player.attack = this.attack;
+			player.setAttack(this.getAttack());
+                        //player.view = this.view;
+                        player.setView(this.getView());
                         
                         player.maxSatiety = this.maxSatiety;
                         player.satiety = this.satiety;
@@ -126,13 +133,18 @@ public class Player extends Unit implements Cloneable
 		y = gridWinY2y(gridScrY);
 		/*--------------------*/
 
-		dir = 2; // 初期方向
-
-		speed = 1;
-		action_flag = false;
-		maxHp = 100;
-		hp = 100;
-		attack = 35;
+		//dir = 2; // 初期方向
+                this.setDir(2);
+                //speed = 1;
+                this.setSpeed(1);
+		//action_flag = false;
+		this.setActionFlag(false);
+                //maxHp = 100;
+                this.setMaxHp(100);		
+                //hp = 100;
+                this.setHp(100);        
+		//attack = 35;
+                this.setAttack(35);
 		maxSatiety = 100;
 		satiety = 100;
 		active = false;
@@ -149,7 +161,8 @@ public class Player extends Unit implements Cloneable
 		curFloor = 0;
 
 		// 初期maxHPに対する1Tあたりの回復量
-		spontRecVal = (double)maxHp / SPONTREC_PER;
+		//spontRecVal = (double)maxHp / SPONTREC_PER;
+                spontRecVal = (double)this.getMaxHp() / SPONTREC_PER;
 		sumSpontRecVal = 0;
 
 		// 満腹度の減少までのカウント
@@ -192,15 +205,18 @@ public class Player extends Unit implements Cloneable
 	public void updateAtk()
 	{
 		// atkの更新
-		attack += 1;
+		//attack += 1;
+                this.setAttack(this.getAttack() + 1);
 	}
 
 	public void updateMaxHp()
 	{
 		// maxHpの更新
-		maxHp += 1;
+		//maxHp += 1;
+                this.setMaxHp(this.getMaxHp() + 1);
 		// spontRecValの更新
-		spontRecVal = (double)maxHp / SPONTREC_PER;
+		//spontRecVal = (double)maxHp / SPONTREC_PER;
+                spontRecVal = (double)this.getMaxHp() / SPONTREC_PER;
 	}
 
         public void setLevel(int lv){
@@ -428,7 +444,8 @@ public class Player extends Unit implements Cloneable
 
 			// 向き
 			Point p[] = new Point[3];
-			switch(dir)
+			//switch(dir)
+                        switch(this.getDir())
 			{
 			// 斜め向き
 			case 1:

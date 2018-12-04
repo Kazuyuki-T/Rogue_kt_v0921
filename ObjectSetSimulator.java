@@ -21,7 +21,8 @@ public class ObjectSetSimulator
 	public void attackPlayer(Info info)
 	{
 		// 隣の座標
-		Point np = nextGridAxis(info.player.gridMapX, info.player.gridMapY, info.player.dir);
+		//Point np = nextGridAxis(info.player.gridMapX, info.player.gridMapY, info.player.dir);
+                Point np = nextGridAxis(info.player.gridMapX, info.player.gridMapY, info.player.getDir());
 
 		// 1マス先に敵がいるとき
 		int nextMonsIndex = inNextGridMonster(np, info);
@@ -31,7 +32,8 @@ public class ObjectSetSimulator
 		   isPlayerDiagonalAtkCheck(np.x - info.player.gridMapX, np.y - info.player.gridMapY, info) == false)
 		{
 			// ダメージ計算・アクティブ処理
-			calcEnemyDamage(info, nextMonsIndex, info.player.attack);
+			calcEnemyDamage(info, nextMonsIndex, info.player.getAttack()); //calcEnemyDamage(info, nextMonsIndex, info.player.attack);
+                        
 			// 敵を倒したか否かのチェック
 			if(info.enemy[nextMonsIndex].active == false)
 			{
@@ -80,12 +82,12 @@ public class ObjectSetSimulator
         public void calcEnemyDamage(Info info, int eIndex, int pAtk)
 	{
 		// hpから攻撃力分のダメージを引く
-		info.enemy[eIndex].hp -= pAtk;
+		info.enemy[eIndex].addHp(-pAtk); //info.enemy[eIndex].hp -= pAtk;
 
-		if(info.enemy[eIndex].hp <= 0)
+		if(info.enemy[eIndex].getHp() <= 0) //if(info.enemy[eIndex].hp <= 0)
 		{
 			info.enemy[eIndex].active = false;
-			info.enemy[eIndex].hp = 0;
+			info.enemy[eIndex].setHp(0); //info.enemy[eIndex].hp = 0;
 			
                         info.mapUnit[info.enemy[eIndex].gridMapY][info.enemy[eIndex].gridMapX] = -1;
 			
@@ -416,14 +418,14 @@ public class ObjectSetSimulator
 					// 斜め攻撃ができるとき
 					else
 					{
-						calcPlayerDamage(info.enemy[enemyIndex].attack, info);
+						calcPlayerDamage(info.enemy[enemyIndex].getAttack(), info); //calcPlayerDamage(info.enemy[enemyIndex].attack, info);
 					}
 				}
 				// 斜め攻撃ではないとき
 				else
 				{
 					// 攻撃
-					calcPlayerDamage(info.enemy[enemyIndex].attack, info);
+					calcPlayerDamage(info.enemy[enemyIndex].getAttack(), info); //calcPlayerDamage(info.enemy[enemyIndex].attack, info);
 				}
 			}
 			else
@@ -670,7 +672,7 @@ public class ObjectSetSimulator
 
 	public boolean isPlayerinView(int index, Info info)
 	{
-		int view = info.enemy[index].view;
+		int view = info.enemy[index].getView(); //int view = info.enemy[index].view;
 
 		// 部屋の視界を含める場合
 
@@ -984,8 +986,13 @@ public class ObjectSetSimulator
 //			}
 //		}
             
+            
+            
                 int rn = info.mapRoomNum[info.player.gridMapY][info.player.gridMapX];
 
+                
+                /*
+                
 		// 現在地が部屋の時，かつ初めて訪れる部屋の場合
 		// 部屋の情報を得る
 		if(rn != -1)
@@ -1028,6 +1035,8 @@ public class ObjectSetSimulator
 				}
 			}
 		}
+
+                */
 	}
 
 	// 更新

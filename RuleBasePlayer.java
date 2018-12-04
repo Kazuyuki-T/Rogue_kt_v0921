@@ -739,7 +739,8 @@ public class RuleBasePlayer implements Agent, Cloneable
 		// infoから内部変数の更新
                 update(info);
                 
-                Action ruleBesedAct = new Action(info.player.dir);
+                //Action ruleBesedAct = new Action(info.player.dir);
+                Action ruleBesedAct = new Action(info.player.getDir());
 
 		// 隣接している敵のリスト
 		aroundEnemy.clear();
@@ -889,7 +890,8 @@ public class RuleBasePlayer implements Agent, Cloneable
 			//System.out.println("rulebased-4");
 		}
 		// hpが7割以下であり，満腹度が4割以上
-		else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 40)
+		//else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 40)
+                else if(info.player.getHp() < info.player.getMaxHp() * 0.7 && info.player.satiety > 40)
 		{
 			ruleBesedAct.action = Action.STAY;
 
@@ -903,7 +905,7 @@ public class RuleBasePlayer implements Agent, Cloneable
 			if(foodIndex != -1)
 			{
 				ruleBesedAct.action = Action.USE_ITEM;
-				ruleBesedAct.dir = info.player.dir;
+				ruleBesedAct.dir = info.player.getDir(); //ruleBesedAct.dir = info.player.dir;
 				ruleBesedAct.itemIndex = foodIndex;
 			}
 			// ない
@@ -1059,7 +1061,7 @@ public class RuleBasePlayer implements Agent, Cloneable
         
         public Action semiRBP(Info info, ArrayList<Action> actList)
         {
-                Action ruleBesedAct = new Action(info.player.dir);
+                Action ruleBesedAct = new Action(info.player.getDir()); //Action ruleBesedAct = new Action(info.player.dir);
                 
 		// 隣接している敵のリスト
 		aroundEnemy.clear();
@@ -1071,42 +1073,42 @@ public class RuleBasePlayer implements Agent, Cloneable
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
 				// ダメージの合計
-				sumDamage += aroundEnemy.get(eNum).e.attack;
+				sumDamage += aroundEnemy.get(eNum).e.getAttack(); //sumDamage += aroundEnemy.get(eNum).e.attack;
 			}
 			// くらう最大のダメージ
 			int maxSumDamage = sumDamage;
 			int targetEnemyIndex = 0;
-                        int targethp = aroundEnemy.get(0).e.hp;
+                        int targethp = aroundEnemy.get(0).e.getHp(); //int targethp = aroundEnemy.get(0).e.hp;
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
-				if(aroundEnemy.get(eNum).e.hp <= info.player.attack &&
-				   maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.attack)
-				{
+				//if(aroundEnemy.get(eNum).e.hp <= info.player.attack && maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.attack)
+				if(aroundEnemy.get(eNum).e.getHp() <= info.player.getAttack() && maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.getAttack())
+                                {
 					targetEnemyIndex = eNum;
-					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
+					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.getAttack(); //maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
 				}
                                 else
                                 {
-                                    if(targethp > aroundEnemy.get(eNum).e.hp)
+                                    //if(targethp > aroundEnemy.get(eNum).e.hp)
+                                    if(targethp > aroundEnemy.get(eNum).e.getHp())
                                     {
                                         targetEnemyIndex = eNum;
-                                        targethp = aroundEnemy.get(eNum).e.hp;
+                                        targethp = aroundEnemy.get(eNum).e.getHp(); //targethp = aroundEnemy.get(eNum).e.hp;
                                     }
                                 }
 			}
 			//System.out.println(maxSumDamage);
 
 			// hpが敵から受ける攻撃力超過->攻撃
-			if(info.player.hp > maxSumDamage)
-			{
+			//if(info.player.hp > maxSumDamage)
+                        if(info.player.getHp() > maxSumDamage) {
 				// ターゲットを攻撃
 				ruleBesedAct.action = Action.ATTACK;
 				// 方向を決定
 				ruleBesedAct.dir = aroundEnemy.get(targetEnemyIndex).dir;
 			}
 			// hpが敵から受ける攻撃力以下
-			else
-			{
+                        else {
 				// アイテムにポーションがあり，ポーションの回復量で間に合う
 				int poIndex = inInvPotionCheck(info.player.inventory);
 				if(poIndex != -1)
@@ -1189,7 +1191,8 @@ public class RuleBasePlayer implements Agent, Cloneable
                 update(info);
                 
                 
-                Action ruleBesedAct = new Action(info.player.dir);
+                //Action ruleBesedAct = new Action(info.player.dir);
+                Action ruleBesedAct = new Action(info.player.getDir());
                 
 		// 隣接している敵のリスト
 		aroundEnemy.clear();
@@ -1208,35 +1211,37 @@ public class RuleBasePlayer implements Agent, Cloneable
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
 				// ダメージの合計
-				sumDamage += aroundEnemy.get(eNum).e.attack;
+				sumDamage += aroundEnemy.get(eNum).e.getAttack(); //sumDamage += aroundEnemy.get(eNum).e.attack;
 			}
 			// くらう最大のダメージ
 			int maxSumDamage = sumDamage;
 			int targetEnemyIndex = 0;
-                        int targethp = aroundEnemy.get(0).e.hp;
+                        int targethp = aroundEnemy.get(0).e.getHp(); //int targethp = aroundEnemy.get(0).e.hp;
                         for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
 				// 倒せそうな敵がいるとき，ターゲットに設定
                                 // いないとき，hpの低い敵をターゲットに設定
-                                if(aroundEnemy.get(eNum).e.hp <= info.player.attack &&
-				   maxSumDamage > (sumDamage - aroundEnemy.get(eNum).e.attack))
+                                //if(aroundEnemy.get(eNum).e.hp <= info.player.attack && maxSumDamage > (sumDamage - aroundEnemy.get(eNum).e.attack))
+                                if(aroundEnemy.get(eNum).e.getHp() <= info.player.getAttack() && maxSumDamage > (sumDamage - aroundEnemy.get(eNum).e.getAttack()))
 				{
 					targetEnemyIndex = eNum;
-					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
+					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.getAttack(); //maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
 				}
                                 else
                                 {
-                                    if(targethp > aroundEnemy.get(eNum).e.hp)
+                                    //if(targethp > aroundEnemy.get(eNum).e.hp)
+                                    if(targethp > aroundEnemy.get(eNum).e.getHp())
                                     {
                                         targetEnemyIndex = eNum;
-                                        targethp = aroundEnemy.get(eNum).e.hp;
+                                        targethp = aroundEnemy.get(eNum).e.getHp(); //targethp = aroundEnemy.get(eNum).e.hp;
                                     }
                                 }
 			}
 			//System.out.println(maxSumDamage);
 
 			// hpが敵から受ける攻撃力超過->攻撃
-			if(info.player.hp > maxSumDamage)
+			//if(info.player.hp > maxSumDamage)
+                        if(info.player.getHp() > maxSumDamage)
 			{
 				// ターゲットを攻撃
 				ruleBesedAct.action = Action.ATTACK;
@@ -1296,12 +1301,12 @@ public class RuleBasePlayer implements Agent, Cloneable
                                                 
                                                 // 周囲の敵の中の，最もhpの高い敵を探索
                                                 int mhpenIndex = 0;
-                                                int mhpenHp = aroundEnemy.get(mhpenIndex).e.hp;
+                                                int mhpenHp = aroundEnemy.get(mhpenIndex).e.getHp(); //int mhpenHp = aroundEnemy.get(mhpenIndex).e.hp;
                                                 for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
                                                 {
-                                                    if(mhpenHp < aroundEnemy.get(eNum).e.hp)
+                                                    if(mhpenHp < aroundEnemy.get(eNum).e.getHp()) //if(mhpenHp < aroundEnemy.get(eNum).e.hp)
                                                     {
-                                                        mhpenHp = aroundEnemy.get(eNum).e.hp;
+                                                        mhpenHp = aroundEnemy.get(eNum).e.getHp(); //mhpenHp = aroundEnemy.get(eNum).e.hp;
                                                         mhpenIndex = eNum;
                                                     }
                                                 }
@@ -1351,7 +1356,7 @@ public class RuleBasePlayer implements Agent, Cloneable
 			// 敵との距離，適当な大きい数字
 			int targetEnemyIndex = 0;
 			int distEnemy = aroundEnemy.get(targetEnemyIndex).dis;
-                        int maxdamEn = aroundEnemy.get(targetEnemyIndex).e.attack;
+                        int maxdamEn = aroundEnemy.get(targetEnemyIndex).e.getAttack(); //int maxdamEn = aroundEnemy.get(targetEnemyIndex).e.attack;
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
 				// より距離の近い敵がいるとき
@@ -1362,9 +1367,9 @@ public class RuleBasePlayer implements Agent, Cloneable
 					targetEnemyIndex = eNum;
 				}
                                 // より大きなダメージを与える敵がいるとき
-                                if(maxdamEn < aroundEnemy.get(eNum).e.attack)
+                                if(maxdamEn < aroundEnemy.get(eNum).e.getAttack()) //if(maxdamEn < aroundEnemy.get(eNum).e.attack)
                                 {
-                                        maxdamEn = aroundEnemy.get(eNum).e.attack;
+                                        maxdamEn = aroundEnemy.get(eNum).e.getAttack(); //maxdamEn = aroundEnemy.get(eNum).e.attack;
                                 }
 			}
 
@@ -1403,7 +1408,7 @@ public class RuleBasePlayer implements Agent, Cloneable
                                 int ldIndex = inInvLongDistAtkCheck(info.player.inventory, p, e);
                                 int poIndex = inInvPotionCheck(info.player.inventory);
                                 // hpが危なく，ポーションがある
-                                if(((info.player.hp - maxdamEn) < info.player.maxHp * 0.25) && poIndex != -1)
+                                if(((info.player.getHp() - maxdamEn) < info.player.getMaxHp() * 0.25) && poIndex != -1) //if(((info.player.hp - maxdamEn) < info.player.maxHp * 0.25) && poIndex != -1)
                                 {
                                         ruleBesedAct.action = Action.USE_ITEM;
 					ruleBesedAct.dir = aroundEnemy.get(targetEnemyIndex).dir;
@@ -1703,7 +1708,7 @@ public class RuleBasePlayer implements Agent, Cloneable
                         rulenumber = 3;
 		}
 		// hpが7割以下であり，満腹度が半分以上
-		else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 40)
+		else if(info.player.getHp() < info.player.getMaxHp() * 0.7 && info.player.satiety > 40) //else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 40)
 		{
 			ruleBesedAct.action = Action.STAY;
                         
@@ -1718,7 +1723,7 @@ public class RuleBasePlayer implements Agent, Cloneable
 			if(foodIndex != -1)
 			{
 				ruleBesedAct.action = Action.USE_ITEM;
-				ruleBesedAct.dir = info.player.dir;
+				ruleBesedAct.dir = info.player.getDir(); //ruleBesedAct.dir = info.player.dir;
 				ruleBesedAct.itemIndex = foodIndex;
 			}
 			// ない
@@ -2012,7 +2017,7 @@ public class RuleBasePlayer implements Agent, Cloneable
 		
                 
 
-                Action ruleBesedAct = new Action(info.player.dir);
+                Action ruleBesedAct = new Action(info.player.getDir()); //Action ruleBesedAct = new Action(info.player.dir);
                 
 		// 隣接している敵のリスト
 		aroundEnemy.clear();
@@ -2028,33 +2033,33 @@ public class RuleBasePlayer implements Agent, Cloneable
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
 				// ダメージの合計
-				sumDamage += aroundEnemy.get(eNum).e.attack;
+				sumDamage += aroundEnemy.get(eNum).e.getAttack(); //sumDamage += aroundEnemy.get(eNum).e.attack;
 			}
 			// くらう最大のダメージ
 			int maxSumDamage = sumDamage;
 			int targetEnemyIndex = 0;
-                        int targethp = aroundEnemy.get(0).e.hp;
+                        int targethp = aroundEnemy.get(0).e.getHp(); //int targethp = aroundEnemy.get(0).e.hp;
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
-				if(aroundEnemy.get(eNum).e.hp <= info.player.attack &&
-				   maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.attack)
+				//if(aroundEnemy.get(eNum).e.hp <= info.player.attack && maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.attack)
+                                if(aroundEnemy.get(eNum).e.getHp() <= info.player.getAttack() && maxSumDamage > sumDamage - aroundEnemy.get(eNum).e.getAttack())
 				{
 					targetEnemyIndex = eNum;
-					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
+					maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.getAttack(); //maxSumDamage = sumDamage - aroundEnemy.get(eNum).e.attack;
 				}
                                 else
                                 {
-                                    if(targethp < aroundEnemy.get(eNum).e.hp)
+                                    if(targethp < aroundEnemy.get(eNum).e.getHp()) //if(targethp < aroundEnemy.get(eNum).e.hp)
                                     {
                                         targetEnemyIndex = eNum;
-                                        targethp = aroundEnemy.get(eNum).e.hp;
+                                        targethp = aroundEnemy.get(eNum).e.getHp(); //targethp = aroundEnemy.get(eNum).e.hp;
                                     }
                                 }
 			}
 			//System.out.println(maxSumDamage);
 
 			// hpが敵から受ける攻撃力超過->攻撃
-			if(info.player.hp > maxSumDamage)
+			if(info.player.getHp() > maxSumDamage) //if(info.player.hp > maxSumDamage)
 			{
 				// ターゲットを攻撃
 				ruleBesedAct.action = Action.ATTACK;
@@ -2143,7 +2148,7 @@ public class RuleBasePlayer implements Agent, Cloneable
 			// 敵との距離，適当な大きい数字
 			int targetEnemyIndex = 0;
 			int distEnemy = aroundEnemy.get(targetEnemyIndex).dis;
-                        int maxdamEn = aroundEnemy.get(targetEnemyIndex).e.attack;
+                        int maxdamEn = aroundEnemy.get(targetEnemyIndex).e.getAttack(); //int maxdamEn = aroundEnemy.get(targetEnemyIndex).e.attack;
 			for(int eNum = 0; eNum < aroundEnemy.size(); eNum++)
 			{
 				// より距離の近い敵がいるとき
@@ -2154,9 +2159,9 @@ public class RuleBasePlayer implements Agent, Cloneable
 					targetEnemyIndex = eNum;
 				}
                                 // より大きなダメージを与える敵がいるとき
-                                if(maxdamEn < aroundEnemy.get(eNum).e.attack)
+                                if(maxdamEn < aroundEnemy.get(eNum).e.getAttack()) //if(maxdamEn < aroundEnemy.get(eNum).e.attack)
                                 {
-                                        maxdamEn = aroundEnemy.get(eNum).e.attack;
+                                        maxdamEn = aroundEnemy.get(eNum).e.getAttack(); //maxdamEn = aroundEnemy.get(eNum).e.attack;
                                 }
 			}
 
@@ -2194,7 +2199,8 @@ public class RuleBasePlayer implements Agent, Cloneable
                                 int ldIndex = inInvLongDistAtkCheck(info.player.inventory, p, e);
                                 int poIndex = inInvPotionCheck(info.player.inventory);
                                 // hpが危なく，ポーションがある
-                                if(((info.player.hp - maxdamEn) < info.player.maxHp * 0.25) && poIndex != -1)
+                                //if(((info.player.hp - maxdamEn) < info.player.maxHp * 0.25) && poIndex != -1)
+                                if(((info.player.getHp() - maxdamEn) < info.player.getMaxHp() * 0.25) && poIndex != -1)
                                 {
                                         ruleBesedAct.action = Action.USE_ITEM;
 					ruleBesedAct.dir = aroundEnemy.get(targetEnemyIndex).dir;
@@ -2326,7 +2332,8 @@ public class RuleBasePlayer implements Agent, Cloneable
 			}
 		}
 		// hpが7割以下であり，満腹度が半分以上
-		else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 40)
+                //else if(info.player.hp < info.player.maxHp * 0.7 && info.player.satiety > 40)
+		else if(info.player.getHp() < info.player.getMaxHp() * 0.7 && info.player.satiety > 40)
 		{
 			ruleBesedAct.action = Action.STAY;
 		}
@@ -2339,7 +2346,8 @@ public class RuleBasePlayer implements Agent, Cloneable
 			if(foodIndex != -1)
 			{
 				ruleBesedAct.action = Action.USE_ITEM;
-				ruleBesedAct.dir = info.player.dir;
+				//ruleBesedAct.dir = info.player.dir;
+				ruleBesedAct.dir = info.player.getDir();
 				ruleBesedAct.itemIndex = foodIndex;
 			}
 			// ない
@@ -3082,7 +3090,7 @@ public class RuleBasePlayer implements Agent, Cloneable
         public Action passSearchMove(Info info) 
         {
             // 選択したアクション
-            Action rbAct = new Action(info.player.dir);
+            Action rbAct = new Action(info.player.getDir()); //Action rbAct = new Action(info.player.dir);
             
             int passType = diagonalCheck(info.map, info.player.gridMapX, info.player.gridMapY);
             // 部屋の時
@@ -3140,7 +3148,7 @@ public class RuleBasePlayer implements Agent, Cloneable
         public Action passSearchMoveforSimu(Info info) 
         {
             // 選択したアクション
-            Action rbAct = new Action(info.player.dir);
+            Action rbAct = new Action(info.player.getDir()); //Action rbAct = new Action(info.player.dir);
             
             int passType = diagonalCheck(info.map, info.player.gridMapX, info.player.gridMapY);
             // 部屋の時
@@ -3666,14 +3674,14 @@ public class RuleBasePlayer implements Agent, Cloneable
 
 	public Action makeAction(Info info)
 	{
-		Action act = new Action(info.player.dir);
+		Action act = new Action(info.player.getDir()); //Action act = new Action(info.player.dir);
 		//act.difPos = new Point();
 
                 px = info.player.gridMapX;
                 py = info.player.gridMapY;
                 
-                //act = ruleBased(info);
-                act = ruleBasedOnly(info);
+                act = ruleBased(info);
+                //act = ruleBasedOnly(info);
                 
                 //RuleBasePlayer rbp_deepcopy = this.clone();
                 //rbp_deepcopy.sysoutput();

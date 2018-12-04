@@ -29,11 +29,11 @@ public class MonteCarloPlayer implements Agent
 
         int stturn;
         
-        int debug = 0;
+        int debug = 11;
         
         // プレイアウト終了時の評価値の計算方法
         // 0:平均値, 1:最大値
-        private static final int MethodOfEval = 0;
+        private static final int MethodOfEval = 1;
         
         String logstr;
         String logsimurand;
@@ -150,28 +150,18 @@ public class MonteCarloPlayer implements Agent
             int[] diffx ={1,0,-1,0};
             int[] diffy ={0,1,0,-1};
             
-            for(int i = 0; i < 2 ; i++)
-            {
-                if((map[py + diffy[i]][px + diffx[i]] == 1) && ( map[py + diffy[i+2]][px + diffx[i+2]] == 1))
-                {
-                    return i;     
-                }
+            for(int i = 0; i < 2 ; i++) {
+                if((map[py + diffy[i]][px + diffx[i]] == 1) && ( map[py + diffy[i+2]][px + diffx[i+2]] == 1)) return i;
             }
             
-            if(map[py][px] == -100)
-            {
-                return -100;
-            }
-            else
-            {
-                return -1;
-            }
+            if(map[py][px] == -100) return -100;
+            else                    return -1;
         }
         
 	// ある盤面における評価値の計算
 	public double calcEvaVal(Info info)
 	{
-		// 評価値計算
+               // 評価値計算
 //		double pHpPersent = (double)info.player.hp / info.player.maxHp;
 
 		// 敵のhpの合計
@@ -656,7 +646,7 @@ public class MonteCarloPlayer implements Agent
 //                } 
             
             // 中間審査後
-            int hp = info.player.hp;
+            int hp = info.player.getHp(); //int hp = info.player.hp;
             double lv = calcLevelandExpD(info); // 経験値を少数点で表したレベル
             int sp = info.player.satiety + (info.player.inventory.getInvItemNum(1) * info.player.inventory.getFoodHealVal()); // 満腹度+食料による回復量
             int pt = info.player.inventory.getInvItemNum(2); // ポーション数
@@ -678,7 +668,7 @@ public class MonteCarloPlayer implements Agent
             // 2:実験７データ，onehot，sqrt(3)*sqrt(x)
             // 3:実験７データ，onehot，StUn，10*sqrt(x)
             // 4:0重み，死亡ペナ減少
-            int eval = -5;
+            int eval = 5;
             if(eval == -5){
                 int simuturn = info.turn - stturn; // 展開分のバイアス
                 if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
@@ -690,8 +680,8 @@ public class MonteCarloPlayer implements Agent
                 for(int index = 0; index < info.visibleEnemy.size(); index++) {
 			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
                             if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
-                                sum += (double)info.enemy[index].hp;
-                                maxSum += (double)info.enemy[index].maxHp;
+                                sum += (double)info.enemy[index].getHp(); //sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].getMaxHp(); //maxSum += (double)info.enemy[index].maxHp;
                                 break;
                             }
                         }
@@ -701,7 +691,7 @@ public class MonteCarloPlayer implements Agent
                 //System.out.println("simuturn:" + simuturn);
                 innerp = (double)(0.0
                             + (2.0 * (maxSum - sum))
-                            - (info.player.maxHp - info.player.hp)
+                            - (info.player.getMaxHp() - info.player.getHp()) //- (info.player.maxHp - info.player.hp)
                             + (info.countbeatsum_70_1t5)
                             + (1000 * life)
                             + (1000 * gameclear)
@@ -724,8 +714,8 @@ public class MonteCarloPlayer implements Agent
                 for(int index = 0; index < info.visibleEnemy.size(); index++) {
 			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
                             if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
-                                sum += (double)info.enemy[index].hp;
-                                maxSum += (double)info.enemy[index].maxHp;
+                                sum += (double)info.enemy[index].getHp(); //sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].getMaxHp(); //maxSum += (double)info.enemy[index].maxHp;
                                 if(info.enemy[index].active == false) countbeat++;
                                 break;
                             }
@@ -736,7 +726,7 @@ public class MonteCarloPlayer implements Agent
                 //System.out.println("simuturn:" + simuturn);
                 innerp = (double)(0.0
                             + (2.0 * (maxSum - sum))
-                            - (info.player.maxHp - info.player.hp)
+                            - (info.player.getMaxHp() - info.player.getHp()) //- (info.player.maxHp - info.player.hp)
                             + ((60 - (5 * simuturn)) * countbeat)
                             + (1000 * life)
                             + (1000 * gameclear)
@@ -759,8 +749,8 @@ public class MonteCarloPlayer implements Agent
                 for(int index = 0; index < info.visibleEnemy.size(); index++) {
 			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
                             if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
-                                sum += (double)info.enemy[index].hp;
-                                maxSum += (double)info.enemy[index].maxHp;
+                                sum += (double)info.enemy[index].getHp(); //sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].getMaxHp(); //maxSum += (double)info.enemy[index].maxHp;
                                 if(info.enemy[index].active == false) countbeat++;
                                 break;
                             }
@@ -771,7 +761,7 @@ public class MonteCarloPlayer implements Agent
                 //System.out.println("simuturn:" + simuturn);
                 innerp = (double)(0.0
                             + (maxSum - sum)
-                            - (info.player.maxHp - info.player.hp)
+                            - (info.player.getMaxHp() - info.player.getHp()) //- (info.player.maxHp - info.player.hp)
                             + ((60 - (5 * simuturn)) * countbeat)
                             + (1000 * life)
                             + (1000 * gameclear)
@@ -792,8 +782,8 @@ public class MonteCarloPlayer implements Agent
                 for(int index = 0; index < info.visibleEnemy.size(); index++) {
 			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
                             if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
-                                sum += (double)info.enemy[index].hp;
-                                maxSum += (double)info.enemy[index].maxHp;
+                                sum += (double)info.enemy[index].getHp(); //sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].getMaxHp(); //maxSum += (double)info.enemy[index].maxHp;
                                 if(info.enemy[index].active == false) countbeat++;
                                 break;
                             }
@@ -804,7 +794,7 @@ public class MonteCarloPlayer implements Agent
                 
                 innerp = (double)(0.0
                             + (2.0 * (maxSum - sum))
-                            - (info.player.maxHp - info.player.hp)
+                            - (info.player.getMaxHp() - info.player.getHp()) //- (info.player.maxHp - info.player.hp)
                             + (50 * countbeat)
                             + (1000 * life)
                             + (1000 * gameclear)
@@ -825,8 +815,8 @@ public class MonteCarloPlayer implements Agent
                 for(int index = 0; index < info.visibleEnemy.size(); index++) {
 			for(int eindex = 0; eindex < info.enemy.length; eindex++) {
                             if(info.visibleEnemy.get(index).index == info.enemy[eindex].index) {
-                                sum += (double)info.enemy[index].hp;
-                                maxSum += (double)info.enemy[index].maxHp;
+                                sum += (double)info.enemy[index].getHp(); //sum += (double)info.enemy[index].hp;
+                                maxSum += (double)info.enemy[index].getMaxHp(); //maxSum += (double)info.enemy[index].maxHp;
                                 if(info.enemy[index].active == false) countbeat++;
                                 break;
                             }
@@ -837,7 +827,7 @@ public class MonteCarloPlayer implements Agent
                 
                 innerp = (double)(0.0
                             + (maxSum - sum)
-                            - (info.player.maxHp - info.player.hp)
+                            - (info.player.getMaxHp() - info.player.getHp()) //- (info.player.maxHp - info.player.hp)
                             + (50 * countbeat)
                             + (1000 * life)
                             + (1000 * gameclear)
@@ -1124,6 +1114,69 @@ public class MonteCarloPlayer implements Agent
                     innerp = 100000;
                 }
             }
+            else if(eval == 5){
+                double ar0 = (ar < 3) ? ((double)(3 - ar) / 3) : 0;
+                double ar3 = (1 <= ar && ar < 6) ? ((double)(3 - Math.abs(3 - ar)) / 3) : 0;
+                double ar6 = (4 <= ar && ar < 9) ? ((double)(3 - Math.abs(6 - ar)) / 3) : 0;
+                double ar9 = (7 <= ar && ar < 12) ? ((double)(3 - Math.abs(9 - ar)) / 3) : 0;
+                double ar12 = (10 <= ar && ar < 13) ? ((double)(3 - Math.abs(12 - ar)) / 3) : (13 <= ar) ? 1: 0;
+                //System.out.println("ar : " + ar + " -> [ " + ar12 + " " + ar9 + " " + ar6 + " " + ar3 + " " + ar0 + " ]");
+                if (curFloor == 0) {
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 31.31)
+                            + ((double) lv * 93.00)
+                            + ((double) sp * -37.59)
+                            + ((double) pt * 1180.67)
+                            + ((double) ar * -224.23)
+                            + ((double) st * 609.08)
+                            + ((double) unknownAreaPer * 8.32)
+                            + ((double) stair * -107.24)
+                            + ((double) -349.66);
+                }
+                else if (curFloor == 1) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 46.95)
+                            + ((double) lv * 44.27)
+                            + ((double) sp * -27.41)
+                            + ((double) pt * 1078.39)
+                            + ((double) ar * -119.27)
+                            + ((double) st * 479.54)
+                            + ((double) unknownAreaPer * -20.92)
+                            + ((double) stair * -117.17)
+                            + ((double) -1149.91);
+                } else if (curFloor == 2) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 96.6)
+                            + ((double) lv * 322.6)
+                            + ((double) sp * 20.1)
+                            + ((double) pt * 894.9)
+                            + ((double) ar12 * -1085.8)
+                            + ((double) ar9 * -1325.1)
+                            + ((double) ar6 * -1731.8)
+                            + ((double) ar3 * -2737.8)
+                            + ((double) ar0 * -3120.7)
+                            + ((double) st * 611.2)
+                            + ((double) unknownAreaPer * 0.5)
+                            + ((double) stair * -122.2)
+                            + ((double) -9163.3);
+                } else if (curFloor == 3) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 189.04)
+                            + ((double) lv * -230.70)
+                            + ((double) sp * 0.31)
+                            + ((double) pt * 883.37)
+                            + ((double) ar * 111.03)
+                            + ((double) st * 558.56)
+                            + ((double) unknownAreaPer * -23.25)
+                            + ((double) stair * 1658.15)
+                            + ((double) -2284.18);
+                } else if (curFloor == 4) {
+                    innerp = 100000;
+                }
+            }
             //System.out.println("innerp:" + innerp);
             return innerp;
 	}
@@ -1143,9 +1196,11 @@ public class MonteCarloPlayer implements Agent
             int mapx = info.mapsizeX;
             int mapy = info.mapsizeY;
             
-            for(int y = 0; y < mapy; y++)
-                for(int x = 0; x < mapx; x++)
+            for(int y = 0; y < mapy; y++) {
+                for(int x = 0; x < mapx; x++) {
                     if(info.pmap[y][x] == false) hitCount++;
+                }
+            }
             
             unknownAreaPer = (hitCount * 100.0) / (double)(mapx * mapy);
             return unknownAreaPer;
@@ -1178,10 +1233,8 @@ public class MonteCarloPlayer implements Agent
 	public boolean isCheckMonsterinPView(Info info)
 	{
 		// 視界内のモンスターの探索
-		for(int y = -5; y <= 5; y++)
-		{
-			for(int x = -5; x <= 5; x++)
-			{
+		for(int y = -5; y <= 5; y++) {
+			for(int x = -5; x <= 5; x++) {
 				// 敵がいて，かつ視界内
 				if(0 < info.player.gridMapY + y && info.player.gridMapY + y < MyCanvas.MAPGRIDSIZE_Y &&
 				   0 < info.player.gridMapX + x && info.player.gridMapX + x < MyCanvas.MAPGRIDSIZE_X &&
@@ -1202,10 +1255,8 @@ public class MonteCarloPlayer implements Agent
         {
             boolean flag = true;
             
-            for(int index = 0; index < info.visibleEnemy.size(); index++)
-            {
-                if(info.visibleEnemy.get(index).active == true)
-                {
+            for(int index = 0; index < info.visibleEnemy.size(); index++) {
+                if(info.visibleEnemy.get(index).active == true) {
                     flag = false;
                 }
             }
@@ -1398,7 +1449,7 @@ public class MonteCarloPlayer implements Agent
 	// rulebaseからinfoを受け取り，アクションを返す
 	public Action makeAction(Info info, RuleBasePlayer rbp)
 	{
-		Action act = new Action(info.player.dir);
+		Action act = new Action(info.player.getDir()); //Action act = new Action(info.player.dir);
 
 		act = DLMCTS(info, rbp);
 
@@ -1527,7 +1578,7 @@ public class MonteCarloPlayer implements Agent
                 //Action randAct = actList.get(random.nextInt(actList.size()));
                 
                 RuleBasePlayer rbp = new RuleBasePlayer();
-                Action randAct = new Action(info.player.dir);
+                Action randAct = new Action(info.player.getDir()); //Action randAct = new Action(info.player.dir);
                 //randAct = rbp.semiRBP(info, actList);
                 
                 // アクション実行前の階層
@@ -1542,29 +1593,25 @@ public class MonteCarloPlayer implements Agent
                
                 
                 int sumdam = 0;
-                for(Enemy e : info.visibleEnemy)
-                {
+                for(Enemy e : info.visibleEnemy) {
                     Point p = new Point(info.player.gridMapX, info.player.gridMapY);
-                    if(Math.abs(p.x - e.gridMapX) < 2 && Math.abs(p.y - e.gridMapY) < 2 && e.active == true)
-                    {
-                        sumdam += e.attack;
+                    if(Math.abs(p.x - e.gridMapX) < 2 && Math.abs(p.y - e.gridMapY) < 2 && e.active == true) {
+                        sumdam += e.getAttack(); //sumdam += e.attack;
                     }
                 }
                 
-                if(sumdam != 0)
-                {
-                    if(info.player.hp - sumdam > 0)
-                    {
+                // このままだとダメージを受ける状況で
+                if(sumdam != 0) {
+                    // しかしそのダメージが死なないくらいの時
+                    if(info.player.getHp() - sumdam > 0) { //if(info.player.hp - sumdam > 0) {
                         boolean inflag = false;
                         
-                        for(int dir = 0; dir < 9; dir++)
-                        {
-                            for(int i = 0; i < actList.size(); i++)
-                            {
-                                if(actList.get(i).action == Action.ATTACK && actList.get(i).dir == dir)
-                                {
-                                    if(trialPlay == 10)
-                                    {
+                        // 攻撃できたらする
+                        for(int dir = 0; dir < 9; dir++) {
+                            for(int i = 0; i < actList.size(); i++) {
+                                if(actList.get(i).action == Action.ATTACK && actList.get(i).dir == dir) {
+                                    // 最後のターンだけ文字列の追加処理を行いたい（何でここ？）
+                                    if(trialPlay == 10) {
                                         inflag = true;
                                     }
                                     randAct = actList.get(i);
@@ -1572,37 +1619,32 @@ public class MonteCarloPlayer implements Agent
                             }
                         }
                         
-                        if(inflag == true)
-                        {
-                            logsimurand += ("\t" + "in");
+                        // 
+                        if(inflag == true) {
+                            logsimurand += ("\t" + "Pdamage");
                         }
                     }
-                    else
-                    {
-                        if(info.player.inventory.getInvItemNum(2) >= 1)
-                        {
-                            for(int i = 0; i < actList.size(); i++)
-                            {
-                                if(actList.get(i).action == Action.USE_ITEM && info.player.inventory.itemList.get(actList.get(i).itemIndex).id == 2)
-                                {
+                    // 死ぬダメージ量の時
+                    else {
+                        // 杖があったら使う
+                        if(info.player.inventory.getInvItemNum(2) >= 1) {
+                            for(int i = 0; i < actList.size(); i++) {
+                                if(actList.get(i).action == Action.USE_ITEM && info.player.inventory.itemList.get(actList.get(i).itemIndex).id == 2) {
                                     randAct = actList.get(i);
                                 }
                             }
                         }
-                        else
-                        {
+                        else {
                             randAct = actList.get(random.nextInt(actList.size()));
                         }
                     }
                 }
-                else
-                {
+                else {
                     randAct = actList.get(random.nextInt(actList.size()));
                     randflag = true;
                 }
                 
-                if(trialPlay == 10)
-                {
+                if(trialPlay == 10) {
                     logstr += (sumdam + "\t");
 //                    System.out.println("player:(" + info.player.gridMapX + "," + info.player.gridMapY + ")");
 //                    for(int e = 0; e < info.visibleEnemy.size(); e++)
@@ -1614,27 +1656,27 @@ public class MonteCarloPlayer implements Agent
                 
                 if(randflag == true)
                 {
-                    logstr += "R-";
+                    logstr += "Rand-";
                 }
                 
                 if(randAct.action == Action.ATTACK)
                 {
-                    logstr += "a" + (randAct.dir + 1) + ", "; 
+                    logstr += "atk" + (randAct.dir + 1) + ", "; 
                     //System.out.print("a" + randAct.dir + ", ");
                 }
                 else if(randAct.action == Action.USE_ITEM)
                 {
-                    logstr += "u(" + randAct.itemIndex + ")" + (randAct.dir + 1) + ", ";
+                    logstr += "useItem(" + randAct.itemIndex + ")" + (randAct.dir + 1) + ", ";
                     //System.out.print("u(" + randAct.itemIndex + ")" + randAct.dir + ", ");
                 }
                 else if(randAct.action == Action.MOVE)
                 {
-                    logstr += "m" + (randAct.dir + 1) + ", ";
+                    logstr += "move" + (randAct.dir + 1) + ", ";
                     //System.out.print("m" + randAct.dir + ", ");
                 }
                 else if(randAct.action == Action.STAY)
                 {
-                    logstr += "p, ";
+                    logstr += "stay, ";
                     //System.out.print("m5");
                 }
                 
@@ -1658,6 +1700,17 @@ public class MonteCarloPlayer implements Agent
                 }
             }
 
+            int hp = info.player.getHp(); //int hp = info.player.hp;
+            double lv = calcLevelandExpD(info); // 経験値を少数点で表したレベル
+            int sp = info.player.satiety + (info.player.inventory.getInvItemNum(1) * info.player.inventory.getFoodHealVal()); // 満腹度+食料による回復量
+            int pt = info.player.inventory.getInvItemNum(2); // ポーション数
+            int ar = info.player.inventory.getInvItemNum(3); // 矢数(使用可能数) 
+            int st = info.player.inventory.getInvItemNum(4); // 杖数
+            double unknownAreaPer = calcUnknownAreaPer(info); // 未知領域の割合
+            int stair = (info.stairpos == true) ? 1 : -1; // 階段発見の有無，発見1，未発見-1
+            
+            logstr += ("\t" + "(" + hp + "," + lv + "," + sp + "," + pt + "," + ar + "," + st + "," + unknownAreaPer + "," + stair + ")");
+            
             // 一定のターン経過したとき -> 評価値を計算，値を返す
             return calcEvaVal(info);
         }
@@ -1788,7 +1841,41 @@ public class MonteCarloPlayer implements Agent
                 {
                         //System.out.println("simu gameover");
                         // 評価値を計算し，値を返す
-                        return calcEvaVal(info);
+                    
+                        double tmp = calcEvaVal(info);
+                        
+                        if(debug > 10) {
+                            System.out.print("act" + acthistindex + " : " + acthist.action);
+                            if(acthist.action == Action.USE_ITEM)
+                            {
+                                System.out.print(", itemindex(" + acthist.itemIndex + ")");
+                            }
+                            System.out.println(", dir(1~9) : " + acthist.dir);
+                            
+                            int hp = info.player.getHp(); //int hp = info.player.hp;
+                            double lv = calcLevelandExpD(info); // 経験値を少数点で表したレベル
+                            int sp = info.player.satiety + (info.player.inventory.getInvItemNum(1) * info.player.inventory.getFoodHealVal()); // 満腹度+食料による回復量
+                            int pt = info.player.inventory.getInvItemNum(2); // ポーション数
+                            int ar = info.player.inventory.getInvItemNum(3); // 矢数(使用可能数) 
+                            int st = info.player.inventory.getInvItemNum(4); // 杖数
+                            double unknownAreaPer = calcUnknownAreaPer(info); // 未知領域の割合
+                            int stair = (info.stairpos == true) ? 1 : -1; // 階段発見の有無，発見1，未発見-1
+
+                            String tmpstr = ("\t" + "(" + hp + "," + lv + "," + sp + "," + pt + "," + ar + "," + st + "," + unknownAreaPer + "," + stair + ")");
+
+                            if(info.player.active == false){
+                                System.out.print("gameover:");
+                            }
+                            else if(curFloor != info.player.curFloor){
+                                System.out.print("player is going next Flr:");
+                            }
+                            else if(isCheckMonsterinPView(info) == false){
+                                System.out.print("enemy vanished in player-view:");
+                            }
+                            System.out.println(tmp + "\t" + tmpstr);
+                        }
+                    
+                        return tmp;
                 }
                 
                 // 上の条件に当てはまらないとき，さらに行動を展開
@@ -1894,7 +1981,7 @@ public class MonteCarloPlayer implements Agent
         // 
         public Action makeAction(Info info)
         {
-                Action act = new Action(info.player.dir);
+                Action act = new Action(info.player.getDir()); //Action act = new Action(info.player.dir);
 
                 sfd = info.player.inventory.getInvItemNum(1);
                 spt = info.player.inventory.getInvItemNum(2);
@@ -1917,7 +2004,8 @@ public class MonteCarloPlayer implements Agent
                     for(int e = 0; e < info.visibleEnemy.size(); e++)
                     {
                         System.out.println("e" + info.visibleEnemy.get(e).index + "(" + info.visibleEnemy.get(e).gridMapX + "," + info.visibleEnemy.get(e).gridMapY + ")" + 
-                                            info.visibleEnemy.get(e).hp + "/" + info.visibleEnemy.get(e).maxHp);
+                                            info.visibleEnemy.get(e).getHp() + "/" + info.visibleEnemy.get(e).getMaxHp());
+                                            //info.visibleEnemy.get(e).hp + "/" + info.visibleEnemy.get(e).maxHp);
                     }
                     for(int y = 0; y < info.mapsizeY; y++)
                     {
@@ -1957,7 +2045,7 @@ public class MonteCarloPlayer implements Agent
                     }
                     System.out.println("player:(" + info.player.gridMapX + "," + info.player.gridMapY + ")");
                     System.out.println("Lv:" + calcLevelandExpD(info));
-                    System.out.println("Hp:" + info.player.hp + "/" + info.player.maxHp);
+                    System.out.println("Hp:" + info.player.getHp() + "/" + info.player.getMaxHp()); //System.out.println("Hp:" + info.player.hp + "/" + info.player.maxHp);
                     System.out.println("sp:" + info.player.satiety);
                     System.out.println("unknownAreaPer:" + calcUnknownAreaPer(info));
                     System.out.println("stair:" + ((info.stairpos == true) ? 1 : -1));

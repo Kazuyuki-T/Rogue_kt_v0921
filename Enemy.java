@@ -52,13 +52,20 @@ public class Enemy extends Unit implements Cloneable
 			enemy.sizeY = this.sizeY;
 			enemy.sizeMagX = this.sizeMagX;
 			enemy.sizeMagY = this.sizeMagY;
-			enemy.action_flag = this.action_flag;
-			enemy.dir = this.dir;
-			enemy.speed = this.speed;
-			enemy.maxHp = this.maxHp;
-			enemy.hp = this.hp;
-			enemy.attack = this.attack;
-			enemy.view = this.view;
+			//enemy.action_flag = this.action_flag;
+                        enemy.setActionFlag(this.isActionFlag());
+			//enemy.dir = this.dir;
+			enemy.setDir(this.getDir());
+                        //enemy.speed = this.speed;
+			enemy.setSpeed(this.getSpeed());
+                        //enemy.maxHp = this.maxHp;
+			enemy.setMaxHp(this.getMaxHp());
+                        //enemy.hp = this.hp;
+			enemy.setHp(this.getHp());
+                        //enemy.attack = this.attack;
+			enemy.setAttack(this.getAttack());
+                        //enemy.view = this.view;
+                        enemy.setView(this.getView());
                         
                         enemy.index = this.index;
                         enemy.repopFlag = this.repopFlag;
@@ -110,20 +117,26 @@ public class Enemy extends Unit implements Cloneable
 		gridScrY = player.gridScrY - player.gridMapY + gridMapY;
 		x = gridWinX2x(gridScrX);
 		y = gridWinY2y(gridScrY);
-		dir = 0;
-		action_flag = false;
-
+		//dir = 0;
+		this.setDir(0);
+                //action_flag = false;
+                this.setActionFlag(false);
+                
 		// プレイヤーの視界ぎりぎりで逃げられた際に追いかけられるように，プレイヤの視界+1
 		// actionTableとの関係上，2以上とする
 		// 検討の必要あり
-		view = MyCanvas.SCREENGRIDSIZE_X / 2 + 1;
-
+		//view = MyCanvas.SCREENGRIDSIZE_X / 2 + 1;
+                this.setView(MyCanvas.SCREENGRIDSIZE_X / 2 + 1);
+                
 		// 現在の階層によって性能を変更
 		if(MyCanvas.floorNumber == 0){
-			maxHp = 60;
-			hp = 60;
-			attack = 20;
-			spoint = 15;
+			//maxHp = 60;
+                        this.setMaxHp(60);
+			//hp = 60;
+			this.setHp(60);
+                        //attack = 20;
+			this.setAttack(20);
+                        spoint = 15;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
@@ -132,10 +145,13 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else if(MyCanvas.floorNumber == 1)
 		{
-			maxHp = 80;
-			hp = 80;
-			attack = 25;
-			spoint = 20;
+			//maxHp = 80;
+			this.setMaxHp(80);
+                        //hp = 80;
+			this.setHp(80);
+                        //attack = 25;
+			this.setAttack(25);
+                        spoint = 20;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
@@ -144,10 +160,13 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else if(MyCanvas.floorNumber == 2)
 		{
-			maxHp = 90;
-			hp = 90;
-			attack = 30;
-			spoint = 25;
+			//maxHp = 90;
+			this.setMaxHp(90);
+                        //hp = 90;
+			this.setHp(90);
+                        //attack = 30;
+			this.setAttack(30);
+                        spoint = 25;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
@@ -156,10 +175,13 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else if(MyCanvas.floorNumber == 3)
 		{
-			maxHp = 95;
-			hp = 95;
-			attack = 35;
-			spoint = 30;
+			//maxHp = 95;
+			this.setMaxHp(95);
+                        //hp = 95;
+			this.setHp(95);
+                        //attack = 35;
+			this.setAttack(35);
+                        spoint = 30;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
@@ -168,10 +190,13 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else
 		{
-			maxHp = 60;
-			hp = 60;
-			attack = 35;
-			spoint = 15;
+			//maxHp = 60;
+			this.setMaxHp(60);
+                        //hp = 60;
+			this.setHp(60);
+                        //attack = 35;
+			this.setAttack(35);
+                        spoint = 15;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
 			sizeY = img.getHeight(this);
@@ -199,19 +224,25 @@ public class Enemy extends Unit implements Cloneable
 		gridScrY = player.gridScrY - player.gridMapY + gridMapY;
 		x = gridWinX2x(gridScrX);
 		y = gridWinY2y(gridScrY);
-		dir = 0;
-		action_flag = false;
-
+		//dir = 0;
+                this.setDir(0);
+		//action_flag = false;
+                this.setActionFlag(false);
+                    
 		// プレイヤーの視界ぎりぎりで逃げられた際に追いかけられるように，プレイヤの視界+1
 		// actionTableとの関係上，2以上とする
 		// 検討の必要あり
-		view = MyCanvas.SCREENGRIDSIZE_X / 2 + 1;
-
+		//view = MyCanvas.SCREENGRIDSIZE_X / 2 + 1;
+                this.setView(MyCanvas.SCREENGRIDSIZE_X / 2 + 1);
+                
 		// 現在の階層によって性能を変更
 		if(level == 0){
-			maxHp = 60;
-			hp = 60;
-			attack = 20;
+			//maxHp = 60;
+                        this.setMaxHp(60);
+			//hp = 60;
+			this.setHp(60);
+                        //attack = 20;
+			this.setAttack(20);
 			spoint = 15;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
@@ -221,9 +252,12 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else if(level == 1)
 		{
-			maxHp = 80;
-			hp = 80;
-			attack = 25;
+			//maxHp = 80;
+			this.setMaxHp(80);
+                        //hp = 80;
+			this.setHp(80);
+                        //attack = 25;
+			this.setAttack(25);
 			spoint = 20;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
@@ -233,9 +267,12 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else if(level == 2)
 		{
-			maxHp = 90;
-			hp = 90;
-			attack = 30;
+			//maxHp = 90;
+			this.setMaxHp(90);
+                        //hp = 90;
+			this.setHp(90);
+                        //attack = 30;
+			this.setAttack(30);
 			spoint = 25;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
@@ -245,9 +282,12 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else if(level == 3)
 		{
-			maxHp = 95;
-			hp = 95;
-			attack = 35;
+			//maxHp = 95;
+			this.setMaxHp(95);
+                        //hp = 95;
+			this.setHp(95);
+                        //attack = 35;
+			this.setAttack(35);
 			spoint = 30;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
@@ -257,9 +297,12 @@ public class Enemy extends Unit implements Cloneable
 		}
 		else
 		{
-			maxHp = 60;
-			hp = 60;
-			attack = 35;
+			//maxHp = 60;
+			this.setMaxHp(60);
+                        //hp = 60;
+			this.setHp(60);
+                        //attack = 35;
+			this.setAttack(35);
 			spoint = 15;
 			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 			sizeX = img.getWidth(this);
@@ -443,12 +486,15 @@ public class Enemy extends Unit implements Cloneable
 	public void damageCalc(Unit u)
 	{
 		// hpから攻撃力分のダメージを引く
-		hp -= u.attack;
-
-		if(hp <= 0)
+		//hp -= u.attack;
+                this.addHp(-u.getAttack());
+            
+		//if(hp <= 0)
+                if(this.getHp() <= 0)
 		{
 			active = false;
-			hp = 0;
+			//hp = 0;
+                        this.setHp(0);
 			//Background.mapUnit[gridMapY][gridMapX] = -1;
 			bg.setMapUnit(gridMapX, gridMapY, -1);
 			//Game.appendRog("beat " + getName());
@@ -461,12 +507,15 @@ public class Enemy extends Unit implements Cloneable
 	public void damageCalc(int udam, Info info)
 	{
 		// hpから攻撃力分のダメージを引く
-		hp -= udam;
-
-		if(hp <= 0)
+		//hp -= udam;
+                this.addHp(-udam);
+            
+		//if(hp <= 0)
+                if(this.getHp() <= 0)
 		{
 			active = false;
-			hp = 0;
+			//hp = 0;
+                        this.setHp(0);
 			//bgSimu.mapUnit[gridMapY][gridMapX] = -1;
 			info.mapUnit[gridMapY][gridMapX] = -1;
 			//Game.appendRog("beat " + getName());
@@ -479,12 +528,15 @@ public class Enemy extends Unit implements Cloneable
 	public void damageCalc(int dam)
 	{
 		// hpから攻撃力分のダメージを引く
-		hp -= dam;
+		//hp -= dam;
+                this.addHp(-dam);
 
-		if(hp <= 0)
+		//if(hp <= 0)
+                if(this.getHp() <= 0)
 		{
 			active = false;
-			hp = 0;
+			//hp = 0;
+                        this.setHp(0);
 			//Background.mapUnit[gridMapY][gridMapX] = -1;
 			bg.setMapUnit(gridMapX, gridMapY, -1);
 			//Game.appendRog("beat " + getName());
@@ -592,9 +644,11 @@ public class Enemy extends Unit implements Cloneable
 					// 斜め攻撃ができるとき
 					else
 					{
-						int oldhp = player.hp;
+						//int oldhp = player.hp;
+                                                int oldhp = player.getHp();
 						player.damageCalc(ObjectSet.enemy[enemyIndex], bg);
-						int newhp = player.hp;
+						//int newhp = player.hp;
+                                                int newhp = player.getHp();
 						Logger.appendLog("player:" + oldhp + "->" + newhp);
 					}
 				}
@@ -602,9 +656,11 @@ public class Enemy extends Unit implements Cloneable
 				else
 				{
 					// 攻撃
-					int oldhp = player.hp;
-					player.damageCalc(ObjectSet.enemy[enemyIndex], bg);
-					int newhp = player.hp;
+					//int oldhp = player.hp;
+					int oldhp = player.getHp();
+                                        player.damageCalc(ObjectSet.enemy[enemyIndex], bg);
+					//int newhp = player.hp;
+                                        int newhp = player.getHp();
 					Logger.appendLog("player:" + oldhp + "->" + newhp);
 				}
 			}
@@ -684,9 +740,9 @@ public class Enemy extends Unit implements Cloneable
 			// プレイヤーとの距離の差を計算
 			int difx = player.gridMapX - gridMapX;
 			int dify = player.gridMapY - gridMapY;
-
+                        int eview = this.getView();
 			// 視界内にいる場合
-			if(-view <= difx && difx <= view && -view <= dify && dify <= view)
+			if(-eview <= difx && difx <= eview && -eview <= dify && dify <= eview)
 			{
 				return true;
 			}
@@ -704,7 +760,8 @@ public class Enemy extends Unit implements Cloneable
 			// または，視界内にいる
 			int difx = player.gridMapX - gridMapX;
 			int dify = player.gridMapY - gridMapY;
-			if(-view <= difx && difx <= view && -view <= dify && dify <= view)
+                        int eview = this.getView();
+			if(-eview <= difx && difx <= eview && -eview <= dify && dify <= eview)
 			{
 				return true;
 			}
@@ -713,9 +770,10 @@ public class Enemy extends Unit implements Cloneable
 		// プレイヤーとの距離の差を計算
 		int difx = player.gridMapX - gridMapX;
 		int dify = player.gridMapY - gridMapY;
-
+                int eview = this.getView();
+                
 		// 視界内にいる場合
-		if(-view <= difx && difx <= view && -view <= dify && dify <= view)
+		if(-eview <= difx && difx <= eview && -eview <= dify && dify <= eview)
 		{
 			return true;
 		}
