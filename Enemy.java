@@ -38,7 +38,7 @@ public class Enemy extends Unit implements Cloneable
 			enemy.player = simuplayer;
 
 			// deepcopyができていない？
-			enemy.img = this.img;
+			enemy.setImg(this.getImg()); //enemy.img = this.img;
 			enemy.objName = this.objName;
 			enemy.objNum = this.objNum;
 			enemy.active = this.active;
@@ -137,11 +137,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 20;
 			this.setAttack(20);
                         spoint = 15;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else if(MyCanvas.floorNumber == 1)
 		{
@@ -152,11 +148,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 25;
 			this.setAttack(25);
                         spoint = 20;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else if(MyCanvas.floorNumber == 2)
 		{
@@ -167,11 +159,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 30;
 			this.setAttack(30);
                         spoint = 25;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else if(MyCanvas.floorNumber == 3)
 		{
@@ -182,11 +170,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 35;
 			this.setAttack(35);
                         spoint = 30;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else
 		{
@@ -197,12 +181,15 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 35;
 			this.setAttack(35);
                         spoint = 15;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
+                
+                // 度の階層でも共通する部分
+                // 画像読み込みは後々変更することを考えif文中
+                sizeX = this.getImg().getWidth(this); //sizeX = img.getWidth(this);
+                sizeY = this.getImg().getHeight(this); //sizeY = img.getHeight(this);
+		sizeMagX = MyCanvas.MAPCHIP_MAGX;
+		sizeMagY = MyCanvas.MAPCHIP_MAGY;
 	}
         
         // 指定したlvの敵を生成
@@ -244,11 +231,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 20;
 			this.setAttack(20);
 			spoint = 15;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else if(level == 1)
 		{
@@ -259,11 +242,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 25;
 			this.setAttack(25);
 			spoint = 20;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else if(level == 2)
 		{
@@ -274,11 +253,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 30;
 			this.setAttack(30);
 			spoint = 25;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else if(level == 3)
 		{
@@ -289,11 +264,7 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 35;
 			this.setAttack(35);
 			spoint = 30;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
 		else
 		{
@@ -304,12 +275,15 @@ public class Enemy extends Unit implements Cloneable
                         //attack = 35;
 			this.setAttack(35);
 			spoint = 15;
-			img = loadImage("src/mat/enemy.png"); // 敵機読み込み
-			sizeX = img.getWidth(this);
-			sizeY = img.getHeight(this);
-			sizeMagX = MyCanvas.MAPCHIP_MAGX;
-			sizeMagY = MyCanvas.MAPCHIP_MAGY;
+			this.loadImage("src/mat/enemy.png"); //img = loadImage("src/mat/enemy.png"); // 敵機読み込み
 		}
+                
+                // 度の階層でも共通する部分
+                // 画像読み込みは後々変更することを考えif文中
+                sizeX = this.getImg().getWidth(this); //sizeX = img.getWidth(this);
+                sizeY = this.getImg().getHeight(this); //sizeY = img.getHeight(this);
+		sizeMagX = MyCanvas.MAPCHIP_MAGX;
+		sizeMagY = MyCanvas.MAPCHIP_MAGY;
 	}
 
 	// unitを継承したための仮実装
@@ -826,7 +800,8 @@ public class Enemy extends Unit implements Cloneable
 			if(active == true)
 			{
 				// 読み込んだ画像の出力
-				g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+				//g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+                                g.drawImage(this.getImg(), x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
 				// 番号
 				Font eFont = new Font("Alial", Font.BOLD, 30);
 				g.setColor(Color.red);

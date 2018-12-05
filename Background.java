@@ -52,7 +52,7 @@ public class Background extends LoadImg
 		random = new Random();
 
 		// マップチップの読み込み
-		img = loadImage("src/mat/mapchip.png");
+		this.loadImage("src/mat/mapchip.png"); //img = loadImage("src/mat/mapchip.png");
 		// マップの読み込み
 		//map = mapUpdate(new String("mat/d.txt"));
 		mapUpdate();
@@ -66,7 +66,7 @@ public class Background extends LoadImg
                 random = new Random();
 
 		// マップチップの読み込み
-		img = loadImage("src/mat/mapchip.png");
+		this.loadImage("src/mat/mapchip.png"); //img = loadImage("src/mat/mapchip.png");
 		// マップの読み込み
 		//map = mapUpdate(new String("mat/d.txt"));
 		mapUpdate();
@@ -520,11 +520,13 @@ public class Background extends LoadImg
 				int sDrowPointX = (max_X / 2 + 1 + countX) * mcX ;
 				int sDrowPointY = (max_Y / 2 + 1 + countY) * mcY;
 				if(map[y][x] == 0){
-					g.drawImage(img, sDrowPointX - mcX/2, sDrowPointY - mcY/2,
+					//g.drawImage(img, sDrowPointX - mcX/2, sDrowPointY - mcY/2,
+                                        g.drawImage(this.getImg(), sDrowPointX - mcX/2, sDrowPointY - mcY/2,
 							         sDrowPointX + mcX/2, sDrowPointY + mcY/2, 0, 0, MyCanvas.MAPCHIP_X, MyCanvas.MAPCHIP_Y, this);
 				}
 				else if (map[y][x] == 1){
-					g.drawImage(img, sDrowPointX - mcX/2, sDrowPointY - mcY/2,
+					//g.drawImage(img, sDrowPointX - mcX/2, sDrowPointY - mcY/2,
+                                        g.drawImage(this.getImg(), sDrowPointX - mcX/2, sDrowPointY - mcY/2,
 							         sDrowPointX + mcX/2, sDrowPointY + mcY/2, 64, 0, MyCanvas.MAPCHIP_X+64, MyCanvas.MAPCHIP_Y, this);
 				}
 			}

@@ -43,7 +43,7 @@ public class Item extends Object implements Cloneable
                         item.x = this.x;
                         item.y = this.y;
                         item.id = this.id;
-                        item.img = this.img;
+                        item.setImg(this.getImg()); //item.img = this.img;
                         item.sizeX = this.sizeX;
                         item.sizeY = this.sizeY;
                         item.sizeMagX = this.sizeMagX;
@@ -111,10 +111,10 @@ public class Item extends Object implements Cloneable
 		id = idn;
 
 		String imgfName = new String("src/mat/item" + idn + ".png");
-		img = loadImage(imgfName);
+		this.loadImage(imgfName);//img = loadImage(imgfName);
 
-		sizeX = img.getWidth(this);
-		sizeY = img.getHeight(this);
+		sizeX = this.getImg().getWidth(this); //sizeX = img.getWidth(this);
+		sizeY = this.getImg().getHeight(this); //sizeY = img.getHeight(this);
 		sizeMagX = MyCanvas.MAPCHIP_MAGX;
 		sizeMagY = MyCanvas.MAPCHIP_MAGY;
 	}
@@ -135,7 +135,8 @@ public class Item extends Object implements Cloneable
 			if(active == true)
 			{
 				// 読み込んだ画像の出力
-				g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+				//g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+                                g.drawImage(this.getImg(), x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
 			}
 		}
 	}

@@ -57,7 +57,7 @@ public class Player extends Unit implements Cloneable
 
 			// deepcopyができていない？
 
-			player.img = this.img;
+			player.setImg(this.getImg());//player.img = this.img;
 			player.objName = this.objName;
 			player.objNum = this.objNum;
 			player.active = this.active;
@@ -169,11 +169,11 @@ public class Player extends Unit implements Cloneable
 		spDecCount = 0;
 
 		// 自機読み込み
-		img = loadImage("src/mat/player.png");
+		this.loadImage("src/mat/player.png");//img = loadImage("src/mat/player.png");
 
 		// 本来のimgサイズ
-		sizeX = img.getWidth(this);
-		sizeY = img.getHeight(this);
+		sizeX = this.getImg().getWidth(this); //sizeX = img.getWidth(this);
+		sizeY = this.getImg().getHeight(this); //sizeY = img.getHeight(this);
 		// 倍率をかけたimgサイズ
 		sizeMagX = MyCanvas.MAPCHIP_MAGX;
 		sizeMagY = MyCanvas.MAPCHIP_MAGY;
@@ -440,7 +440,8 @@ public class Player extends Unit implements Cloneable
 		if (active == true)
 		{
 			// 読み込んだ画像の出力
-			g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+			//g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+                        g.drawImage(this.getImg(), x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
 
 			// 向き
 			Point p[] = new Point[3];

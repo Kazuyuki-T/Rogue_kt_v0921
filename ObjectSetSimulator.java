@@ -339,15 +339,24 @@ public class ObjectSetSimulator
 	// エネミーが移動する処理
 	public void moveEnemy(Info info)
 	{
-		for (int index = 0; index < info.enemy.length; index++)
-		{
-			if (info.enemy[index].active == true)
-			{
-				moveEachEnemy(index, info);
-
-				// アクションフラグの更新必要か？
-			}
-		}
+		// visible以外動かさない
+                for(int visn = 0; visn < info.visibleEnemy.size(); visn++) {
+			for(int en = 0; en < info.enemy.length; en++) {
+                                if(info.visibleEnemy.get(visn).index == info.enemy[en].index && info.enemy[en].active == true) {
+                                        moveEachEnemy(en, info);
+                                }
+                        }
+                }
+            
+//                for (int index = 0; index < info.enemy.length; index++)
+//		{
+//			if (info.enemy[index].active == true)
+//			{
+//				moveEachEnemy(index, info);
+//
+//				// アクションフラグの更新必要か？
+//			}
+//		}
 	}
 
 	public void moveEachEnemy(int enemyIndex, Info info)

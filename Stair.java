@@ -12,7 +12,7 @@ public class Stair extends Object implements Cloneable
 			stair.player = iplayer;
                         
                         stair.active = this.active;
-                        stair.img = this.img;
+                        stair.setImg(this.getImg()); //stair.img = this.img;
                         stair.sizeX = this.sizeX;
                         stair.sizeY = this.sizeY;
                         stair.sizeMagX = this.sizeMagX;
@@ -38,9 +38,9 @@ public class Stair extends Object implements Cloneable
 
 		active = false;
 
-		img = loadImage("src/mat/stair.png"); // 階段画像読み込み
-		sizeX = img.getWidth(this);
-		sizeY = img.getHeight(this);
+		this.loadImage("src/mat/stair.png"); //img = loadImage("src/mat/stair.png"); // 階段画像読み込み
+		sizeX = this.getImg().getWidth(this); //sizeX = img.getWidth(this);
+		sizeY = this.getImg().getHeight(this); //sizeY = img.getHeight(this);
 		sizeMagX = MyCanvas.MAPCHIP_MAGX;
 		sizeMagY = MyCanvas.MAPCHIP_MAGY;
 	}
@@ -74,7 +74,8 @@ public class Stair extends Object implements Cloneable
 			if(active == true)
 			{
 				// 読み込んだ画像の出力
-				g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+				//g.drawImage(img, x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
+                                g.drawImage(this.getImg(), x - sizeMagX/2, y - sizeMagY/2, x + sizeMagX/2, y + sizeMagY/2, 0, 0, sizeX, sizeY, this);
 			}
 		}
 	}

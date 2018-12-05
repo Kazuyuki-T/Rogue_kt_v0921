@@ -9,15 +9,16 @@ import javax.imageio.ImageIO;
 public abstract class LoadImg extends Canvas
 {
 	// オブジェクトの持つ外見イメージ
-	public BufferedImage img;
+	private BufferedImage img;
 
 	// イメージのロード
-	BufferedImage loadImage(String name)
+	public BufferedImage loadImage(String name)
 	{
 		try{
 			FileInputStream in = new FileInputStream(name);// FileInputStream
 			BufferedImage rv = ImageIO.read(in);//
 			in.close();//
+                        img = rv;
 			return rv;//
 		}catch(IOException e){
 			System.out.println("Err e=" + e);//
@@ -25,4 +26,11 @@ public abstract class LoadImg extends Canvas
 			return null;// null
 		}
 	}
+        
+        public BufferedImage getImg(){
+            return img;
+        }
+        public void setImg(BufferedImage img){
+            this.img = img;
+        }
 }

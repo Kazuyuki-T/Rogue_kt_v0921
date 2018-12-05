@@ -1,6 +1,7 @@
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.List;
 
 public class MonteCarloPlayer implements Agent
 {
@@ -33,7 +34,7 @@ public class MonteCarloPlayer implements Agent
         
         // プレイアウト終了時の評価値の計算方法
         // 0:平均値, 1:最大値
-        private static final int MethodOfEval = 1;
+        private static final int MethodOfEval = 0;
         
         String logstr;
         String logsimurand;
@@ -1744,10 +1745,24 @@ public class MonteCarloPlayer implements Agent
                     //|| isCheckMonsterBeat(info) == true
                     ) 
                 {
+                        int hp = info.player.getHp(); //int hp = info.player.hp;
+                        double lv = calcLevelandExpD(info); // 経験値を少数点で表したレベル
+                        int sp = info.player.satiety + (info.player.inventory.getInvItemNum(1) * info.player.inventory.getFoodHealVal()); // 満腹度+食料による回復量
+                        int pt = info.player.inventory.getInvItemNum(2); // ポーション数
+                        int ar = info.player.inventory.getInvItemNum(3); // 矢数(使用可能数) 
+                        int st = info.player.inventory.getInvItemNum(4); // 杖数
+                        double unknownAreaPer = calcUnknownAreaPer(info); // 未知領域の割合
+                        int stair = (info.stairpos == true) ? 1 : -1; // 階段発見の有無，発見1，未発見-1
+
+                        String tmpstr = ("\t" + "(" + hp + "," + lv + "," + sp + "," + pt + "," + ar + "," + st + "," + unknownAreaPer + "," + stair + ")");
+                        
                         //System.out.println("simu gameover");
                         // 評価値を計算し，値を返す
                         double breakval = calcEvaVal(info);
                         //System.out.println("break:" + breakval);
+                        
+                        System.out.println(breakval + "\t" + tmpstr);
+                                                
                         return breakval;
                 }
                 
@@ -1962,19 +1977,53 @@ public class MonteCarloPlayer implements Agent
                 }
 
 		// 評価値の最も高いアクションをListの中から探索
-		double maxEvaVal = actList.get(0).evaVal;
-		int maxIndex = 0;
-		for(int index = 1; index < actList.size(); index++)
-		{
-			if(maxEvaVal < actList.get(index).evaVal)
-			{
-				maxEvaVal = actList.get(index).evaVal;
-				maxIndex = index;
-			}
-		}
-
-		return actList.get(maxIndex);
+                List<Integer> maxEvaValIndex = new ArrayList<Integer>(); // 評価値最大となるアクションのインデックス
+                maxEvaValIndex.add(0); // 初期値としてインデックス0を追加
+                double maxEvaVal = actList.get(0).evaVal; // 最大評価値，初期値として0個目の評価値を代入
+                for(int index = 1; index < actList.size(); index++){
+                    // 今までの評価値より大きいとき
+                    if(maxEvaVal < actList.get(index).evaVal){
+                        maxEvaValIndex = new ArrayList<Integer>(); // リストの初期化
+                        maxEvaValIndex.add(index);
+                        maxEvaVal = actList.get(index).evaVal;
+                    }
+                    // 今までの評価値と等しいとき
+                    else if(isDoubleValueEqual(maxEvaVal, actList.get(index).evaVal) == true){
+                        maxEvaValIndex.add(index);
+                    }
+                }
+                
+                // Listに格納したインデックスの中から，ランダムに選択
+                if(maxEvaValIndex.size() == 1){
+                    return actList.get(maxEvaValIndex.get(0));
+                }
+                else{
+                    int selectIndex = random.nextInt(maxEvaValIndex.size());
+                    return actList.get(maxEvaValIndex.get(selectIndex));
+                }
+                
+                
+                        
+//		double maxEvaVal = actList.get(0).evaVal;
+//		int maxIndex = 0;
+//		for(int index = 1; index < actList.size(); index++)
+//		{
+//			if(maxEvaVal < actList.get(index).evaVal)
+//			{
+//				maxEvaVal = actList.get(index).evaVal;
+//				maxIndex = index;
+//			}
+//		}
+//              return actList.get(maxIndex);
 	}
+        
+        // 引数として与えられた浮動小数点２値の比較
+        // ほぼ同じ：true，ことなる:false
+        public boolean isDoubleValueEqual(double dv1, double dv2){
+            if(Math.abs(dv1 - dv2) <= 0.00001)  return true;
+            else                                return false;
+        }
+        
         
         int actcount = 0;
         

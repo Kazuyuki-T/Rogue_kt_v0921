@@ -53,8 +53,7 @@ public class TurnManagerSimulator
 		// ...
 		// ...
 
-		if(info.player.active == true)
-		{
+		if(info.player.active == true) {
 			// アクションフラグリセット
 			info.player.setActionFlag(false); //info.player.action_flag = false;
 
@@ -62,12 +61,10 @@ public class TurnManagerSimulator
 			countPlayerSat(info);
 
 			// 満腹度0の際のHP減少
-			if(info.player.satiety == 0)
-			{
+			if(info.player.satiety == 0) {
 				objSimu.calcPlayerDamage(1, info);
 			}
-			else
-			{
+                        else {
 				// HPの自然回復
 				countPlayerHpSpontRec(info);
 			}
@@ -100,22 +97,18 @@ public class TurnManagerSimulator
                         }
                         
                         // フロアの滞在ターン数の更新
-                        if(info.player.curFloor < MyCanvas.TOPFLOOR)
-                        {
+                        if(info.player.curFloor < MyCanvas.TOPFLOOR) {
                             info.floorturn[info.player.curFloor]++;
                         }
 		}
                 
-                for(int n1 = 0; n1 < info.visibleEnemy.size(); n1++)
-		{
-			for(int n2 = 0; n2 < info.enemy.length; n2++)
-                        {
-                                if(info.visibleEnemy.get(n1).index == info.enemy[n2].index)
-                                {
-                                        info.visibleEnemy.get(n1).setHp(info.enemy[n2].getHp()); //info.visibleEnemy.get(n1).hp = info.enemy[n2].hp;
-                                        info.visibleEnemy.get(n1).gridMapX = info.enemy[n2].gridMapX;
-                                        info.visibleEnemy.get(n1).gridMapY = info.enemy[n2].gridMapY;
-                                        info.visibleEnemy.get(n1).active = info.enemy[n2].active;
+                for(int visn = 0; visn < info.visibleEnemy.size(); visn++) {
+			for(int en = 0; en < info.enemy.length; en++) {
+                                if(info.visibleEnemy.get(visn).index == info.enemy[en].index) {
+                                        info.visibleEnemy.get(visn).setHp(info.enemy[en].getHp()); //info.visibleEnemy.get(n1).hp = info.enemy[n2].hp;
+                                        info.visibleEnemy.get(visn).gridMapX = info.enemy[en].gridMapX;
+                                        info.visibleEnemy.get(visn).gridMapY = info.enemy[en].gridMapY;
+                                        info.visibleEnemy.get(visn).active = info.enemy[en].active;
                                         break;
                                 }
                         }
