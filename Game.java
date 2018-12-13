@@ -28,7 +28,7 @@ public class Game extends JFrame
         {
                 // フレーム出力あり，入力受付あり
                 if(drawLv != 0) {
-                    int gameMode = 1; // 0:人間，1:AI，2:実験用高速周回，3:AI１行動一時停止確認用
+                    int gameMode = 2; // 0:人間，1:AI，2:実験用高速周回，3:AI１行動一時停止確認用
                     int oplv = (gameMode == 2) ? 0 : 10; // 0:表示なし，10:表示あり
                     Logger.setLoggerLevel(oplv);
                     
