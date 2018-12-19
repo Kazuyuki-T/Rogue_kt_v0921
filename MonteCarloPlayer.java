@@ -30,7 +30,7 @@ public class MonteCarloPlayer implements Agent
 
         int stturn;
         
-        int debug = 11;
+        int debug = 0; // 11で全表示
         
         // プレイアウト終了時の評価値の計算方法
         // 0:平均値, 1:最大値
@@ -672,7 +672,9 @@ public class MonteCarloPlayer implements Agent
             // 5:矢ワンホット
             // 6:矢ワンホット，ターンペナあり
             // 7:全アイテムワンホット
-            int eval = 7;
+            // 8:hp矢ワンホット，hp重み300刻みに変更
+            // 9:hp矢ワンホット，8にターンペナルティ（1T30）追加
+            int eval = 9;
             if(eval == -5){
                 int simuturn = info.turn - stturn; // 展開分のバイアス
                 if(simuturn < 0 || 12 < simuturn) System.out.println("---------------error---------------");
@@ -1227,7 +1229,7 @@ public class MonteCarloPlayer implements Agent
                             + ((double) st * 611.2)
                             + ((double) unknownAreaPer * 0.5)
                             + ((double) stair * -122.2)
-                            - ((double) (info.turn - stturn) * 100.0)
+                            - ((double) (info.turn - stturn) * 100.0) // ターン経過ペナルティ
                             + ((double) -9163.3);
                 } else if (curFloor == 3) {
                     // 死んでいるとき
@@ -1310,6 +1312,179 @@ public class MonteCarloPlayer implements Agent
                             + ((double) unknownAreaPer * 0.9)
                             + ((double) stair * -206.7)
                             + ((double) -4842.9);
+                } else if (curFloor == 3) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 189.04)
+                            + ((double) lv * -230.70)
+                            + ((double) sp * 0.31)
+                            + ((double) pt * 883.37)
+                            + ((double) ar * 111.03)
+                            + ((double) st * 558.56)
+                            + ((double) unknownAreaPer * -23.25)
+                            + ((double) stair * 1658.15)
+                            + ((double) -2284.18);
+                } else if (curFloor == 4) {
+                    innerp = 100000;
+                }
+            }
+            else if(eval == 8){
+                double ar0 = (ar < 3) ? ((double)(3 - ar) / 3) : 0;
+                double ar3 = (1 <= ar && ar < 6) ? ((double)(3 - Math.abs(3 - ar)) / 3) : 0;
+                double ar6 = (4 <= ar && ar < 9) ? ((double)(3 - Math.abs(6 - ar)) / 3) : 0;
+                double ar9 = (7 <= ar && ar < 12) ? ((double)(3 - Math.abs(9 - ar)) / 3) : 0;
+                double ar12 = (10 <= ar && ar < 13) ? ((double)(3 - Math.abs(12 - ar)) / 3) : (13 <= ar) ? 1 : 0;
+                double hp100 = (100 > hp && hp > 90) ? ((double)(10 - Math.abs(100 - hp)) / 10) : ((hp >= 100) ? 1 : 0);
+                double hp90  = (100 > hp && hp > 80) ? ((double)(10 - Math.abs(90 - hp)) / 10) : 0;
+                double hp80  = ( 90 > hp && hp > 70) ? ((double)(10 - Math.abs(80 - hp)) / 10) : 0;
+                double hp70  = ( 80 > hp && hp > 60) ? ((double)(10 - Math.abs(70 - hp)) / 10) : 0;
+                double hp60  = ( 70 > hp && hp > 50) ? ((double)(10 - Math.abs(60 - hp)) / 10) : 0;
+                double hp50  = ( 60 > hp && hp > 40) ? ((double)(10 - Math.abs(50 - hp)) / 10) : 0;
+                double hp40  = ( 50 > hp && hp > 30) ? ((double)(10 - Math.abs(40 - hp)) / 10) : 0;
+                double hp30  = ( 40 > hp && hp > 20) ? ((double)(10 - Math.abs(30 - hp)) / 10) : 0;
+                double hp20  = ( 30 > hp && hp > 10) ? ((double)(10 - Math.abs(20 - hp)) / 10) : 0;
+                double hp10  = ( 20 > hp && hp >  0) ? ((double)(10 - Math.abs(10 - hp)) / 10) : 0;
+                double hp0   = (10 > hp) ? ((double)(10 - hp) / 10) : 0;
+                //System.out.println("ar : " + ar + " -> [ " + ar12 + " " + ar9 + " " + ar6 + " " + ar3 + " " + ar0 + " ]");
+                //System.out.println("hp : " + hp + " -> [ " + hp100 + " " + hp90 + " " + hp80 + " " + hp70 + " " + hp60 + " " + hp50 + " " + 
+                //        hp40 + " " + hp30 + " " + hp20 + " " + hp10 + " " + hp0 + " ]");
+                if (curFloor == 0) {
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 31.31)
+                            + ((double) lv * 93.00)
+                            + ((double) sp * -37.59)
+                            + ((double) pt * 1180.67)
+                            + ((double) ar * -224.23)
+                            + ((double) st * 609.08)
+                            + ((double) unknownAreaPer * 8.32)
+                            + ((double) stair * -107.24)
+                            + ((double) -349.66);
+                }
+                else if (curFloor == 1) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 46.95)
+                            + ((double) lv * 44.27)
+                            + ((double) sp * -27.41)
+                            + ((double) pt * 1078.39)
+                            + ((double) ar * -119.27)
+                            + ((double) st * 479.54)
+                            + ((double) unknownAreaPer * -20.92)
+                            + ((double) stair * -117.17)
+                            + ((double) -1149.91);
+                } else if (curFloor == 2) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp100 * 1300.0)
+                            + ((double) hp90 * 1000.0)
+                            + ((double) hp80 * 700.0)
+                            + ((double) hp70 * 400.0)
+                            + ((double) hp60 * 100.0)
+                            + ((double) hp50 * -200.0)
+                            + ((double) hp40 * -500.0)
+                            + ((double) hp30 * -800.0)
+                            + ((double) hp20 * -1100.0)
+                            + ((double) hp10 * -1400.0)
+                            + ((double) hp0 * -1700.0)
+                            + ((double) lv * 167.8)
+                            + ((double) sp * 15.0)
+                            + ((double) pt * 831.3)
+                            + ((double) ar12 * 673.2)
+                            + ((double) ar9 * 157.3)
+                            + ((double) ar6 * -365.0)
+                            + ((double) ar3 * -1244.4)
+                            + ((double) ar0 * -1899.7)
+                            + ((double) st * 293.4)
+                            + ((double) unknownAreaPer * 2.1)
+                            + ((double) stair * -66.3)
+                            + ((double) -2678.5);
+                } else if (curFloor == 3) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 189.04)
+                            + ((double) lv * -230.70)
+                            + ((double) sp * 0.31)
+                            + ((double) pt * 883.37)
+                            + ((double) ar * 111.03)
+                            + ((double) st * 558.56)
+                            + ((double) unknownAreaPer * -23.25)
+                            + ((double) stair * 1658.15)
+                            + ((double) -2284.18);
+                } else if (curFloor == 4) {
+                    innerp = 100000;
+                }
+            }
+            else if(eval == 9){
+                double ar0 = (ar < 3) ? ((double)(3 - ar) / 3) : 0;
+                double ar3 = (1 <= ar && ar < 6) ? ((double)(3 - Math.abs(3 - ar)) / 3) : 0;
+                double ar6 = (4 <= ar && ar < 9) ? ((double)(3 - Math.abs(6 - ar)) / 3) : 0;
+                double ar9 = (7 <= ar && ar < 12) ? ((double)(3 - Math.abs(9 - ar)) / 3) : 0;
+                double ar12 = (10 <= ar && ar < 13) ? ((double)(3 - Math.abs(12 - ar)) / 3) : (13 <= ar) ? 1 : 0;
+                double hp100 = (100 > hp && hp > 90) ? ((double)(10 - Math.abs(100 - hp)) / 10) : ((hp >= 100) ? 1 : 0);
+                double hp90  = (100 > hp && hp > 80) ? ((double)(10 - Math.abs(90 - hp)) / 10) : 0;
+                double hp80  = ( 90 > hp && hp > 70) ? ((double)(10 - Math.abs(80 - hp)) / 10) : 0;
+                double hp70  = ( 80 > hp && hp > 60) ? ((double)(10 - Math.abs(70 - hp)) / 10) : 0;
+                double hp60  = ( 70 > hp && hp > 50) ? ((double)(10 - Math.abs(60 - hp)) / 10) : 0;
+                double hp50  = ( 60 > hp && hp > 40) ? ((double)(10 - Math.abs(50 - hp)) / 10) : 0;
+                double hp40  = ( 50 > hp && hp > 30) ? ((double)(10 - Math.abs(40 - hp)) / 10) : 0;
+                double hp30  = ( 40 > hp && hp > 20) ? ((double)(10 - Math.abs(30 - hp)) / 10) : 0;
+                double hp20  = ( 30 > hp && hp > 10) ? ((double)(10 - Math.abs(20 - hp)) / 10) : 0;
+                double hp10  = ( 20 > hp && hp >  0) ? ((double)(10 - Math.abs(10 - hp)) / 10) : 0;
+                double hp0   = (10 > hp) ? ((double)(10 - hp) / 10) : 0;
+                //System.out.println("ar : " + ar + " -> [ " + ar12 + " " + ar9 + " " + ar6 + " " + ar3 + " " + ar0 + " ]");
+                //System.out.println("hp : " + hp + " -> [ " + hp100 + " " + hp90 + " " + hp80 + " " + hp70 + " " + hp60 + " " + hp50 + " " + 
+                //        hp40 + " " + hp30 + " " + hp20 + " " + hp10 + " " + hp0 + " ]");
+                if (curFloor == 0) {
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 31.31)
+                            + ((double) lv * 93.00)
+                            + ((double) sp * -37.59)
+                            + ((double) pt * 1180.67)
+                            + ((double) ar * -224.23)
+                            + ((double) st * 609.08)
+                            + ((double) unknownAreaPer * 8.32)
+                            + ((double) stair * -107.24)
+                            + ((double) -349.66);
+                }
+                else if (curFloor == 1) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp * 46.95)
+                            + ((double) lv * 44.27)
+                            + ((double) sp * -27.41)
+                            + ((double) pt * 1078.39)
+                            + ((double) ar * -119.27)
+                            + ((double) st * 479.54)
+                            + ((double) unknownAreaPer * -20.92)
+                            + ((double) stair * -117.17)
+                            + ((double) -1149.91);
+                } else if (curFloor == 2) {
+                    // 死んでいるとき
+                    if (life == 0) innerp = -10000;
+                    else innerp = ((double) hp100 * 1300.0)
+                            + ((double) hp90 * 1000.0)
+                            + ((double) hp80 * 700.0)
+                            + ((double) hp70 * 400.0)
+                            + ((double) hp60 * 100.0)
+                            + ((double) hp50 * -200.0)
+                            + ((double) hp40 * -500.0)
+                            + ((double) hp30 * -800.0)
+                            + ((double) hp20 * -1100.0)
+                            + ((double) hp10 * -1400.0)
+                            + ((double) hp0 * -1700.0)
+                            + ((double) lv * 167.8)
+                            + ((double) sp * 15.0)
+                            + ((double) pt * 831.3)
+                            + ((double) ar12 * 673.2)
+                            + ((double) ar9 * 157.3)
+                            + ((double) ar6 * -365.0)
+                            + ((double) ar3 * -1244.4)
+                            + ((double) ar0 * -1899.7)
+                            + ((double) st * 293.4)
+                            + ((double) unknownAreaPer * 2.1)
+                            + ((double) stair * -66.3)
+                            - ((double) (info.turn - stturn) * 30.0) // ターン経過ペナルティ
+                            + ((double) -2678.5);
                 } else if (curFloor == 3) {
                     // 死んでいるとき
                     if (life == 0) innerp = -10000;
@@ -1909,7 +2084,7 @@ public class MonteCarloPlayer implements Agent
                         double breakval = calcEvaVal(info);
                         //System.out.println("break:" + breakval);
                         
-                        System.out.println(breakval + "\t" + tmpstr);
+                        if(debug > 10) System.out.println(breakval + "\t" + tmpstr);
                                                 
                         return breakval;
                 }
