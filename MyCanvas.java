@@ -43,9 +43,9 @@ public class MyCanvas extends Canvas
     private static final boolean DATA_COLLECTED = false; // true:データ収集,false:通常の実験
     private static final int BOUND_REACHCOUNT = 100; // 各階層の最低到達回数
 
-    public static final int TRYNUM = 200; // 実行回数
+    public static final int TRYNUM = 1000; // 実行回数
 
-    public static final int DEBUG_INIT = 2; // 初期配置，0:ランダム配置, 1:配置をいじる，2:csv準拠
+    public static final int DEBUG_INIT = 1; // 初期配置，0:ランダム配置, 1:配置をいじる，2:csv準拠
     
     private static final int initFlr = 0; // 初期化時のフロア階層，開始フロアを変更する際に使用
     public static int floorNumber;  // 現在の階層
@@ -140,7 +140,7 @@ public class MyCanvas extends Canvas
     BufferedReader br = null;
     String line = "";
     //String csvFile = "src/mat/ar2fStartFormatData_ar9.csv";
-    String csvFile = "src/mat/2flrStartFormatData.csv";
+    String csvFile = "src/mat/flrStartFormatData.csv";
     //String csvFile = "src/mat/test2f.csv";
     
     public RuleBasePlayer getrbp() { return rbp; }
@@ -219,6 +219,7 @@ public class MyCanvas extends Canvas
             } catch (IOException e) {
                 System.out.println(e); // エラー吐き
                 System.out.println("constractar error");
+                Logger.appendLog("constractar error", true);
             }
         }
         
@@ -302,6 +303,7 @@ public class MyCanvas extends Canvas
             } catch (IOException e) {
                 System.out.println(e); // エラー吐き
                 System.out.println("init error");
+                Logger.appendLog("init error", true);
             }
         }
         
@@ -980,20 +982,27 @@ public class MyCanvas extends Canvas
 
             // プレイヤーの配置
             // プレイヤーの持つマップ情報の初期化・更新を含む
-            objectset.setObject(new String("player"), -1, 19, 5);
-
-            //floorNumber = 0;
+            //objectset.setObject(new String("player"), -1, 10, 4); // 左上
+            //objectset.setObject(new String("player"), -1, 19, 5); // 通路前
+            objectset.setObject(new String("player"), -1, 10, 4); // 左上
+            
+            floorNumber = 2;
+            objectset.player.curFloor = floorNumber;
             // プレイヤー情報の変更
             //if (floorNumber == 0) { // このif必要？
-            objectset.player.addExp(50); // レベルの調整
+            objectset.player.addExp(350); // レベルの調整
             //objectset.player.hp = objectset.player.maxHp;
-            objectset.player.setHp(objectset.player.getMaxHp());
+           // objectset.player.setHp(objectset.player.getMaxHp());
+            objectset.player.setHp(95);
             objectset.player.satiety = objectset.player.maxSatiety;
-            objectset.player.inventory.addItem(4); // wst追加
-            objectset.player.inventory.addItem(4);
-//                        objectset.player.inventory.addItem(3);
-//                        objectset.player.inventory.addItem(2);
-//                        objectset.player.inventory.addItem(1);
+            //objectset.player.inventory.addItem(4); // wst追加
+            objectset.player.inventory.addItem(4); // st
+            objectset.player.inventory.addItem(4); // st
+            objectset.player.inventory.addItem(4); // st
+            //objectset.player.inventory.addItem(4); // st
+            //objectset.player.inventory.addItem(3); // ar
+            //objectset.player.inventory.addItem(2); // po
+            //objectset.player.inventory.addItem(1); // fd
 //                        objectset.player.inventory.addItem(4);
 //                        objectset.player.inventory.addItem(3);
 //                        objectset.player.inventory.addItem(2);
@@ -1016,15 +1025,27 @@ public class MyCanvas extends Canvas
 
             // オブジェクトの配置
             // 敵
-            objectset.setObject(new String("enemy"), 0, 17, 5);
-            objectset.setObject(new String("enemy"), 0, 17, 6);
+            
+            // p(19, 5) 通路前　挟み込み
+            //objectset.setObject(new String("enemy"), 2, 22, 5); // 右通路
+            //objectset.setObject(new String("enemy"), 2, 17, 5); // 左
+            
+            // p(19, 5) 通路前　逃げ
+            //objectset.setObject(new String("enemy"), 0, 17, 5);
+            //objectset.setObject(new String("enemy"), 0, 17, 7);
+            
+            //hidariue
+            objectset.setObject(new String("enemy"), 0, 10, 5); // 左上
+            objectset.setObject(new String("enemy"), 0, 13, 4); // 左上
+            
+            
             //ObjectSet.enemy[1].hp = 45;
             //objectset.setObject(new String("enemy"), 3, 11, 8);
             //objectset.setObject(new String("enemy"), 3, 11, 9);
 
             // 階段
             // 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
-            objectset.setObject(new String("stair"), -1, 15, 22);
+            objectset.setObject(new String("stair"), -1, 17, 22);
 
             for (int y = 0; y < MyCanvas.MAPGRIDSIZE_Y; y++) {
                 for (int x = 0; x < MyCanvas.MAPGRIDSIZE_X; x++) {
@@ -1039,7 +1060,8 @@ public class MyCanvas extends Canvas
 
             startFlag = true;
 
-            if (GAMEMODE == 1 || GAMEMODE == 3) {
+            //if (GAMEMODE == 1 || GAMEMODE == 3) {
+            if (GAMEMODE == 3) {
                 scene = SCENE_PAUSE;
             }
 
@@ -1070,6 +1092,12 @@ public class MyCanvas extends Canvas
             objectset.setObjectRand(new String("stair")); // 階段, 通路の直前，部屋に入るとすぐのグリッドに生成されないように調整
             startDrawmapFlag = true; // マップ視野の描画を開始する
             startFlag = true; // 階層初回判定
+            
+            // 高速周回（jar用）の際に，ゲーム数及び勝率がわかりやすいように
+            if (GAMEMODE == 2) {
+                if(DEBUG_INIT != 0) Logger.appendLog(floorNumber + "F, " + gameCount + " game (win:" + winCount + ", lose:" + loseCount + ")", true);
+                else                Logger.appendLog(floorNumber + "F, " + gameCount + " / " + TRYNUM + " game (win:" + winCount + ", lose:" + loseCount + ")", true);
+            }
         }
     }
 
@@ -1205,6 +1233,10 @@ public class MyCanvas extends Canvas
         int currentFlrGetAr;
         int currentFlrGetSt;
         
+        int flrturn; // 滞在ターン数
+        
+        double elapsedTime; // 経過時間
+        
         boolean updateFlag; // ファイルへ出力するか否か
         
         public LData() {
@@ -1235,6 +1267,10 @@ public class MyCanvas extends Canvas
             currentFlrGetAr = 0;
             currentFlrGetSt = 0;
             
+            flrturn = 0;
+            
+            elapsedTime = 0;
+            
             updateFlag = false;
         }
 
@@ -1252,6 +1288,10 @@ public class MyCanvas extends Canvas
             fd = p.inventory.getInvItemNum(1);
             exp = (double)p.exp / p.lvupExp;
             beatsCount = p.getBeatsEnemyCount(fnum);
+            
+            flrturn = lvFloorNum[fnum];
+            
+            elapsedTime = (System.currentTimeMillis() - start) / 1000.0;
             
             updateFlag = true;
         }
@@ -1343,7 +1383,7 @@ public class MyCanvas extends Canvas
                     + "stm,fd,exp,unknownAreaPer,"
                     + "currentFlrUseFd,currentFlrUsePt,currentFlrUseAr,currentFlrUseSt,"
                     + "currentFlrGetFd,currentFlrGetPt,currentFlrGetAr,currentFlrGetSt,"
-                    + "beatsCount,stairFlag"
+                    + "beatsCount,stairFlag,elapsedTime,flrTurn"
                     + System.getProperty("line.separator"));
 
             Logger.OutputFileLog(new String(fileName + ".csv"), str, true);
@@ -1355,7 +1395,7 @@ public class MyCanvas extends Canvas
                     + "," + stm + "," + fd + "," + exp + "," + unknownAreaPer
                     + "," + currentFlrUseFd + "," + currentFlrUsePt + "," + currentFlrUseAr + "," + currentFlrUseSt
                     + "," + currentFlrGetFd + "," + currentFlrGetPt + "," + currentFlrGetAr + "," + currentFlrGetSt
-                    + "," + beatsCount + "," + ((stairflag == true) ? 1 : -1)
+                    + "," + beatsCount + "," + ((stairflag == true) ? 1 : -1) + "," + elapsedTime + "," + flrturn
                     + System.getProperty("line.separator"));
 
             Logger.OutputFileLog(new String(fileName + ".csv"), new String(data), true);

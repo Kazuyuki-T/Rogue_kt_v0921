@@ -930,6 +930,15 @@ public class RuleBasePlayer implements Agent, Cloneable
 								ruleBesedAct = passSearchMove(info);
 							}
 
+                                                        // 階段を降りる際に内積→負ならば
+//                                                        double inner = mcp.calcEvaVal(info);
+//                                                        if(inner < 0){
+//                                                            System.out.println("inner -> under 0 (" + inner + "), curFlr : " + mcp.curFloor + ", playerFlr : " + info.player.curFloor);
+//                                                        }
+//                                                        else{
+//                                                            System.out.println("inner -> over 0 (" + inner + "), curFlr : " + mcp.curFloor + ", playerFlr : " + info.player.curFloor);
+//                                                        }
+                                                        
 							break;
 						}
 					}
@@ -965,6 +974,14 @@ public class RuleBasePlayer implements Agent, Cloneable
 					{
 						ruleBesedAct = passSearchMove(info);
 					}
+                                        
+                                        // 階段を降りる際に内積→負ならば
+//                                        double inner = mcp.calcEvaVal(info);
+//                                        if (inner < 0) {
+//                                            System.out.println("inner -> under 0 (" + inner + "), curFlr : " + mcp.curFloor + ", playerFlr : " + info.player.curFloor);
+//                                        } else {
+//                                            System.out.println("inner -> over 0 (" + inner + "), curFlr : " + mcp.curFloor + ", playerFlr : " + info.player.curFloor);
+//                                        }
 
 					break;
 				}

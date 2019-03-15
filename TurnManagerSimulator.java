@@ -92,6 +92,7 @@ public class TurnManagerSimulator
                         if(info.beatEnemy == true){
                             int turnIntervalOfBeat = info.turn - info.startSimuTurn;
                             info.countbeatsum_70_1t5 += 70 - turnIntervalOfBeat * 5;
+                            info.countbeatsum_50_1t5 += 50 - turnIntervalOfBeat * 5;
                             info.beatEnemy = false;
                             //System.out.println("turn:" + turnIntervalOfBeat + ", cb_60_1t5:" + info.countbeatsum_60_1t5);
                         }
